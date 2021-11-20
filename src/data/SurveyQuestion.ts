@@ -18,4 +18,13 @@ export class SurveyQuestion {
         this.items = items
         this.answer = answer
 	}
+    isMatrix (): boolean {
+        return this.type == "matrix"
+    }
+    isText (): boolean {
+        return this.type == "text"
+    }
+    isRadio (): boolean {
+        return this.type == "radio"
+    }
 }
