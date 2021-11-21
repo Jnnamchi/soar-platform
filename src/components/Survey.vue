@@ -1,74 +1,87 @@
 <template>
   <div class="hello">
-    <div>
+    <h1>
       {{surveyData.title}}
+    </h1>
+    <div>
+      <div>Page {{selectedSurveyPage}} of {{surveyData.pages.length}}</div>
+      <div>Completed {{surveyData.countAnsweredQuestions()}} of {{surveyData.countTotalQuestions()}} questions</div>
+      <div class="survey-progress-bar" :style="styleProgressBar()"></div>
     </div>
-    <div v-for="page in surveyData.pages" v-bind:key="page.name" class="survey-section">
-      <div class="survey-section-name">{{page.name}}</div>
-      <div v-for="question in page.questions" v-bind:key="question.name">
-        <div class="survey-question-name">{{question.name}}</div>
-        <!-- MATRIX QUESTION TYPE -->
-        <div v-if="question.isMatrix()" class="matrix">
-          <div class="matrix-grid">
-            <div class="matrix-column-header">
+    <div v-for="pageNum in surveyData.pages.length" v-bind:key="pageNum" class="survey-section">
+      <div v-if="pageNum - 1 == selectedSurveyPage">
+        <div class="survey-section-name">{{surveyData.pages[pageNum - 1].name}}</div>
+        <div v-for="question in surveyData.pages[pageNum - 1].questions" v-bind:key="question.name">
+          <div class="survey-question-name">{{question.name}}</div>
+          <!-- MATRIX QUESTION TYPE -->
+          <div v-if="question.isMatrix()" class="matrix">
+            <div class="matrix-grid">
+              <div class="matrix-column-header">
               <div class="matrix-column-header-empty"></div>
               <div v-for="column in question.columns" v-bind:key="column" class="matrix-column-header-item">
-                  <div class="matrix-column-header-item-text">
-                      {{column}}
-                  </div>
+                <div class="matrix-column-header-item-text">
+                  {{column}}
+                </div>
               </div>
-            </div>
-            <div v-for="row in question.rows" v-bind:key="row.question" class="matrix-row">
+              </div>
+              <div v-for="row in question.rows" v-bind:key="row.question" class="matrix-row">
                 <div class="matrix-row-header">
-                    {{row.question}}
+                  {{row.question}}
                 </div>
                 <div v-for="column in question.columns.length" v-bind:key="column" class="matrix-row-item">
-                    <div class="matrix-row-item-choice">
-                        <input type="radio" id="html" :name="row.question" :value="question.columns[column - 1]"  v-model="row.answer">
-                    </div>
+                  <div class="matrix-row-item-choice">
+                    <input type="radio" id="html" :name="row.question" :value="question.columns[column - 1]"  v-model="row.answer" class="radio-button">
+                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+          <!-- TEXT QUESTION TYPE -->
+          <div v-if="question.isText()" class="text">
+            <div>
+              <input v-model="question.answer" class="text-input">
+            </div>
+          </div>
+          <!-- RADIO QUESTION TYPE -->
+          <div v-if="question.isRadio()" class="radio">
+            <div v-for="choice in question.choices" v-bind:key="choice" class="radio-option">
+              <input type="radio" :value="choice" :id="choice" v-model="question.answer">
+              <label :for="choice" class="radio-label">{{choice}}</label>
             </div>
           </div>
         </div>
-        <!-- TEXT QUESTION TYPE -->
-        <div v-if="question.isText()" class="text">
-            <div>
-                <input v-model="question.answer" class="text-input">
-            </div>
-        </div>
-        <!-- RADIO QUESTION TYPE -->
-        <div v-if="question.isRadio()" class="radio">
-            <div v-for="choice in question.choices" v-bind:key="choice" class="radio-option">
-                <input type="radio" :value="choice" :id="choice" v-model="question.answer">
-                <label :for="choice" class="radio-label">{{choice}}</label>
-            </div>
-        </div>
       </div>
+    </div>
+    <div>
+      <span v-on:click="goToPreviousPage()">Previous</span> | <span v-on:click="goToNextPage()">Next</span>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator"
+import { Component, Vue, Prop } from "vue-property-decorator"
 import { Survey } from "../data/Survey"
 
 import '../styles/surveyStyles.css'
 
-@Component({
-  props: {
-    surveyData: Survey,
-  },
-  components: {
-  },
-  data () {
-    return {
-
-    }
-  }
-})
-
+@Component
 export default class SurveyComponent extends Vue {
-  // @Prop() private surveyData!: Survey
+  @Prop() private surveyData!: Survey
+
+  selectedSurveyPage: number = 1
+
+  goToPreviousPage () {
+    this.selectedSurveyPage = Math.max(0, this.selectedSurveyPage - 1)
+    window.scrollTo(0, 0)
+  }
+  goToNextPage () {
+    this.selectedSurveyPage = Math.min(this.surveyData.pages.length - 1, this.selectedSurveyPage + 1)
+    window.scrollTo(0, 0)
+  }
+  styleProgressBar () {
+    let cutoffValue = Math.round(100 * (this.surveyData.countAnsweredQuestions() / this.surveyData.countTotalQuestions()))
+    return "background: linear-gradient(to right, #19B393 " + cutoffValue + "%, #eee " + cutoffValue + "%);"
+  }
 }
 
 </script>

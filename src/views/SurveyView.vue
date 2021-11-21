@@ -1,6 +1,5 @@
 <template>
   <div class="about">
-    <h1>This the survey section</h1>
     <SurveyComponent :surveyData="surveyData" />
   </div>
 </template>

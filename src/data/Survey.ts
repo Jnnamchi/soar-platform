@@ -20,4 +20,27 @@ export class Survey {
         this.title = title
 		this.pages = pages
 	}
+    countTotalQuestions() : number {
+        let totalQuestions = 0
+        for (const page of this.pages) {
+            for (const question of page.questions) {
+                if (question.isMatrix()) {
+                    totalQuestions += question.rows.length
+                } else {
+                    totalQuestions++
+                }
+            }
+        }
+        return totalQuestions
+    }
+    countAnsweredQuestions () : number {
+        let totalAnswers = 0
+        console.log("HI")
+        for (const page of this.pages) {
+            for (const question of page.questions) {
+                totalAnswers += question.countAnswers()
+            }
+        }
+        return totalAnswers
+    }
 }

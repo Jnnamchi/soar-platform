@@ -3,13 +3,13 @@ export class SurveyQuestion {
     // Fields
     name: string
     type: string
-    choices: (Object | string | number)[]
-    columns: (Object | string | number)[]
-    rows:    (Object | string | number)[]
-    items:   (Object | string | number)[]
+    choices: any[]
+    columns: any[]
+    rows:    any[]
+    items:   any[]
     answer: any
 	// Constructor
-	constructor(name: string, type: string, choices: (Object | string | number)[], columns: (Object | string | number)[], rows: (Object | string | number)[], items: (Object | string | number)[], answer: any) {
+	constructor(name: string, type: string, choices: any[], columns: any[], rows: any[], items: any[], answer: any) {
         this.name = name //uuidv4()
 		this.type = type
         this.choices = choices
@@ -26,5 +26,20 @@ export class SurveyQuestion {
     }
     isRadio (): boolean {
         return this.type == "radio"
+    }
+    countAnswers (): number {
+        let totalAnswers = 0
+        if (this.isMatrix()) {
+            for (const row of this.rows) {
+                if (row.answer != "") {
+                    totalAnswers++
+                }
+            }
+        } else {
+            if (this.answer != "") {
+                return 1
+            }
+        }
+        return totalAnswers
     }
 }

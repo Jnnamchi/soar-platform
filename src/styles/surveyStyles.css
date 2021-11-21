@@ -1,3 +1,11 @@
+.survey-progress-bar {
+    width: 300px;
+    height: 5px;
+    background-color: brown;
+    margin: 0 auto;
+    border-radius: 3px;
+}
+
 .survey-section {
     width: 70%;
     margin: 0 auto;
@@ -58,4 +66,21 @@
 
 .radio-label {
     margin-left: 10px;
+}
+
+.radio-button {
+    box-sizing: border-box;
+    appearance: none;
+    background: white;
+    border: 3px solid white;
+    background-color: #19B393;
+    opacity: 0.2;
+    width: 100px;
+    height: 100px;
+}
+
+.radio-button:hover, .radio-button:checked {
+    background-color: #19B393;
+    opacity: 1;
+    cursor: pointer;
 }
