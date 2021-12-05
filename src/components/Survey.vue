@@ -75,7 +75,7 @@ export default class SurveyComponent extends Vue {
     window.scrollTo(0, 0)
   }
   goToNextPage () {
-    this.selectedSurveyPage = Math.min(this.surveyData.pages.length - 1, this.selectedSurveyPage + 1)
+    this.selectedSurveyPage = Math.min(this.surveyData.pages.length, this.selectedSurveyPage + 1)
     window.scrollTo(0, 0)
   }
   styleProgressBar () {
