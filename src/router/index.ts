@@ -19,6 +19,18 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/SurveyView.vue"),
   },
+  {
+    path: "/addCompany",
+    name: "AddCompanySection",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/AddCompany.vue"),
+  },
+  {
+    path: "/company",
+    name: "CompanyDashboard",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/CompanyDashboard.vue"),
+  },
 ];
 
 const router = new VueRouter({

@@ -1,5 +1,7 @@
 import { SurveyQuestion } from "./SurveyQuestion"
 import { Survey, SurveySection } from "./Survey"
+import { Company } from "./Company"
+import { User } from "./User"
 
 const surveyData = {
   title: "Growth Module",
@@ -427,4 +429,25 @@ export function generateTestData (): Survey {
   }
 
   return new Survey(surveyData.title, surveyPages)
+}
+
+export function generateTestUser (): User {
+    return new User("ab3b453", "John Nnamchi", "john.nnamchi@simvo.io")
+}
+
+export function generateTestCompany (): Company {
+    return new Company("12345", "Bloomberg LP", 20000, "Financial Information and News Company", "Finance", [], [])
+}
+
+export function generateTestCompanies (user: User): Company[] {
+    const newCompany = generateTestCompany()
+    if (user) {
+        newCompany.addAdmin(user)
+        newCompany.addParticipant(user)
+    }
+    return [newCompany]
+}
+
+export function generateHomePageDataState () {
+
 }

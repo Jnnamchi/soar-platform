@@ -4,7 +4,7 @@
       {{surveyData.title}}
     </h1>
     <div>
-      <div>Page {{selectedSurveyPage}} of {{surveyData.pages.length}}</div>
+      <div>Page {{selectedSurveyPage + 1}} of {{surveyData.pages.length}}</div>
       <div>Completed {{surveyData.countAnsweredQuestions()}} of {{surveyData.countTotalQuestions()}} questions</div>
       <div class="survey-progress-bar" :style="styleProgressBar()"></div>
     </div>
@@ -68,14 +68,14 @@ import '../styles/surveyStyles.css'
 export default class SurveyComponent extends Vue {
   @Prop() private surveyData!: Survey
 
-  selectedSurveyPage: number = 1
+  selectedSurveyPage: number = 0
 
   goToPreviousPage () {
     this.selectedSurveyPage = Math.max(0, this.selectedSurveyPage - 1)
     window.scrollTo(0, 0)
   }
   goToNextPage () {
-    this.selectedSurveyPage = Math.min(this.surveyData.pages.length, this.selectedSurveyPage + 1)
+    this.selectedSurveyPage = Math.min(this.surveyData.pages.length - 1, this.selectedSurveyPage + 1)
     window.scrollTo(0, 0)
   }
   styleProgressBar () {
