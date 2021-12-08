@@ -1,12 +1,48 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/survey">Survey</router-link>
+      <router-link to="/">Home</router-link>
+      <span v-on:click="logout()" v-if="userLoggedIn">Logout</span>
     </div>
     <router-view />
   </div>
 </template>
+
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator"
+
+// Firebase Libs
+import { firebasePackage, logoutFirebase } from './firebase/firebase'
+
+@Component
+export default class App extends Vue {
+
+  userLoggedIn: boolean = false
+  mounted () {
+    this.userLoggedIn = false
+    this.isLoggedIn()
+  }
+  isLoggedIn () {
+    // Check if authenticated for protected navigation
+    firebasePackage.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userLoggedIn = true
+      } else {
+        this.userLoggedIn = false
+      }
+    })
+  }
+  logout () {
+    logoutFirebase()
+    firebasePackage.auth().signOut().then(() => {
+      // this.$router.push('/')
+      console.log("Logged Out")
+      this.$router.push("/login")
+    })
+  }
+}
+
+</script>
 
 <style lang="scss">
 

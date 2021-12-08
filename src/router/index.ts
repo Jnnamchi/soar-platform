@@ -2,11 +2,12 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    path: "/",
+    path: "/home",
     name: "HomeMe",
     component: Home,
   },
@@ -31,6 +32,12 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/CompanyDashboard.vue"),
   },
+  {
+    path: "/login",
+    name: "LoginPage",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/Login.vue"),
+  },
 ];
 
 const router = new VueRouter({
@@ -39,4 +46,26 @@ const router = new VueRouter({
   routes,
 });
 
-export default router;
+// Setup the route hooks to perform authentication checking for every route
+// except those that are not protected
+import { getUserLoggedIn } from '../firebase/firebase'
+router.beforeEach(async (to, from, next) => {
+  if (to == from) {
+    return
+  }
+  if (!await getUserLoggedIn()){
+    if (to.path == '/login') {
+      next()
+    } else {
+      next('/login')
+    }
+  } else {
+    if (to.path == '/login') {
+      next('/home')
+    } else {
+      next()
+    }
+  }
+})
+
+export default router

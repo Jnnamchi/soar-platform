@@ -6,7 +6,7 @@
     <br>
     <br>
     <div>Your companies:</div>
-    <div v-for="company in companies" v-bind:key="company" >
+    <div v-for="company in companies" v-bind:key="company.uid" >
       <div v-if="company.isOwndeBy(user)">
         <router-link to="/company">{{company.name}}</router-link>
       </div>
@@ -16,7 +16,7 @@
     <br>
     <br>
     <div>Your consultation groups:</div>
-    <div v-for="company in companies" v-bind:key="company" >
+    <div v-for="company in companies" v-bind:key="company.name" >
       <div v-if="company.isParticipating(user)">
         {{company.name}}
       </div>

@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "firebase": "^8.10.0",
+    "firebase-admin": "^9.11.1",
+    "firebaseui": "^5.0.0",
     "uuid": "^8.3.2",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",

@@ -35,7 +35,6 @@ export class Survey {
     }
     countAnsweredQuestions () : number {
         let totalAnswers = 0
-        console.log("HI")
         for (const page of this.pages) {
             for (const question of page.questions) {
                 totalAnswers += question.countAnswers()
