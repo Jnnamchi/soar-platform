@@ -8,11 +8,13 @@ Vue.use(VueRouter);
 const routes: Array<RouteConfig> = [
   {
     path: "/home",
+    props: true,
     name: "HomeMe",
     component: Home,
   },
   {
     path: "/survey",
+    props: true,
     name: "SurveySection",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -22,21 +24,38 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/addCompany",
+    props: true,
     name: "AddCompanySection",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AddCompany.vue"),
   },
   {
     path: "/company",
+    props: true,
     name: "CompanyDashboard",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/CompanyDashboard.vue"),
   },
   {
     path: "/login",
+    props: true,
     name: "LoginPage",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Login.vue"),
+  },
+  {
+    path: "/SOARModuleView",
+    props: true,
+    name: "SOARModuleView",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/SOARModuleView.vue"),
+  },
+  {
+    path: "/SOARModuleAnalysis",
+    props: true,
+    name: "SOARModuleAnalysis",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/SOARModuleAnalysis.vue"),
   },
 ];
 

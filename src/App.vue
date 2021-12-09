@@ -1,15 +1,16 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link>
+      <router-link to="/home">Home</router-link>
       <span v-on:click="logout()" v-if="userLoggedIn">Logout</span>
     </div>
-    <router-view />
+    <router-view :appData="appData" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator"
+import { generateTestUser, generateTestCompanies } from './data/dataGenerator'
 
 // Firebase Libs
 import { firebasePackage, logoutFirebase } from './firebase/firebase'
@@ -18,6 +19,7 @@ import { firebasePackage, logoutFirebase } from './firebase/firebase'
 export default class App extends Vue {
 
   userLoggedIn: boolean = false
+  appData = this.generateAppData()
   mounted () {
     this.userLoggedIn = false
     this.isLoggedIn()
@@ -35,10 +37,12 @@ export default class App extends Vue {
   logout () {
     logoutFirebase()
     firebasePackage.auth().signOut().then(() => {
-      // this.$router.push('/')
-      console.log("Logged Out")
       this.$router.push("/login")
     })
+  }
+  generateAppData () {
+    let user = generateTestUser()
+    return generateTestCompanies(user)
   }
 }
 

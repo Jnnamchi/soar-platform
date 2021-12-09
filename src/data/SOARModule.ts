@@ -1,16 +1,23 @@
 import { Survey } from "./Survey"
+import { SurveyAnswer } from "./SurveyAnswer"
 
 export class SOARModule {
-    // Fields
-    name: string
-    initialSurvey: Survey
-    // Constructor
-	constructor(name: string, initialSurvey: Survey, size: number, description: string, category: string) {
-        this.name = name
-        this.initialSurvey = initialSurvey
+  // Fields
+  name: string
+  initialSurvey: Survey
+  answers: SurveyAnswer[]
+  // Constructor
+	constructor(name: string, initialSurvey: Survey) {
+    this.name = name
+    this.initialSurvey = initialSurvey
+    this.answers = []
 	}
-    countTotalQuestions() : number {
-        let totalQuestions = 0
-        return 4
+  hasBeenCompletedBy (userUid: string) {
+    for (const answer of this.answers) {
+      if (answer.uid == userUid) {
+        return true
+      }
     }
+    return false
+  }
 }

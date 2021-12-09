@@ -1,26 +1,33 @@
 <template>
-  <div class="about">
-    <SurveyComponent :surveyData="surveyData" />
+  <div>
+      <h1>SOAR MODULE ANALYSIS</h1>
+      <h2>View your company's progress here</h2>
+      <h1>{{selectedSOARModule.name}}</h1>
+      <div>
+          Total Questions: {{selectedSOARModule.initialSurvey.countTotalQuestions()}}
+      </div>
+      <div>
+          Total Answers: {{selectedSOARModule.answers.length}}
+      </div>
+      <div>
+          Answer analysis will be viewable here
+      </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator"
-import SurveyComponent from "../components/Survey.vue"
+
 import { Company } from '../data/Company'
 
-@Component({
-  components: {
-    SurveyComponent,
-  },
-})
-export default class SurveyView extends Vue {
+@Component
+export default class CompanyDashboard extends Vue {
   @Prop() private appData!: Company[]
   @Prop() private companyName!: string
   @Prop() private SOARModuleName!: string
 
+  selectedCompany = this.getSelectedCompany()
   selectedSOARModule = this.getSelectedSOARModule()
-  surveyData = this.getSurveyData()
   getSelectedCompany () {
     for (const company of this.appData) {
       if (company.name == this.companyName) {
@@ -36,12 +43,6 @@ export default class SurveyView extends Vue {
           return module
         }
       }
-    }
-  }
-  getSurveyData () {
-    const SOARModule = this.getSelectedSOARModule()
-    if (SOARModule) {
-      return SOARModule.initialSurvey
     }
   }
 }

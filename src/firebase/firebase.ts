@@ -23,13 +23,13 @@ firebase.initializeApp(firebaseConfig)
 export const firebasePackage = firebase
 
 // When ever the user authentication state changes, save the new user role
-firebase.auth().onAuthStateChanged( (user) => {
-  if (user) {
-	console.log("Auth state changed")
-  } else {
-    console.log("Null user")
-  }
-})
+// firebase.auth().onAuthStateChanged( (user) => {
+//   if (user) {
+// 	console.log("Auth state changed")
+//   } else {
+//     console.log("Null user")
+//   }
+// })
 
 // Exported Functions
 export function userIsLoggedIn () {
