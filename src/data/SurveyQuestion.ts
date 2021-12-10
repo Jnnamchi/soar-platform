@@ -42,4 +42,16 @@ export class SurveyQuestion {
         }
         return totalAnswers
     }
+    getAnswer (): any {
+        if (this.isMatrix()) {
+            const answers = []
+            for (const row of this.rows) {
+                answers.push(row.answer)
+            }
+            return answers
+        } else {
+            return this.answer
+        }
+        return "This is the question"
+    }
 }

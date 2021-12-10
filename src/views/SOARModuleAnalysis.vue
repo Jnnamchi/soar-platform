@@ -1,17 +1,23 @@
 <template>
   <div>
-      <h1>SOAR MODULE ANALYSIS</h1>
-      <h2>View your company's progress here</h2>
-      <h1>{{selectedSOARModule.name}}</h1>
-      <div>
-          Total Questions: {{selectedSOARModule.initialSurvey.countTotalQuestions()}}
-      </div>
-      <div>
-          Total Answers: {{selectedSOARModule.answers.length}}
-      </div>
-      <div>
-          Answer analysis will be viewable here
-      </div>
+    <div class="section-title">SOAR MODULE ANALYSIS</div>
+    <div class="subsection-title">{{selectedSOARModule.name}}</div>
+    <div class="subsection-title-description">View your company's progress here</div>
+
+    <div>
+      Total Questions: {{selectedSOARModule.initialSurvey.countTotalQuestions()}}
+    </div>
+    <div>
+      Total Answers: {{selectedSOARModule.answers.length}}
+    </div>
+    <div class="medium-space"></div>
+    <div class="subsection-title">Answer analysis will be viewable here</div>
+    <div v-if="selectedSOARModule.answers.length == 0">
+      No answers yet
+    </div>
+    <div v-for="answer in selectedSOARModule.answers" v-bind:key="JSON.stringify(answer)">
+      {{answer}}
+    </div>
   </div>
 </template>
 

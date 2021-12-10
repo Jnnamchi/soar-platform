@@ -1,8 +1,6 @@
 <template>
-  <div class="hello">
-    <h1>
-      {{surveyData.title}}
-    </h1>
+  <div>
+    <div class="section-title">{{surveyData.title}}</div>
     <div>
       <div>Page {{selectedSurveyPage + 1}} of {{surveyData.pages.length}}</div>
       <div>Completed {{surveyData.countAnsweredQuestions()}} of {{surveyData.countTotalQuestions()}} questions</div>
@@ -17,12 +15,12 @@
           <div v-if="question.isMatrix()" class="matrix">
             <div class="matrix-grid">
               <div class="matrix-column-header">
-              <div class="matrix-column-header-empty"></div>
-              <div v-for="column in question.columns" v-bind:key="column" class="matrix-column-header-item">
-                <div class="matrix-column-header-item-text">
-                  {{column}}
+                <div class="matrix-column-header-empty"></div>
+                <div v-for="column in question.columns" v-bind:key="column" class="matrix-column-header-item">
+                    <div class="matrix-column-header-item-text">
+                    {{column}}
+                    </div>
                 </div>
-              </div>
               </div>
               <div v-for="row in question.rows" v-bind:key="row.question" class="matrix-row">
                 <div class="matrix-row-header">
@@ -53,7 +51,7 @@
       </div>
     </div>
     <div>
-      <span v-on:click="goToPreviousPage()">Previous</span> | <span v-on:click="goToNextPage()">Next</span>
+      <span class="survey-nav-button" v-on:click="goToPreviousPage()">Previous</span> | <span class="survey-nav-button" v-on:click="goToNextPage()">Next</span>
     </div>
   </div>
 </template>

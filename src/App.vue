@@ -1,10 +1,11 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/home">Home</router-link>
-      <span v-on:click="logout()" v-if="userLoggedIn">Logout</span>
+      <router-link to="/home" class="nav-item">Home</router-link>
+      <a v-on:click="logout()" v-if="userLoggedIn" class="nav-item">Logout</a>
     </div>
     <router-view :appData="appData" />
+    <!-- {{appData}} -->
   </div>
 </template>
 
@@ -52,6 +53,8 @@ export default class App extends Vue {
 
 * {
     box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
 #app {
@@ -63,15 +66,21 @@ export default class App extends Vue {
 }
 
 #nav {
-  padding: 30px;
-
+  padding: 20px;
+  background-color: #42b983;
+  color: white;
+  border-bottom: solid #42b983 1px;
+  text-align: left;
   a {
-    font-weight: bold;
-    color: #2c3e50;
-
+    color: white;
     &.router-link-exact-active {
-      color: #42b983;
+      font-weight: bold;
     }
   }
+}
+
+.nav-item {
+    margin: auto 15px;
+    text-decoration: none;
 }
 </style>

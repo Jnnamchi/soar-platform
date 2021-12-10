@@ -1,3 +1,7 @@
+:root {
+    --col: calc(calc(100% - 150px) / 7)
+}
+
 .survey-progress-bar {
     width: 300px;
     height: 5px;
@@ -9,35 +13,35 @@
 .survey-section {
     width: 70%;
     margin: 0 auto;
+    font-size: 12px;
 }
 
 .survey-section-name {
     text-align: left;
-    font-size: 26px;
-    margin-top: 35px;
-    /* margin-bottom: 25px; */
+    font-size: 20px;
+    margin-top: 25px;
 }
 
 .survey-question-name {
     text-align: left;
-    font-size: 18px;
-    margin-top: 35px;
-    margin-bottom: 10px;
+    font-size: 12px;
+    margin-top: 15px;
+    margin-bottom: 20px;
 }
 
 .matrix-column-header, .matrix-row {
     width: 100%;
-    display: flex;
+    display: grid;
+    grid-template-columns: 150px var(--col) var(--col) var(--col) var(--col) var(--col) var(--col) var(--col);
 }
 
 .matrix-column-header-empty {
-    min-width: 200px;
+    min-width: 150px;
 }
 
 .matrix-column-header-item, .matrix-row-item {
-    flex: 1 1 250px;
     display: table;
-    padding: 15px;
+    /* padding: 15px; */
 }
 
 .matrix-column-header-item-text, .matrix-row-item-choice {
@@ -46,8 +50,7 @@
 }
 
 .matrix-row-header {
-    min-width: 200px;
-    max-width: 200px;
+    width: 150px;
     padding: 25px;
 }
 
@@ -83,4 +86,9 @@
     background-color: #19B393;
     opacity: 1;
     cursor: pointer;
+}
+
+.survey-nav-button:hover {
+    cursor: pointer;
+    font-weight: bold;
 }

@@ -1,11 +1,12 @@
 <template>
   <div>
-      <h1>SOAR MODULE VIEWER</h1>
-      <h1>{{SOARModule.name}}</h1>
-      <div>
+      <div class="section-title">SOAR MODULE VIEWER</div>
+      <div class="subsection-title">{{SOARModule.name}}</div>
+      <div class="subsection-title-description">Module Description Goes Here</div>
+      <div class="subsection-title-description">
           Total Questions: {{SOARModule.initialSurvey.countTotalQuestions()}}
       </div>
-      <div v-on:click="addModuleToCompany(SOARModule, selectedCompany)">
+      <div v-on:click="addModuleToCompany(SOARModule, selectedCompany)" class="add-company">
           Add this module
       </div>
   </div>

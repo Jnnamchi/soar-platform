@@ -7,11 +7,11 @@ export class SOARModule {
   initialSurvey: Survey
   answers: SurveyAnswer[]
   // Constructor
-	constructor(name: string, initialSurvey: Survey) {
+  constructor(name: string, initialSurvey: Survey) {
     this.name = name
     this.initialSurvey = initialSurvey
     this.answers = []
-	}
+  }
   hasBeenCompletedBy (userUid: string) {
     for (const answer of this.answers) {
       if (answer.uid == userUid) {
@@ -19,5 +19,8 @@ export class SOARModule {
       }
     }
     return false
+  }
+  addAnswer (answer: SurveyAnswer) {
+    this.answers.push(answer)
   }
 }

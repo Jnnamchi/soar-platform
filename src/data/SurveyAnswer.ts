@@ -1,10 +1,14 @@
 export class SurveyAnswer {
   // Fields
   uid: string
-  answer: string[]
+  answer: string[][]
   // Constructor
-  constructor(id: string) {
+  constructor(id: string, answers: string[][]) {
     this.uid = id
-	this.answer = []
+    if (answers.length > 0) {
+      this.answer = answers
+    } else {
+      this.answer = []
+    }
   }
 }

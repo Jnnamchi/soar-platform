@@ -46,12 +46,12 @@ export function getCurrentUser () {
   return firebase.auth().currentUser
 }
 
-export function getCurrentUserId () {
+export function getCurrentUserId (): string {
   const currentUser = firebase.auth().currentUser
   if (currentUser) {
     return currentUser.uid
   }
-  return null
+  return ""
 }
 
 export function getCurrentUserName () {

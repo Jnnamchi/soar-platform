@@ -1,4 +1,5 @@
 import { SurveyQuestion } from "./SurveyQuestion"
+import { SurveyAnswer } from "./SurveyAnswer"
 
 export class SurveySection {
     // Fields
@@ -41,5 +42,19 @@ export class Survey {
             }
         }
         return totalAnswers
+    }
+    isCompleted (): boolean {
+        return this.countTotalQuestions() === this.countAnsweredQuestions()
+    }
+    buildAnswerList () :SurveyAnswer {
+        const answers: string[][] = []
+        for (const page of this.pages) {
+            const answerGroup: string[] = []
+            for (const question of page.questions) {
+                answerGroup.push(question.getAnswer())
+            }
+            answers.push(answerGroup)
+        }
+        return new SurveyAnswer("", answers)
     }
 }
