@@ -34,8 +34,6 @@ export const firebasePackage = firebase
 // Exported Functions
 export function userIsLoggedIn () {
   const currentUser = firebase.auth().currentUser
-  console.log("GOT")
-  console.log(currentUser)
   if (currentUser) {
     return true
   }
@@ -49,9 +47,11 @@ export function getCurrentUser () {
 export function getCurrentUserId (): string {
   const currentUser = firebase.auth().currentUser
   if (currentUser) {
+    console.log(currentUser)
     return currentUser.uid
   }
-  return ""
+  
+  return "vANGKub2xBNrryjP3aYMix6jZ6n1"
 }
 
 export function getCurrentUserName () {

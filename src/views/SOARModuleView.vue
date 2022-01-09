@@ -37,7 +37,6 @@ export default class CompanyDashboard extends Vue {
   }
   addModuleToCompany (module: SOARModule, company: Company) {
     company.addSOARModule(module)
-    console.log(company)
     this.$router.push({name: 'CompanyDashboard', params: {companyName: this.companyName}})
   }
 }

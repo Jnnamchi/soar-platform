@@ -54,7 +54,6 @@ export default class SurveyView extends Vue {
       let newAnswer = this.surveyData.buildAnswerList()
       newAnswer.uid = getCurrentUserId()
       this.selectedSOARModule.addAnswer(newAnswer)
-      console.log(newAnswer)
       this.$router.push('/home')
     }
   }

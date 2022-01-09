@@ -51,7 +51,13 @@
       </div>
     </div>
     <div>
-      <span class="survey-nav-button" v-on:click="goToPreviousPage()">Previous</span> | <span class="survey-nav-button" v-on:click="goToNextPage()">Next</span>
+      <span class="survey-nav-button"
+      v-if="hasPreviousPage()"
+      v-on:click="goToPreviousPage()">Previous</span>
+      <span v-if="hasPreviousPage() && hasNextPage()"> | </span>
+      <span class="survey-nav-button"
+      v-if="hasNextPage()"
+      v-on:click="goToNextPage()">Next</span>
     </div>
   </div>
 </template>
@@ -68,9 +74,15 @@ export default class SurveyComponent extends Vue {
 
   selectedSurveyPage: number = 0
 
+  hasPreviousPage () {
+    return this.selectedSurveyPage > 0
+  }
   goToPreviousPage () {
     this.selectedSurveyPage = Math.max(0, this.selectedSurveyPage - 1)
     window.scrollTo(0, 0)
+  }
+  hasNextPage () {
+    return this.selectedSurveyPage < this.surveyData.pages.length - 1
   }
   goToNextPage () {
     this.selectedSurveyPage = Math.min(this.surveyData.pages.length - 1, this.selectedSurveyPage + 1)

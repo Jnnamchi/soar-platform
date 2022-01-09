@@ -8,7 +8,7 @@
       Total Questions: {{selectedSOARModule.initialSurvey.countTotalQuestions()}}
     </div>
     <div>
-      Total Answers: {{selectedSOARModule.answers.length}}
+      Completion: {{selectedSOARModule.answers.length}} out of {{selectedCompany.participants.length}} registered participants
     </div>
     <div class="medium-space"></div>
     <div class="subsection-title">Answer analysis will be viewable here</div>

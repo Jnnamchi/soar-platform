@@ -10,6 +10,8 @@
     "deploy-github": "node scripts/gh-pages-deploy.js"
   },
   "dependencies": {
+    "axios": "^0.24.0",
+    "class-transformer": "^0.5.1",
     "core-js": "^3.6.5",
     "firebase": "^8.10.0",
     "firebase-admin": "^9.11.1",

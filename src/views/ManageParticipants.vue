@@ -2,6 +2,8 @@
   <div>
     <SurveyComponent :surveyData="companySurvey" />
     <div class="medium-space"></div>
+
+
     <div v-if="companySurvey.isCompleted()"
     v-on:click="submitAddCompanySurvey(companySurvey)"
     class="general-select">
@@ -23,18 +25,11 @@ import { Survey } from '../data/Survey'
 import { CreateCompanyFromSurvey } from '../data/Company'
 import { getCurrentUserId } from '../firebase/firebase'
 
-import SurveyComponent from "../components/Survey.vue"
-
 @Component({
-  components: {
-      SurveyComponent,
-  },
-  methods: {
-      getCurrentUserId,
-  }
+  components: {},
 })
 export default class Home extends Vue {
-    @Prop() private appData!: Company[]
+    @Prop() private companyData!: Company[]
 
     companySurvey = generateAddCompanySurvey()
     companyDetailsPageName = "Company Details"
@@ -43,7 +38,6 @@ export default class Home extends Vue {
         let newCompany = CreateCompanyFromSurvey(companySurvey)
         newCompany.addAdmin(getCurrentUserId())
         newCompany.addParticipant(getCurrentUserId())
-        this.appData.push(newCompany)
         this.$router.push("/home")
     }
 }

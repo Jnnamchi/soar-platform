@@ -18,6 +18,17 @@
     margin: 20px auto;
 }
 
+.subection-small-title {
+    font-size: 15px;
+    color: var(--SOAR-color);
+    /* margin: 20px auto; */
+}
+
+.subection-small-title:hover {
+    cursor: pointer;
+    font-weight: bold;
+}
+
 .subsection-title-description {
     margin: -15px auto 20px auto;
     font-size: 12px;
@@ -103,5 +114,18 @@
     text-align: center;
     text-decoration: none !important;
     color: var(--SOAR-color);
+    display: inline-block;
+}
+
+.disable-select {
+    padding: 15px 25px;
+    border: solid rgb(223, 221, 221) 1px;
+    background-color: rgb(223, 221, 221);
+    color: grey;
+    border-radius: 5px;
+    width: fit-content;
+    width: 200px;
+    text-align: center;
+    text-decoration: none !important;
     display: inline-block;
 }

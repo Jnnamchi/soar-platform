@@ -430,40 +430,53 @@ export function generateTestData (): Survey {
   return new Survey(growthModuleSurvey.title, surveyPages)
 }
 
-export function getGrowthModuleSurvey (): Survey {
+export function getGrowthModuleSurvey (surveyInfo?: any): Survey {
+
+    console.log("Checking 1")
+    console.log(surveyInfo)
+
+    let surveyData = surveyInfo
+    if (surveyInfo == undefined) {
+        surveyData = growthModuleSurvey
+    }
+
     const surveyPages = []
-    for (const section of growthModuleSurvey.pages) {
+    for (const section of surveyData.pages) {
+        console.log("Checking 3")
         const sectionQuestions = []
         for (const question of section.questions) {
         sectionQuestions.push(new SurveyQuestion(question.name, question.type, question.choices, question.columns, question.rows, question.items, question.answer))
         }
         surveyPages.push(new SurveySection(section.name, sectionQuestions))
     }
-  return new Survey(growthModuleSurvey.title, surveyPages)
+  return new Survey(surveyData.title, surveyPages)
 }
 
+import { getCurrentUserId } from '../firebase/firebase'
+
 export function generateTestUser (): User {
-    return new User("ab3b453", "John Nnamchi", "john.nnamchi@simvo.io")
+    return new User(getCurrentUserId(), "John Nnamchi", "john.nnamchi@simvo.io")
 }
 
 export function generateTestCompany (): Company {
-    return new Company("12345", "Bloomberg LP", 20000, "Financial Information and News Company", "Finance", [], [])
+    return new Company("12345", "Bloomberg LP", "More than 5000 Employees", "Financial Information and News Company", "Finance", [], [])
 }
 
 export function generateTestCompany2 (): Company {
-    return new Company("12344", "Apple Inc", 100000, "Technology and consumer products", "Technology", [], [])
+    return new Company("12344", "Apple Inc", "More than 5000 Employees", "Technology and consumer products", "Technology", [], [])
 }
 
 export function generateTestCompanies (user: User): Company[] {
     const newCompany = generateTestCompany()
     const secondCompany = generateTestCompany2()
     if (user) {
-        newCompany.addAdmin(user)
-        newCompany.addParticipant(user)
-        secondCompany.addAdmin(user)
-        secondCompany.addParticipant(user)
+        newCompany.addAdmin(user.uuid)
+        newCompany.addParticipant(user.uuid)
+        secondCompany.addAdmin(user.uuid)
+        secondCompany.addParticipant(user.uuid)
     }
-    return [newCompany, secondCompany]
+    // return [newCompany, secondCompany]
+    return []
 }
 
 export function generateHomePageDataState () {
