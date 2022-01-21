@@ -10,6 +10,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator"
 import SurveyComponent from "../components/Survey.vue"
+import { AppData } from '../data/App'
 import { Company } from '../data/Company'
 
 import { getCurrentUserId } from '../firebase/firebase'
@@ -20,35 +21,13 @@ import { getCurrentUserId } from '../firebase/firebase'
   },
 })
 export default class SurveyView extends Vue {
-  @Prop() private appData!: Company[]
-  @Prop() private companyName!: string
-  @Prop() private SOARModuleName!: string
+  @Prop() private appData!: AppData
+  @Prop() private selectedCompany!: Company
+  @Prop() private SOARModule!: string
 
-  selectedSOARModule = this.getSelectedSOARModule()
-  surveyData = this.getSurveyData()
-  getSelectedCompany () {
-    for (const company of this.appData) {
-      if (company.name == this.companyName) {
-        return company
-      }
-    }
-  }
-  getSelectedSOARModule () {
-    let company = this.getSelectedCompany()
-    if (company) {
-      for (const module of company.modules) {
-        if (module.name == this.SOARModuleName) {
-          return module
-        }
-      }
-    }
-  }
-  getSurveyData () {
-    const SOARModule = this.getSelectedSOARModule()
-    if (SOARModule) {
-      return SOARModule.initialSurvey
-    }
-  }
+  selectedSOARModule = this.appData.modules[this.SOARModule]
+  surveyData = this.selectedSOARModule.initialSurvey
+
   submitSOARSurvey () {
     if (this.surveyData && this.selectedSOARModule) {
       let newAnswer = this.surveyData.buildAnswerList()

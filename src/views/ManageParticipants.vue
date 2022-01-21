@@ -2,8 +2,6 @@
   <div>
     <SurveyComponent :surveyData="companySurvey" />
     <div class="medium-space"></div>
-
-
     <div v-if="companySurvey.isCompleted()"
     v-on:click="submitAddCompanySurvey(companySurvey)"
     class="general-select">

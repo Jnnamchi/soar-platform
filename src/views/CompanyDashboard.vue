@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="section-title">{{companyName}}</div>
+    <div class="section-title">{{appData.companies[companyUuid].name}}</div>
     <div>
-      <div>{{selectedCompany.size}} employees</div>
+      <div>{{selectedCompany.size}}</div>
       <div>{{selectedCompany.description}}</div>
       <div>Category: {{selectedCompany.category}}</div>
     </div>
@@ -13,25 +13,37 @@
             There are currently {{selectedCompany.participants.length}} participants registered
         </div>
         <div>
-            <!-- <div v-for="participant in selectedCompany.participants" v-bind:key="participant">
-                {{participant}}
-            </div> -->
-            <div  v-for="participant in participantsToAdd" v-bind:key="participant.email">
+            <div>Existing Users</div>
+            <div  v-for="participantUuid in selectedCompany.participants" v-bind:key="participantUuid">
                 <div class="add-participant-grid">
                     <div>
-                        {{participant.name}}
+                        {{appData.getUserName(participantUuid)}}
                     </div>
                     <div>
-                        {{participant.email}}
+                        {{appData.getUserEmail(participantUuid)}}
                     </div>
                     <div class="remove-participant-grid-button">
-                        X
+                        <!-- X -->
+                    </div>
+                </div>
+            </div>
+            <div>New Users</div>
+            <div  v-for="participant in participantsToAdd" v-bind:key="participant.name">
+                <div class="add-participant-grid">
+                    <div>
+                        <input placeholder="First and last name" v-model="participant.name">
+                    </div>
+                    <div>
+                        <input placeholder="Email" v-model="participant.email">
+                    </div>
+                    <div class="remove-participant-grid-button">
+                        Remove
                     </div>
                 </div>
             </div>
             <div class="add-participant-grid">
                 <div>
-                    <input placeholder="First and Last name" v-model="newParticipantData.name">
+                    <input placeholder="First and last name" v-model="newParticipantData.name">
                 </div>
                 <div>
                     <input placeholder="Email" v-model="newParticipantData.email">
@@ -40,6 +52,11 @@
                     Add
                 </div>
             </div>
+        </div>
+        <div class="company-select" style="margin-top: 25px"
+            v-on:click="submitParticipantChanges()"
+        >
+            SUBMIT CHANGES
         </div>
     </div>
     <div class="subsection">
@@ -50,7 +67,15 @@
       </div>
       <div v-else>
         <div v-for="module in selectedCompany.modules" v-bind:key="module.name">
-          <div v-on:click="openModuleAnalysis(module.name)" class="company-select">{{module.name}}</div>
+          <router-link
+            :to="{
+              name: 'SOARModuleAnalysis',
+              params: { appData: appData, selectedCompany: selectedCompany, SOARModule: module }
+            }"
+            v-if="!(selectedCompany.modules.includes(module.uuid))"
+            class="company-select">
+            {{appData.getModuleName(module)}}
+          </router-link>
         </div>
       </div>
     </div>
@@ -60,65 +85,52 @@
         <router-link
         :to="{
           name: 'SOARModuleView',
-          params: { SOARModule: module, appData: appData, selectedCompany: selectedCompany, companyName: companyName }
+          params: { appData: appData, selectedCompany: selectedCompany, SOARModule: module }
         }"
+        v-if="!(selectedCompany.modules.includes(module.uuid))"
         class="company-select">
           {{module.name}}
         </router-link>
       </span>
-      <div class="company-select">Margin Module</div>
-      <div class="company-select">Sales Module</div>
-      <div class="company-select">HR Module</div>
     </div>
-    <button v-on:click="replaceModules()">REPLACE</button>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator"
-import { User, GenerateUniqueID } from '../data/User'
-import { Company } from '../data/Company'
+import { CreateUserFromObject } from '../data/User'
+import { AppData } from '../data/App'
+import { getServerUrl } from '../requests/requests'
+import { CreateCompanyFromObject } from '../data/Company'
 
 import { getGrowthModuleSurvey } from '../data/dataGenerator'
 import { SOARModule } from '../data/SOARModule'
-import { generateModuleList } from '../data/generator/modules'
 import '../styles/positions.css'
 import '../styles/surveyStyles.css'
 import axios from 'axios'
 
 @Component
 export default class CompanyDashboard extends Vue {
-  @Prop() private appData!: Company[]
-  @Prop() private companyName!: string
+  @Prop() private appData!: AppData
+  @Prop() private companyUuid!: string
 
-  modules = generateModuleList()
-  participantsToAdd = [
-    {
-    name: "John Nnamchi",
-    email: "john.nnamchi@simvo.io",
-    }
-  ]
+  modules: SOARModule[] = []
+  selectedCompany = this.appData.companies[this.companyUuid]
+  participantsToAdd : any[] = []
   newParticipantData = {
     name: "",
     email: ""
   }
 
-  selectedCompany = this.getSelectedCompany()
-  getSelectedCompany () {
-    for (const company of this.appData) {
-      if (company.name == this.companyName) {
-        return company
-      }
-    }
+  mounted () {
+    this.getAllModules()
   }
   openModuleAnalysis (SOARModuleName: string) {
-    this.$router.push({name: 'SOARModuleAnalysis', params: {companyName: this.companyName, SOARModuleName: SOARModuleName}})
+    this.$router.push({name: 'SOARModuleAnalysis', params: {companyUuid: this.companyUuid, SOARModuleName: SOARModuleName}})
   }
   addParticipant () {
     if (this.newParticipantData.name != "" && this.newParticipantData.email != "") {
       this.participantsToAdd.push(this.newParticipantData)
-      let newParticipantUser = new User(GenerateUniqueID(), this.newParticipantData.name, this.newParticipantData.email)
-      this.selectedCompany?.addParticipant(newParticipantUser.uuid)
       this.newParticipantData = {
         name: "",
         email: ""
@@ -127,21 +139,45 @@ export default class CompanyDashboard extends Vue {
       alert("Name and email must be valid")
     }
   }
-  replaceModules () {
-    console.log("Replacing...1")
-    let requestURL = "http://localhost:5000/getAllModules"
-    axios.get(requestURL)
+  getAllModules () {
+    let requestURL = getServerUrl()
+    axios.get(requestURL + "getAllModules")
     .then(response => {
       // Replace all chart data with new data
-      const growthSurveyData = response.data.data[0].survey
-      // console.log(getGrowthModuleSurvey(response.data.data))
-      this.modules.push(new SOARModule("Growth Module 2", getGrowthModuleSurvey(growthSurveyData)))
+      const gotModules = response.data.data
+      for (let module of gotModules) {
+        this.modules.push(new SOARModule(module.uuid, module.name, getGrowthModuleSurvey(module.survey)))
+      }
     }).catch(error => {
       if (error) {
         console.log("There was an error")
-        console.log(error)
       }
       alert("Error fetching data")
+    })
+  }
+  submitParticipantChanges () {
+    const requestBody = {
+      "companyUuid": this.companyUuid,
+      "add": this.participantsToAdd,
+      "remove": []
+    }
+    let requestURL = getServerUrl()
+    axios.post(requestURL + "updateCompanyParticipants", requestBody)
+    .then(response => {
+      // Replace all chart data with new data
+      const newCompanyData = response.data.company
+      for (const userObj of response.data.users) {
+        const newUser = CreateUserFromObject(userObj)
+        this.appData.addUser(newUser)
+      }
+      const newCompany = CreateCompanyFromObject(newCompanyData)
+      this.appData.replaceCompany(newCompany)
+      this.participantsToAdd = []
+      this.selectedCompany = this.appData.companies[newCompany.uuid]
+    }).catch(error => {
+      if (error) {
+        console.log("There was an error")
+      }
     })
   }
 }

@@ -41,21 +41,25 @@ export function userIsLoggedIn () {
 }
 
 export function getCurrentUser () {
-  return firebase.auth().currentUser
+  const currentUser = firebase.auth().currentUser
+  if (currentUser) {
+    return {
+      "name": currentUser.displayName,
+      "uuid": currentUser.uid
+    }
+  }
 }
 
 export function getCurrentUserId (): string {
   const currentUser = firebase.auth().currentUser
   if (currentUser) {
-    console.log(currentUser)
     return currentUser.uid
   }
-  
   return "vANGKub2xBNrryjP3aYMix6jZ6n1"
 }
 
 export function getCurrentUserName () {
-    const currentUser = firebase.auth().currentUser
+  const currentUser = firebase.auth().currentUser
   if (currentUser) {
     return currentUser.displayName
   }

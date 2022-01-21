@@ -432,9 +432,6 @@ export function generateTestData (): Survey {
 
 export function getGrowthModuleSurvey (surveyInfo?: any): Survey {
 
-    console.log("Checking 1")
-    console.log(surveyInfo)
-
     let surveyData = surveyInfo
     if (surveyInfo == undefined) {
         surveyData = growthModuleSurvey
@@ -442,7 +439,6 @@ export function getGrowthModuleSurvey (surveyInfo?: any): Survey {
 
     const surveyPages = []
     for (const section of surveyData.pages) {
-        console.log("Checking 3")
         const sectionQuestions = []
         for (const question of section.questions) {
         sectionQuestions.push(new SurveyQuestion(question.name, question.type, question.choices, question.columns, question.rows, question.items, question.answer))

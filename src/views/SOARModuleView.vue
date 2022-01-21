@@ -6,7 +6,7 @@
       <div class="subsection-title-description">
           Total Questions: {{SOARModule.initialSurvey.countTotalQuestions()}}
       </div>
-      <div v-on:click="addModuleToCompany(SOARModule, selectedCompany)" class="add-company">
+      <div v-on:click="addModuleToCompany(SOARModule.uuid, selectedCompany)" class="add-company">
           Add this module
       </div>
   </div>
@@ -15,29 +15,43 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator"
 
-import { Company } from '../data/Company'
+import { Company, CreateCompanyFromObject } from '../data/Company'
+import { AppData } from '../data/App'
 
 import { SOARModule } from '../data/SOARModule'
-import { generateModuleList } from '../data/generator/modules'
+import { getServerUrl } from '../requests/requests'
+import axios from 'axios'
 
 @Component
 export default class CompanyDashboard extends Vue {
+  @Prop() private appData!: AppData
+  @Prop() private selectedCompany!: Company
   @Prop() private SOARModule!: SOARModule
-  @Prop() private appData!: Company[]
-  @Prop() private companyName!: string
 
-  modules = generateModuleList()
-  selectedCompany = this.getSelectedCompany()
-  getSelectedCompany () {
-    for (const company of this.appData) {
-      if (company.name == this.companyName) {
-        return company
-      }
+  async addModuleToCompany (moduleUuid : string, company : Company) {
+    const url = getServerUrl()
+    const requestBody = {
+        "companyUuid": company.uuid,
+        "moduleUuid": moduleUuid,
     }
-  }
-  addModuleToCompany (module: SOARModule, company: Company) {
-    company.addSOARModule(module)
-    this.$router.push({name: 'CompanyDashboard', params: {companyName: this.companyName}})
+    axios.post(url + "/addModuleToCompany", requestBody)
+    .then(response => {
+      let newCompanyData = response.data
+      let newCompany = CreateCompanyFromObject(newCompanyData)
+      this.appData.replaceCompany(newCompany)
+      this.$router.push({
+        name: 'CompanyDashboard',
+        params: {
+          companyUuid: this.selectedCompany.uuid,
+          appData: this.appData
+        }
+      })
+    }).catch(error => {
+      if (error) {
+        console.log("There was an error")
+      }
+      alert("Error fetching data")
+    })
   }
 }
 </script>

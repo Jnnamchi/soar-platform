@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator"
-import { generateTestUser, generateTestCompanies } from './data/dataGenerator'
+import { AppData } from './data/App'
 
 // Firebase Libs
 import { firebasePackage, logoutFirebase } from './firebase/firebase'
@@ -42,8 +42,8 @@ export default class App extends Vue {
     })
   }
   generateAppData () {
-    let user = generateTestUser()
-    return generateTestCompanies(user)
+    const newAppData = new AppData()
+    return newAppData
   }
 }
 

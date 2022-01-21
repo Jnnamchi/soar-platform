@@ -11,16 +11,20 @@ export class User {
         this.name = name
         this.email = email
 	}
-    isAdmin(uuids: string[]) : boolean {
-        for (const uuid of uuids) {
-            if (uuid == this.uuid) {
-                return true
-            }
-        }
-        return false
+  isAdmin(uuids: string[]) : boolean {
+    for (const uuid of uuids) {
+      if (uuid == this.uuid) {
+        return true
+      }
     }
+    return false
+  }
 }
 
 export function GenerateUniqueID () :string {
     return uuidv4()
+}
+
+export function CreateUserFromObject (userObj : any) : User {
+  return new User(userObj.uuid, userObj.name, userObj.email)
 }

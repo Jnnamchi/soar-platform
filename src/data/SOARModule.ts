@@ -1,13 +1,15 @@
-import { Survey } from "./Survey"
+import { Survey, CreateSurveyFromObject } from "./Survey"
 import { SurveyAnswer } from "./SurveyAnswer"
 
 export class SOARModule {
   // Fields
+  uuid: string
   name: string
   initialSurvey: Survey
   answers: SurveyAnswer[]
   // Constructor
-  constructor(name: string, initialSurvey: Survey) {
+  constructor(uuid: string, name: string, initialSurvey: Survey) {
+    this.uuid = uuid
     this.name = name
     this.initialSurvey = initialSurvey
     this.answers = []
@@ -23,4 +25,11 @@ export class SOARModule {
   addAnswer (answer: SurveyAnswer) {
     this.answers.push(answer)
   }
+}
+
+export function CreateModuleFromObject (moduleObj: any): SOARModule {
+  // Create the survey first
+  const newSurvey = CreateSurveyFromObject(moduleObj.survey)
+  const newModule = new SOARModule(moduleObj.uuid, moduleObj.name, newSurvey)
+  return newModule
 }
