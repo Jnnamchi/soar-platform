@@ -12,23 +12,23 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { Component, Vue, Prop } from "vue-property-decorator"
 
-import { Company, CreateCompanyFromObject } from '../data/Company'
-import { AppData } from '../data/App'
+import { CreateCompanyFromObject } from '../data/Company'
+// import { AppData } from '../data/App'
 
-import { SOARModule } from '../data/SOARModule'
+// import { SOARModule } from '../data/SOARModule'
 import { getServerUrl } from '../requests/requests'
 import axios from 'axios'
 
 @Component
 export default class CompanyDashboard extends Vue {
-  @Prop() private appData!: AppData
-  @Prop() private selectedCompany!: Company
-  @Prop() private SOARModule!: SOARModule
+  @Prop() appData
+  @Prop() selectedCompany
+  @Prop() SOARModule
 
-  async addModuleToCompany (moduleUuid : string, company : Company) {
+  async addModuleToCompany (moduleUuid, company) {
     const url = getServerUrl()
     const requestBody = {
         "companyUuid": company.uuid,

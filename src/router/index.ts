@@ -37,7 +37,10 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/company",
-    props: true,
+    props: (route) => ({
+      user: '',
+      ...route.params
+    }),
     name: "CompanyDashboard",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/CompanyDashboard.vue"),
