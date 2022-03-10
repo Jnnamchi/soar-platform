@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "deploy-github": "node scripts/gh-pages-deploy.js"
+    "deploy-github": "node scripts/gh-pages-deploy.js",
+    "deploy-aws": "aws --region us-east-1 --profile jnnamchi s3 sync ./dist s3://soar-platform --delete"
   },
   "dependencies": {
     "axios": "^0.24.0",
