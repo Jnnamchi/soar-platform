@@ -1,15 +1,16 @@
-
 export class SurveyQuestion {
     // Fields
+    id: string
     name: string
     type: string
     choices: any[]
     columns: any[]
-    rows:    any[]
-    items:   any[]
+    rows: any[]
+    items: any[]
     answer: any
 	// Constructor
-	constructor(name: string, type: string, choices: any[], columns: any[], rows: any[], items: any[], answer: any) {
+	constructor(id: string, name: string, type: string, choices: any[], columns: any[], rows: any[], items: any[], answer: any) {
+    this.id = id
     this.name = name //uuidv4()
 		this.type = type
     this.choices = choices
@@ -44,22 +45,20 @@ export class SurveyQuestion {
   }
   getAnswer (): any {
     if (this.isMatrix()) {
-      const answers = []
+      const answers: { [key: string]: string; } = {};
       for (const row of this.rows) {
-        answers.push(row.answer)
+        answers[row.id] = row.answer
       }
       return answers
-    } else {
-      return this.answer
     }
-    return "This is the question"
+    return { [this.id]: this.answer}
   }
 }
 
 export function CreateSurveyQuestionsFromObject (surveyQuestionsList: any[]) :SurveyQuestion[] {
   const newSurveyQuestions: SurveyQuestion[] = []
   for (const question of surveyQuestionsList) {
-    const newSurveyQuestion = new SurveyQuestion(question.name, question.type, question.choices, question.columns, question.rows, question.items, question.answer)
+    const newSurveyQuestion = new SurveyQuestion(question.id, question.name, question.type, question.choices, question.columns, question.rows, question.items, question.answer)
     newSurveyQuestions.push(newSurveyQuestion)
   }
   return newSurveyQuestions

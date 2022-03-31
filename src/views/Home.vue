@@ -21,6 +21,9 @@
       <div v-for="company in appData.companies" v-bind:key="company.name" >
         <div v-if="company.isParticipating(user.uuid) && company.modules.length > 0">
           <div class="company-name">{{company.name}}</div>
+          <div v-if="company.userHasCompletedAllModules(user.uuid)">
+              All surveys have been completed!
+          </div>
           <div v-for="module in company.modules" v-bind:key="module.name">
             <div v-if="!company.userHasCompletedModule(user.uuid, module)">
               <router-link

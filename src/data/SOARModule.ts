@@ -6,13 +6,13 @@ export class SOARModule {
   uuid: string
   name: string
   initialSurvey: Survey
-  answers: SurveyAnswer[]
+  answers: any
   // Constructor
   constructor(uuid: string, name: string, initialSurvey: Survey) {
     this.uuid = uuid
     this.name = name
     this.initialSurvey = initialSurvey
-    this.answers = []
+    this.answers = {}
   }
   hasBeenCompletedBy (userUid: string) {
     for (const answer of this.answers) {
@@ -23,7 +23,7 @@ export class SOARModule {
     return false
   }
   addAnswer (answer: SurveyAnswer) {
-    this.answers.push(answer)
+    this.answers[answer.uuid] = answer.answers
   }
 }
 

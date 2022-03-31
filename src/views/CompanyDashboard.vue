@@ -141,7 +141,7 @@ export default class CompanyDashboard extends Vue {
   }
   getAllModules () {
     let requestURL = getServerUrl()
-    axios.get(requestURL + "getAllModules")
+    axios.get(requestURL + "/getAllModules")
     .then(response => {
       // Replace all chart data with new data
       const gotModules = response.data.data
@@ -151,6 +151,7 @@ export default class CompanyDashboard extends Vue {
     }).catch(error => {
       if (error) {
         console.log("There was an error")
+        console.log(error)
       }
       alert("Error fetching data")
     })
@@ -162,7 +163,7 @@ export default class CompanyDashboard extends Vue {
       "remove": []
     }
     let requestURL = getServerUrl()
-    axios.post(requestURL + "updateCompanyParticipants", requestBody)
+    axios.post(requestURL + "/updateCompanyParticipants", requestBody)
     .then(response => {
       // Replace all chart data with new data
       const newCompanyData = response.data.company

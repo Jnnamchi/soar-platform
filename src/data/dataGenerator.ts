@@ -422,7 +422,7 @@ export function generateTestData (): Survey {
   for (const section of growthModuleSurvey.pages) {
     const sectionQuestions = []
     for (const question of section.questions) {
-      sectionQuestions.push(new SurveyQuestion(question.name, question.type, question.choices, question.columns, question.rows, question.items, question.answer))
+      sectionQuestions.push(new SurveyQuestion("", question.name, question.type, question.choices, question.columns, question.rows, question.items, question.answer))
     }
     surveyPages.push(new SurveySection(section.name, sectionQuestions))
   }
@@ -441,7 +441,7 @@ export function getGrowthModuleSurvey (surveyInfo?: any): Survey {
     for (const section of surveyData.pages) {
         const sectionQuestions = []
         for (const question of section.questions) {
-        sectionQuestions.push(new SurveyQuestion(question.name, question.type, question.choices, question.columns, question.rows, question.items, question.answer))
+          sectionQuestions.push(new SurveyQuestion(question.id, question.name, question.type, question.choices, question.columns, question.rows, question.items, question.answer))
         }
         surveyPages.push(new SurveySection(section.name, sectionQuestions))
     }

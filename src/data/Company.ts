@@ -49,6 +49,14 @@ export class Company {
     this.modules.push(moduleUuid)
     this.moduleAnswers[moduleUuid] = {}
   }
+  userHasCompletedAllModules (userUuid: string) {
+    for (const module of this.modules) {
+      if (!this.userHasCompletedModule(userUuid, module)) {
+        return false
+      }
+    }
+    return true
+  }
   userHasCompletedModule (userUuid: string, moduleUuid: string) {
     if (!(moduleUuid in this.moduleAnswers)) {
       return false
@@ -73,6 +81,7 @@ export function CreateCompanyFromObject (companyObj: any): Company {
   newCompany.description = companyObj.description
   newCompany.category = companyObj.category
   newCompany.modules = companyObj.modules
+  newCompany.moduleAnswers = companyObj.moduleAnswers
 
   // List fields
   for (const admin of companyObj.admins) {

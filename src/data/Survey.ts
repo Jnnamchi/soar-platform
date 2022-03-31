@@ -46,16 +46,14 @@ export class Survey {
   isCompleted (): boolean {
     return this.countTotalQuestions() === this.countAnsweredQuestions()
   }
-  buildAnswerList () :SurveyAnswer {
-    const answers: string[][] = []
+  buildAnswerList (userId: string) :SurveyAnswer {
+    const answers = {}
     for (const page of this.pages) {
-      const answerGroup: string[] = []
       for (const question of page.questions) {
-        answerGroup.push(question.getAnswer())
+        Object.assign(answers, question.getAnswer())
       }
-      answers.push(answerGroup)
     }
-    return new SurveyAnswer("", answers)
+    return new SurveyAnswer(userId, answers)
   }
 }
 
