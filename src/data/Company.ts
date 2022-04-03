@@ -11,8 +11,11 @@ export class Company {
   participants: string[]
   modules: string[]
   moduleAnswers: { [key: string]: Object }
+  answerAnalysis: any
+  topAnswers: any[]
+  virtualWorkshops: any
   // Constructor
-  constructor(uuid: string, name: string, size: string, description: string, category: string, admins: string[], participants: string[]) {
+  constructor(uuid: string, name: string, size: string, description: string, category: string, admins: string[], participants: string[], virtualWorkshops: any) {
     this.uuid = uuid
     this.name = name
     this.size = size
@@ -22,6 +25,9 @@ export class Company {
     this.participants = participants
     this.modules = []
     this.moduleAnswers = {}
+    this.answerAnalysis = {}
+    this.topAnswers = []
+    this.virtualWorkshops = virtualWorkshops
   }
   addAdmin (uuid: string) {
     this.admins.push(uuid)
@@ -54,6 +60,9 @@ export class Company {
       if (!this.userHasCompletedModule(userUuid, module)) {
         return false
       }
+      if (!this.userHasCompletedVirtualWorkshops(userUuid, module)) {
+        return false
+      }
     }
     return true
   }
@@ -63,16 +72,47 @@ export class Company {
     }
     return userUuid in this.moduleAnswers[moduleUuid]
   }
+  userHasCompletedVirtualWorkshops (userUuid: string, moduleUuid: string) {
+    if (!(moduleUuid in this.virtualWorkshops)) {
+      return true
+    }
+    const lastVirtualWorkshop = this.getLastVirtualWorkshop(moduleUuid)
+    if (!("moduleAnswers" in lastVirtualWorkshop)) {
+      return false
+    }
+    return userUuid in lastVirtualWorkshop.moduleAnswers
+  }
+  getLastVirtualWorkshop (moduleUuid: string) {
+    let lastVirtualWorkshopNumber = "0"
+    for (const key in this.virtualWorkshops[moduleUuid]) {
+      if (key > lastVirtualWorkshopNumber) {
+        lastVirtualWorkshopNumber = key
+      }
+    }
+    if (lastVirtualWorkshopNumber == "0") {
+      return {}
+    }
+    return this.virtualWorkshops[moduleUuid][lastVirtualWorkshopNumber]
+  }
   countModuleAnswers (moduleId : string) {
     if (!(moduleId in this.moduleAnswers)) {
       return 0
     }
     return Object.keys(this.moduleAnswers[moduleId]).length
   }
+  getModuleAnswerAnalysis (moduleId : string) {
+    if (moduleId in this.answerAnalysis) {
+      return this.answerAnalysis[moduleId]
+    }
+    return {}
+  }
+  addTopAnswers(topAnswers : any[]) {
+    this.topAnswers = topAnswers
+  }
 }
 
 export function CreateCompanyFromObject (companyObj: any): Company {
-  const newCompany = new Company("", "", "", "", "", [], [])
+  const newCompany = new Company("", "", "", "", "", [], [], {})
 
   // Base fields
   newCompany.uuid = companyObj.uuid
@@ -82,6 +122,8 @@ export function CreateCompanyFromObject (companyObj: any): Company {
   newCompany.category = companyObj.category
   newCompany.modules = companyObj.modules
   newCompany.moduleAnswers = companyObj.moduleAnswers
+  newCompany.answerAnalysis = companyObj.answerAnalysis
+  newCompany.virtualWorkshops = companyObj.virtualWorkshops
 
   // List fields
   for (const admin of companyObj.admins) {
@@ -94,7 +136,7 @@ export function CreateCompanyFromObject (companyObj: any): Company {
 }
 
 export function CreateCompanyFromSurvey (survey : Survey): Company {
-  const newCompany = new Company("", "", "", "", "", [], [])
+  const newCompany = new Company("", "", "", "", "", [], [], {})
   for (const page of survey.pages) {
     if (page.name === "Company Details") {
       for (const question of page.questions) {

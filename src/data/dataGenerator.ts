@@ -455,11 +455,11 @@ export function generateTestUser (): User {
 }
 
 export function generateTestCompany (): Company {
-    return new Company("12345", "Bloomberg LP", "More than 5000 Employees", "Financial Information and News Company", "Finance", [], [])
+    return new Company("12345", "Bloomberg LP", "More than 5000 Employees", "Financial Information and News Company", "Finance", [], [], {})
 }
 
 export function generateTestCompany2 (): Company {
-    return new Company("12344", "Apple Inc", "More than 5000 Employees", "Technology and consumer products", "Technology", [], [])
+    return new Company("12344", "Apple Inc", "More than 5000 Employees", "Technology and consumer products", "Technology", [], [], {})
 }
 
 export function generateTestCompanies (user: User): Company[] {

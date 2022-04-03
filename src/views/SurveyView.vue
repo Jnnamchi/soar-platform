@@ -45,18 +45,18 @@ export default class SurveyView extends Vue {
       let newAnswer = this.surveyData.buildAnswerList(userId)
       this.selectedSOARModule.addAnswer(newAnswer)
       this.runSubmitSoarSurvey(this.selectedSOARModule, newAnswer)
-      this.$router.push('/home')
     }
   }
   async runSubmitSoarSurvey (selectedSOARModule: SOARModule, surveyAnswer: SurveyAnswer) {
     const url = getServerUrl()
     const data = {
-        companyUuid: this.selectedCompany.uuid,
-        moduleUuid: selectedSOARModule.uuid,
-        uuid: surveyAnswer.uuid,
-        answers: surveyAnswer.answers
+      companyUuid: this.selectedCompany.uuid,
+      moduleUuid: selectedSOARModule.uuid,
+      uuid: surveyAnswer.uuid,
+      answers: surveyAnswer.answers
     }
-    axios.post(url + "/updateUserSurveyAnswer", data)
+    await axios.post(url + "/updateUserSurveyAnswer", data)
+    this.$router.push('/home')
   }
 }
 </script>

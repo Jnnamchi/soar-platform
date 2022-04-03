@@ -28,7 +28,7 @@
                 </div>
                 <div v-for="column in question.columns.length" v-bind:key="column" class="matrix-row-item">
                   <div class="matrix-row-item-choice">
-                    <input type="radio" id="html" :name="row.question" :value="question.columns[column - 1]"  v-model="row.answer" class="radio-button">
+                    <input type="radio" id="html" :name="row.question" :value="question.columns[column - 1]"  v-on:click="updateRender()" v-model="row.answer" class="radio-button">
                   </div>
                 </div>
               </div>
@@ -92,6 +92,13 @@ export default class SurveyComponent extends Vue {
     let cutoffValue = Math.round(100 * (this.surveyData.countAnsweredQuestions() / this.surveyData.countTotalQuestions()))
     return "background: linear-gradient(to right, #19B393 " + cutoffValue + "%, #eee " + cutoffValue + "%);"
   }
+  updateRender () {
+    setTimeout(this.forceUpdate, 10);
+  }
+  forceUpdate () {
+    this.$forceUpdate()
+  }
+
 }
 
 </script>

@@ -25,6 +25,11 @@ export class SOARModule {
   addAnswer (answer: SurveyAnswer) {
     this.answers[answer.uuid] = answer.answers
   }
+  addQuestionNamesById (answers : any) {
+    for (const answer of answers) {
+      answer["questionName"] = this.initialSurvey.getQuestionNameById(answer.id)
+    }
+  }
 }
 
 export function CreateModuleFromObject (moduleObj: any): SOARModule {

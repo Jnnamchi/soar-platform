@@ -24,20 +24,29 @@
           <div v-if="company.userHasCompletedAllModules(user.uuid)">
               All surveys have been completed!
           </div>
-          <div v-for="module in company.modules" v-bind:key="module.name">
-            <div v-if="!company.userHasCompletedModule(user.uuid, module)">
+          <div v-for="moduleUuid in company.modules" v-bind:key="moduleUuid.name">
+            <div v-if="!company.userHasCompletedModule(user.uuid, moduleUuid)">
               <router-link
-                :to="{
-                name: 'SurveySection',
-                params: { appData: appData, selectedCompany: company, SOARModule: module }
-                }"
-                class="company-select">
-                <div>{{appData.getModuleName(module)}}</div>
+              :to="{
+              name: 'SurveySection',
+              params: { appData: appData, selectedCompany: company, SOARModule: moduleUuid }
+              }"
+              class="company-select">
+                <div>{{appData.getModuleName(moduleUuid)}}</div>
                 <div class="start-module-text">START NOW</div>
               </router-link>
-              <!-- <div v-on:click="openStartModule(company.name, appData.modules[module].name)" class="company-select">
-                
-              </div> -->
+            </div>
+            <div v-if="!company.userHasCompletedVirtualWorkshops(user.uuid, moduleUuid)">
+              <router-link
+              :to="{
+              name: 'VirtualWorkshop',
+              params: { appData: appData, selectedCompany: company, virtualWorkShop: company.getLastVirtualWorkshop(moduleUuid) }
+              }"
+              class="company-select">
+                <div>{{appData.getModuleName(moduleUuid)}}</div>
+                <div>{{company.getLastVirtualWorkshop(moduleUuid).title}}</div>
+                <div class="start-module-text">START NOW</div>
+              </router-link>
             </div>
           </div>
           <div class="small-space"></div>

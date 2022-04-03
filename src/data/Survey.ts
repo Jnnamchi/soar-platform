@@ -55,6 +55,31 @@ export class Survey {
     }
     return new SurveyAnswer(userId, answers)
   }
+  buildVirtualWorkshopAnswerList (userId: string) :SurveyAnswer {
+    const answers = {}
+    for (const page of this.pages) {
+      for (const question of page.questions) {
+        Object.assign(answers, question.getAnswer())
+      }
+    }
+    return new SurveyAnswer(userId, answers)
+  }
+  getQuestionNameById (questionId: string) {
+    for (const page of this.pages) {
+      for (const question of page.questions) {
+        if (question.isMatrix()) {
+          for (const matrixQ of question.rows) {
+            if (matrixQ.id == questionId) {
+              return matrixQ.question
+            }
+          }
+        } else if (question.id == questionId) {
+          return question.name
+        }
+      }
+    }
+    return "Could not find question"
+  }
 }
 
 export function CreateSurveySectionsFromObject (surveyPagesList: any[]) :SurveySection[] {

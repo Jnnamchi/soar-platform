@@ -58,7 +58,6 @@ export default class Home extends Vue {
         }).catch(error => {
             if (error) {
                 console.log("There was an error")
-                console.log(error)
             }
             alert("Error fetching data")
         })
