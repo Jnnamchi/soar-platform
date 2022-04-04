@@ -11,6 +11,7 @@ export class SOARModule {
   constructor(uuid: string, name: string, initialSurvey: Survey) {
     this.uuid = uuid
     this.name = name
+    // initialSurvey.title = name
     this.initialSurvey = initialSurvey
     this.answers = {}
   }

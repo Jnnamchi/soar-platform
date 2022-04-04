@@ -42,6 +42,13 @@
 .flex-parent {
     display: flex;
     justify-content: left;
+    flex-wrap: wrap;
+}
+
+.flex-parent-middle {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .company-select {

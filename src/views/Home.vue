@@ -40,7 +40,7 @@
               <router-link
               :to="{
               name: 'VirtualWorkshop',
-              params: { appData: appData, selectedCompany: company, virtualWorkShop: company.getLastVirtualWorkshop(moduleUuid) }
+              params: { appData: appData, selectedCompany: company, virtualWorkShop: company.getLastVirtualWorkshop(moduleUuid), moduleUuid: moduleUuid }
               }"
               class="company-select">
                 <div>{{appData.getModuleName(moduleUuid)}}</div>

@@ -55,14 +55,18 @@ export class Survey {
     }
     return new SurveyAnswer(userId, answers)
   }
-  buildVirtualWorkshopAnswerList (userId: string) :SurveyAnswer {
-    const answers = {}
+  buildVirtualWorkshopAnswerList () :SurveyAnswer {
+    const answers: any = {}
+    let num: number = 1
     for (const page of this.pages) {
+      const key = "question" + num
+      answers[key] = {}
       for (const question of page.questions) {
-        Object.assign(answers, question.getAnswer())
+        Object.assign(answers[key], question.getAnswer())
       }
+      num++
     }
-    return new SurveyAnswer(userId, answers)
+    return answers
   }
   getQuestionNameById (questionId: string) {
     for (const page of this.pages) {

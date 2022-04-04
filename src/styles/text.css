@@ -1,0 +1,10 @@
+.click-text:hover {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.notice-message {
+    font-weight: bold;
+    font-style: italic;
+    margin: 10px;
+}

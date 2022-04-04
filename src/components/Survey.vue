@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="section-title">{{surveyData.title}}</div>
+    <div></div>
     <div>
       <div>Page {{selectedSurveyPage + 1}} of {{surveyData.pages.length}}</div>
       <div>Completed {{surveyData.countAnsweredQuestions()}} of {{surveyData.countTotalQuestions()}} questions</div>

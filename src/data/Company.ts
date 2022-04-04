@@ -51,6 +51,9 @@ export class Company {
     }
     return false
   }
+  hasMovedToNextRound () {
+    return Object.keys(this.virtualWorkshops).length > 0
+  }
   addSOARModule (moduleUuid: string) {
     this.modules.push(moduleUuid)
     this.moduleAnswers[moduleUuid] = {}

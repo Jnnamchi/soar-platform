@@ -7,7 +7,7 @@
     class="general-select">
         SUBMIT
     </div>
-    <div v-else class="disable-select">
+    <div v-else class="disable-select" v-on:click="test()">
         SUBMIT
     </div>
     <div class="large-space"></div>
@@ -57,6 +57,9 @@ export default class SurveyView extends Vue {
     }
     await axios.post(url + "/updateUserSurveyAnswer", data)
     this.$router.push('/home')
+  }
+  test () {
+    console.log(this.surveyData)
   }
 }
 </script>
