@@ -7,7 +7,6 @@
       <span class="click-text" v-if="selectedWorkshopStage > 0" v-on:click="previousStage()">&#60;</span>
       <span class="click-text" v-if="selectedWorkshopStage < getLastVirtualWorkshopNumber()" v-on:click="nextStage()">&#62;</span>
     </div>
-
     <div v-if="selectedWorkshopStage === 0">
       <div>
         Initial Survey
@@ -21,7 +20,7 @@
       <div class="medium-space"></div>
       <div class="subsection-title">Answer analysis will be viewable here</div>
       <div
-      class="general-select" v-on:click="moveToNextRound()"
+      class="general-select" v-on:click="startVirtualWorkshops()"
       v-if="!selectedCompany.hasMovedToNextRound()">
         Start Virtual Workshops
       </div>
@@ -32,8 +31,11 @@
         <div class="flex-parent-middle" style="width: 95%; margin: 0 auto;">
           <div v-for="answer in rankAnswers(selectedCompany.answerAnalysis)" v-bind:key="answer.id" style="margin-top: 20px; flex: 0 0 400px;">
             <div style="width: 400px; margin: 10px;">
-              <div>Score: {{answer.score}}</div>
+              <div>Opportunity Score: {{answer.opportunityScore}}</div>
               <div style="font-size: 12px;">{{answer.questionName}}</div>
+              <div style="font-size: 12px;">
+                  {{answer}}
+                </div>
             </div>
           </div>
         </div>
@@ -61,6 +63,7 @@
                 This is the final workshop
               </div>
             </div>
+            <!-- {{getVirtualWorkshop()}} -->
           </div>
           <div class="flex-parent-middle" style="width: 95%; margin: 0 auto;">
             <div v-for="answer in rankWorkshopAnswers(workshop.answerAnalysis)" v-bind:key="answer.id" style="margin-top: 20px; flex: 0 0 400px;">
@@ -75,6 +78,9 @@
                 :canvasName="answer.id + workshopNum"/> -->
                 <div style="font-size: 12px;">
                   {{answer.questionName}}
+                </div>
+                <div style="font-size: 12px;">
+                  {{answer}}
                 </div>
               </div>
             </div>
@@ -120,6 +126,24 @@ export default class CompanyDashboard extends Vue {
     }
     return 0;
   }
+  compareOpportunities (a: any, b: any) {
+    if (a.opportunityScore < b.opportunityScore) {
+      return 1;
+    }
+    if (a.opportunityScore > b.opportunityScore) {
+      return -1;
+    }
+    return 0;
+  }
+  compareNecessities (a: any, b: any) {
+    if (a.necessityScore < b.necessityScore) {
+      return 1;
+    }
+    if (a.necessityScore > b.necessityScore) {
+      return -1;
+    }
+    return 0;
+  }
   rankAnswers (answerAnalysis: any) {
     const answers = []
     for (const answerId in answerAnalysis[this.selectedSOARModule.uuid]) {
@@ -127,7 +151,7 @@ export default class CompanyDashboard extends Vue {
         answers.push(Object.assign(answerAnalysis[this.selectedSOARModule.uuid][answerId], {id: answerId}))
       }
     }
-    answers.sort(this.compare)
+    answers.sort(this.compareOpportunities)
     this.selectedSOARModule.addQuestionNamesById(answers)
     this.topAnswers = answers
     return answers
@@ -143,6 +167,10 @@ export default class CompanyDashboard extends Vue {
     this.selectedSOARModule.addQuestionNamesById(answers)
     this.topAnswers = answers
     return answers
+  }
+  startVirtualWorkshops () {
+    // Add question names by id
+    this.moveToNextRound()
   }
   moveToNextRound () {
     this.selectedSOARModule.addQuestionNamesById(this.topAnswers)
@@ -194,18 +222,15 @@ export default class CompanyDashboard extends Vue {
     this.selectedWorkshopStage = Math.min(this.selectedWorkshopStage + 1, parseInt(this.getLastVirtualWorkshopNumber()))
   }
   buildChartDataFromAnswer (answer: any) {
-    console.log("HEERE======")
     const illegalKeys = ["questionName", "score", "id"]
     let labels = []
     let data = []
     for (const key in answer) {
-      console.log(key)
       if (!(illegalKeys.includes(key))) {
         labels.push(key)
         data.push(answer[key])
       }
     }
-    console.log(labels)
     const chartData = {
       labels: labels,
       datasets: [{

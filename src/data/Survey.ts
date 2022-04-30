@@ -57,14 +57,14 @@ export class Survey {
   }
   buildVirtualWorkshopAnswerList () :SurveyAnswer {
     const answers: any = {}
-    let num: number = 1
     for (const page of this.pages) {
-      const key = "question" + num
-      answers[key] = {}
       for (const question of page.questions) {
-        Object.assign(answers[key], question.getAnswer())
+        const questionName = question.name
+        if (!(questionName in answers)) {
+          answers[questionName] = {}
+        }
+        Object.assign(answers[questionName], question.getAnswer())
       }
-      num++
     }
     return answers
   }
