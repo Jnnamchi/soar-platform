@@ -88,6 +88,7 @@ export default class Home extends Vue {
       // Replace all chart data with new data
       this.appData.clearCompanies()
       for (const company of response.data.companies) {
+        console.log(company)
         const newCompany = CreateCompanyFromObject(company)
         this.appData.addCompany(newCompany)
       }

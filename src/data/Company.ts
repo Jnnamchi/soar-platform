@@ -14,6 +14,7 @@ export class Company {
   answerAnalysis: any
   topAnswers: any[]
   virtualWorkshops: any
+  inPersonWorkshops: any
   // Constructor
   constructor(uuid: string, name: string, size: string, description: string, category: string, admins: string[], participants: string[], virtualWorkshops: any) {
     this.uuid = uuid
@@ -112,6 +113,17 @@ export class Company {
   addTopAnswers(topAnswers : any[]) {
     this.topAnswers = topAnswers
   }
+  addInPersonWorkshops (inPersonWorkshops: any) {
+    this.inPersonWorkshops = inPersonWorkshops
+  }
+  hasInPersonWorkshop (moduleId: string) {
+    if (this.inPersonWorkshops) {
+      if (moduleId in this.inPersonWorkshops) {
+        return true
+      }
+    }
+    return false
+  }
 }
 
 export function CreateCompanyFromObject (companyObj: any): Company {
@@ -127,6 +139,7 @@ export function CreateCompanyFromObject (companyObj: any): Company {
   newCompany.moduleAnswers = companyObj.moduleAnswers
   newCompany.answerAnalysis = companyObj.answerAnalysis
   newCompany.virtualWorkshops = companyObj.virtualWorkshops
+  newCompany.inPersonWorkshops = companyObj.inPersonWorkshops
 
   // List fields
   for (const admin of companyObj.admins) {

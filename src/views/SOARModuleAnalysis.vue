@@ -4,8 +4,14 @@
     <!-- <div class="subsection-title">{{selectedSOARModule.name}}</div> -->
     <div class="subsection-title-description">View your company's progress here</div>
     <div>
-      <span class="click-text" v-if="selectedWorkshopStage > 0" v-on:click="previousStage()">&#60;</span>
-      <span class="click-text" v-if="selectedWorkshopStage < getLastVirtualWorkshopNumber()" v-on:click="nextStage()">&#62;</span>
+      <div v-if="!isViewingInPersonWorkshops">
+        <span class="click-text" v-if="selectedWorkshopStage > 0" v-on:click="previousStage()">&#60;</span>
+        <span class="click-text" v-if="selectedWorkshopStage < getLastVirtualWorkshopNumber()" v-on:click="nextStage()">&#62;</span>
+        <span class="click-text" v-if="selectedWorkshopStage == getLastVirtualWorkshopNumber() && hasInPersonWorkshops" v-on:click="isViewingInPersonWorkshops = true">&#62;</span>
+      </div>
+      <div v-else>
+        <span class="click-text" v-if="selectedWorkshopStage == getLastVirtualWorkshopNumber() && hasInPersonWorkshops" v-on:click="isViewingInPersonWorkshops = false">&#60;</span>
+      </div>
     </div>
     <div v-if="selectedWorkshopStage === 0">
       <div>
@@ -41,7 +47,7 @@
         </div>
       </div>
     </div>
-    <div v-else>
+    <div v-else-if="!isViewingInPersonWorkshops">
       <!-- {{getVirtualWorkshop()}} -->
       <div v-for="(workshop, workshopNum) in getVirtualWorkshop()" v-bind:key="workshopNum">
         <div v-if="workshopNum == selectedWorkshopStage">
@@ -57,10 +63,10 @@
                 Start Next Workshop
               </div>
             </div>
-            <div v-else>
-              <div
+            <div v-else-if="!hasInPersonWorkshops">
+              <div v-on:click="startInPersonWorkshops()"
               class="notice-message">
-                This is the final workshop
+                Start in person workshops
               </div>
             </div>
             <!-- {{getVirtualWorkshop()}} -->
@@ -88,6 +94,71 @@
         </div>
       </div>
     </div>
+    <div v-else>
+      <div class="medium-space"></div>
+      <div>
+        <div>
+          Workshops:
+        </div>
+        <div>
+          <div v-for="answer in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="answer.title">
+            <div v-if="answer.name == selectedWorkshop" style="font-weight: bold">{{answer.name}}</div>
+            <div v-else v-on:click="selectWorkshop(answer.name)">{{answer.name}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="medium-space"></div>
+      <div v-for="answer in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="answer.title">
+        <div v-if="answer.name == selectedWorkshop" class="in-person-workshop-container">
+          <div :style="getRequiredColumns(answer.columns)">
+            <div></div>
+            <div></div>
+            <div v-for="(column, columnNum) in answer.columns" v-bind:key="columnNum">
+              <div class="table-column-header">{{column.title}}</div>
+              <div style="font-size: 11px;">{{column.subtitle}}</div>
+            </div>
+          </div>
+          <div class="medium-space"></div>
+          <div>
+            <draggable tag="ul" :list="answer.rows" class="list-group" handle=".dragPoint">
+              <div
+                v-for="(row) in answer.rows"
+                :key="row.questionName"
+              >
+                <div class="small-space"></div>
+                <div :style="getRequiredColumns(answer.columns)">
+                  <div>
+                    <i class="drag-icon fa-solid fa-bars dragPoint"></i>
+                  </div>
+                  <div style="font-size: 12px;">
+                    {{row.questionName}}
+                  </div>
+                  <div v-for="(column, columnNum) in answer.columns" v-bind:key="columnNum" class="table-column-header">
+                    <div v-if="column.type == 'text'">
+                      <input class="text-input">
+                    </div>
+                    <div v-if="column.type == 'textarea'" style="width:">
+                      <textarea rows="4" cols="25" class="textarea-input">
+                      </textarea>
+                    </div>
+                    <div v-if="column.type == 'date'">
+                      <input type="date" class="date-input">
+                    </div>
+                    <div v-if="column.type == 'dropdown'">
+                      <div style="font-size: 12px;">
+                        <select>
+                          <option v-for="option in column.options" v-bind:key="option" value="volvo">{{option}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </draggable>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -101,14 +172,16 @@ import { getServerUrl } from '../requests/requests'
 import axios from 'axios'
 
 import '../styles/text.css'
+import draggable from 'vuedraggable'
 // import RadarChart from '../chart-js/RadarChart.vue'
 
 @Component({
   components: {
+    draggable
     // RadarChart,
   }
 })
-export default class CompanyDashboard extends Vue {
+export default class SOARModuleAnalysis extends Vue {
   @Prop() private appData!: AppData
   @Prop() private selectedCompany!: Company
   @Prop() private SOARModule!: string
@@ -116,6 +189,9 @@ export default class CompanyDashboard extends Vue {
   selectedSOARModule = this.appData.modules[this.SOARModule]
   topAnswers: any[] = []
   selectedWorkshopStage = parseInt(this.getLastVirtualWorkshopNumber())
+  hasInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(this.SOARModule)
+  isViewingInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(this.SOARModule)
+  selectedWorkshop: string = this.getSelectedWorkshop()
 
   compare( a: any, b: any ) {
     if ( a.score < b.score ){
@@ -215,7 +291,25 @@ export default class CompanyDashboard extends Vue {
     this.selectedCompany.virtualWorkshops = response.data.virtualWorkshops
     this.nextStage()
   }
+  // Create In-Person Workshops
+  startInPersonWorkshops () {
+    this.runStartInPersonWorkshop()
+  }
+  async runStartInPersonWorkshop () {
+    const url = getServerUrl()
+    const data = {
+        company: this.selectedCompany,
+        moduleId: this.selectedSOARModule.uuid
+    }
+    const response = await axios.post(url + "/createInPersonWorkshops", data)
+    this.selectedCompany.addInPersonWorkshops(response.data.inPersonWorkshops)
+    this.hasInPersonWorkshops = true
+    this.isViewingInPersonWorkshops = true
+    this.$forceUpdate()
+  }
+  // Navigation
   previousStage () {
+    this.isViewingInPersonWorkshops = false
     this.selectedWorkshopStage = Math.max(this.selectedWorkshopStage - 1, 0)
   }
   nextStage () {
@@ -247,5 +341,61 @@ export default class CompanyDashboard extends Vue {
     }
     return chartData
   }
+  getRequiredColumns (columns: any) {
+    let templateColumns = "grid-template-columns: 30px 300px"
+    for (let column of columns) {
+      if (column.type == 'textarea') {
+        templateColumns = templateColumns + " var(--large-width)"
+      } else {
+        templateColumns = templateColumns + " var(--std-width)"
+      }
+    }
+    templateColumns = templateColumns + ";"
+    return "display: grid; gap: 15px; " + templateColumns
+  }
+  getSelectedWorkshop () :string {
+    if ("inPersonWorkshops" in this.selectedCompany) {
+      const workshops: any = this.selectedCompany.inPersonWorkshops[this.SOARModule]
+      for (let workshop of workshops) {
+        return workshop.name
+      }
+    }
+    return ""
+  }
+  selectWorkshop (workshopName: string) {
+    this.selectedWorkshop = workshopName
+  }
 }
 </script>
+
+<style>
+
+:root {
+    --std-width: 100px;
+    --large-width: 150px;
+}
+.table-column-header {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.drag-icon:hover {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.text-input, .date-input, .dropdown-input  {
+    width: var(--std-width);
+}
+
+.textarea-input {
+    width: var(--large-width);
+}
+
+.in-person-workshop-container {
+  margin: 0 auto;
+  width: 80%;
+  overflow: scroll;
+}
+
+</style>
