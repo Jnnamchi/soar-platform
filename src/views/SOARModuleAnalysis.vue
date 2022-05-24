@@ -24,7 +24,6 @@
         Completion: {{selectedCompany.countModuleAnswers(SOARModule)}} out of {{selectedCompany.participants.length}} registered participants
       </div>
       <div class="medium-space"></div>
-      <div class="subsection-title">Answer analysis will be viewable here</div>
       <div
       class="general-select" v-on:click="startVirtualWorkshops()"
       v-if="!selectedCompany.hasMovedToNextRound()">
@@ -101,53 +100,57 @@
           Workshops:
         </div>
         <div>
-          <div v-for="answer in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="answer.title">
-            <div v-if="answer.name == selectedWorkshop" style="font-weight: bold">{{answer.name}}</div>
-            <div v-else v-on:click="selectWorkshop(answer.name)">{{answer.name}}</div>
+          <div v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="inPersonWorkshop.name">
+            <div v-if="inPersonWorkshop.name == selectedWorkshop" style="font-weight: bold">{{inPersonWorkshop.name}}</div>
+            <div v-else v-on:click="selectWorkshop(inPersonWorkshop.name)">{{inPersonWorkshop.name}}</div>
           </div>
         </div>
       </div>
       <div class="medium-space"></div>
-      <div v-for="answer in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="answer.title">
-        <div v-if="answer.name == selectedWorkshop" class="in-person-workshop-container">
-          <div :style="getRequiredColumns(answer.columns)">
+      <div v-on:click="saveWorkshopState()">
+        SAVE
+      </div>
+      <div class="medium-space"></div>
+      <div v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="inPersonWorkshop.name">
+        <div v-if="inPersonWorkshop.name == selectedWorkshop" class="in-person-workshop-container">
+          <div :style="getRequiredColumns(inPersonWorkshop.columns)">
             <div></div>
             <div></div>
-            <div v-for="(column, columnNum) in answer.columns" v-bind:key="columnNum">
+            <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum">
               <div class="table-column-header">{{column.title}}</div>
               <div style="font-size: 11px;">{{column.subtitle}}</div>
             </div>
           </div>
           <div class="medium-space"></div>
           <div>
-            <draggable tag="ul" :list="answer.rows" class="list-group" handle=".dragPoint">
+            <draggable tag="ul" :list="inPersonWorkshop.rows" class="list-group" handle=".dragPoint">
               <div
-                v-for="(row) in answer.rows"
+                v-for="(row) in inPersonWorkshop.rows"
                 :key="row.questionName"
               >
                 <div class="small-space"></div>
-                <div :style="getRequiredColumns(answer.columns)">
+                <div :style="getRequiredColumns(inPersonWorkshop.columns)">
                   <div>
                     <i class="drag-icon fa-solid fa-bars dragPoint"></i>
                   </div>
                   <div style="font-size: 12px;">
                     {{row.questionName}}
                   </div>
-                  <div v-for="(column, columnNum) in answer.columns" v-bind:key="columnNum" class="table-column-header">
+                  <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum" class="table-column-header">
                     <div v-if="column.type == 'text'">
-                      <input class="text-input">
+                      <input class="text-input" v-model="row.answers[columnNum]">
                     </div>
                     <div v-if="column.type == 'textarea'" style="width:">
-                      <textarea rows="4" cols="25" class="textarea-input">
+                      <textarea rows="4" cols="25" class="textarea-input" v-model="row.answers[columnNum]">
                       </textarea>
                     </div>
                     <div v-if="column.type == 'date'">
-                      <input type="date" class="date-input">
+                      <input type="date" class="date-input" v-model="row.answers[columnNum]">
                     </div>
                     <div v-if="column.type == 'dropdown'">
                       <div style="font-size: 12px;">
-                        <select>
-                          <option v-for="option in column.options" v-bind:key="option" value="volvo">{{option}}</option>
+                        <select v-model="row.answers[columnNum]">
+                          <option v-for="option in column.options" v-bind:key="option">{{option}}</option>
                         </select>
                       </div>
                     </div>
@@ -354,7 +357,7 @@ export default class SOARModuleAnalysis extends Vue {
     return "display: grid; gap: 15px; " + templateColumns
   }
   getSelectedWorkshop () :string {
-    if ("inPersonWorkshops" in this.selectedCompany) {
+    if (this.selectedCompany.hasInPersonWorkshop(this.SOARModule)) {
       const workshops: any = this.selectedCompany.inPersonWorkshops[this.SOARModule]
       for (let workshop of workshops) {
         return workshop.name
@@ -364,6 +367,16 @@ export default class SOARModuleAnalysis extends Vue {
   }
   selectWorkshop (workshopName: string) {
     this.selectedWorkshop = workshopName
+  }
+  async saveWorkshopState () {
+    const url = getServerUrl()
+    const data = {
+      companyId: this.selectedCompany.uuid,
+      workshops: this.selectedCompany.inPersonWorkshops[this.SOARModule],
+      moduleId: this.SOARModule
+    }
+    const response = await axios.post(url + "/saveWorkshopState", data)
+    this.selectedCompany.inPersonWorkshops = response.data.inPersonWorkshops
   }
 }
 </script>

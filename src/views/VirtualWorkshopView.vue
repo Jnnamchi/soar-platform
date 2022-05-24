@@ -52,8 +52,7 @@ export default class SurveyView extends Vue {
         moduleUuid: moduleUuid,
         answers: workshopAnswers
     }
-    const response = await axios.post(url + "/updateUserWorkshopAnswers", data)
-    console.log(response)
+    await axios.post(url + "/updateUserWorkshopAnswers", data)
     this.$router.push('/home')
   }
 }
