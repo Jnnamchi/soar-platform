@@ -33,21 +33,29 @@
         No answers yet
       </div>
       <div>
-        <div class="flex-parent-middle" style="width: 95%; margin: 0 auto;">
+        <div style="width: 95%; margin: 0 auto;">
+          <div class="initial-survey-grid table-column-header">
+            <div>
+            </div>
+            <div>
+              Opportunity Score
+            </div>
+            <div>
+              Necessity Score
+            </div>
+          </div>
+          <div class="medium-space"></div>
           <div v-for="answer in rankAnswers(selectedCompany.answerAnalysis)" v-bind:key="answer.id" style="margin-top: 20px; flex: 0 0 400px;">
-            <div style="width: 400px; margin: 10px;">
-              <div>Opportunity Score: {{answer.opportunityScore}}</div>
-              <div style="font-size: 12px;">{{answer.questionName}}</div>
-              <div style="font-size: 12px;">
-                  {{answer}}
-                </div>
+            <div class="initial-survey-grid">
+              <div class="question-name-in-grid">{{answer.questionName}}</div>
+              <div>{{answer.opportunityScore}}</div>
+              <div>{{answer.necessityScore}}</div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div v-else-if="!isViewingInPersonWorkshops">
-      <!-- {{getVirtualWorkshop()}} -->
       <div v-for="(workshop, workshopNum) in getVirtualWorkshop()" v-bind:key="workshopNum">
         <div v-if="workshopNum == selectedWorkshopStage">
           <div>
@@ -58,34 +66,40 @@
           </div>
           <div v-if="workshopNum == getLastVirtualWorkshopNumber()">
             <div v-if="workshop.hasNextWorkshop">
+              <div class="medium-space"></div>
               <div class="general-select" v-on:click="moveToNextVirtualWorkshop()">
                 Start Next Workshop
               </div>
+              <div class="medium-space"></div>
             </div>
             <div v-else-if="!hasInPersonWorkshops">
+              <div class="medium-space"></div>
               <div v-on:click="startInPersonWorkshops()"
               class="notice-message">
                 Start in person workshops
               </div>
+              <div class="medium-space"></div>
             </div>
-            <!-- {{getVirtualWorkshop()}} -->
+            {{getVirtualWorkshop()}}
           </div>
-          <div class="flex-parent-middle" style="width: 95%; margin: 0 auto;">
+          <div style="width: 95%; margin: 0 auto;">
+            <div :style="getVirtualWorkshopRequiredColumns(rankWorkshopAnswers(workshop.answerAnalysis)[0])">
+              <div></div>
+              <div v-for="workshopQuestion in getVirtualWorkshopQuestions(rankWorkshopAnswers(workshop.answerAnalysis)[0])" v-bind:key="workshopQuestion">
+                {{workshopQuestion}} <div class="table-column-header">Consensus Answer</div>
+              </div>
+              <div>Updated Score</div>
+            </div>
             <div v-for="answer in rankWorkshopAnswers(workshop.answerAnalysis)" v-bind:key="answer.id" style="margin-top: 20px; flex: 0 0 400px;">
-              <div style="width: 400px; margin: 10px;">
-                 <!-- {{answer}} -->
-                <div>
-                  Score: {{answer.score}}
-                </div>
-                <!-- <RadarChart class="test-radar" ref="summaryPersonnaCategories"
-                :chartOptions="{}"
-                :chartData="buildChartDataFromAnswer(answer)"
-                :canvasName="answer.id + workshopNum"/> -->
-                <div style="font-size: 12px;">
+              <div :style="getVirtualWorkshopRequiredColumns(answer)">
+                <div class="question-name-in-grid">
                   {{answer.questionName}}
                 </div>
-                <div style="font-size: 12px;">
-                  {{answer}}
+                <div v-for="workshopQuestion in getVirtualWorkshopQuestions(answer)" v-bind:key="workshopQuestion">
+                  {{getConsensusAnswer(answer[workshopQuestion])}}
+                </div>
+                <div style="font-size: 16px;">
+                  {{answer.score}}
                 </div>
               </div>
             </div>
@@ -133,7 +147,7 @@
                   <div>
                     <i class="drag-icon fa-solid fa-bars dragPoint"></i>
                   </div>
-                  <div style="font-size: 12px;">
+                  <div class="question-name-in-grid">
                     {{row.questionName}}
                   </div>
                   <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum" class="table-column-header">
@@ -245,6 +259,7 @@ export default class SOARModuleAnalysis extends Vue {
     answers.sort(this.compare)
     this.selectedSOARModule.addQuestionNamesById(answers)
     this.topAnswers = answers
+    console.log(answers)
     return answers
   }
   startVirtualWorkshops () {
@@ -356,6 +371,46 @@ export default class SOARModuleAnalysis extends Vue {
     templateColumns = templateColumns + ";"
     return "display: grid; gap: 15px; " + templateColumns
   }
+  getVirtualWorkshopRequiredColumns (workshopQuestion: any) {
+    let totalColumns = 0
+    const illegalKeys = "score id questionName"
+    for (let key in workshopQuestion) {
+      if (!(illegalKeys.includes(key))) {
+        totalColumns = totalColumns + 1
+      }
+    }
+    let templateColumns = "grid-template-columns: 300px"
+    for (let i = 0; i < totalColumns; i++) {
+      templateColumns = templateColumns + " var(--large-width)"
+    }
+    templateColumns = templateColumns + " var(--large-width);"
+    return "display: grid; gap: 25px; margin: 0 auto; font-size: 12px; width: fit-content; " + templateColumns
+  }
+  getVirtualWorkshopQuestions (workshopQuestion: any) {
+    let totalQuestions = []
+    const illegalKeys = "score id questionName"
+    for (let keyName in workshopQuestion) {
+      if (!(illegalKeys.includes(keyName))) {
+        totalQuestions.push(keyName)
+      }
+    }
+    return totalQuestions
+  }
+  getConsensusAnswer (answerTally: any) {
+    let consensusAnswers: Array<any> = []
+    let maxScore = 0
+    for (let answer in answerTally) {
+      const answerScore = answerTally[answer]
+      if (answerScore === maxScore) {
+        consensusAnswers.push(answer)
+      }
+      if (answerScore > maxScore) {
+        consensusAnswers = [answer]
+        maxScore = answerScore
+      }
+    }
+    return consensusAnswers.join(", ") + " (" + maxScore + ")"
+  }
   getSelectedWorkshop () :string {
     if (this.selectedCompany.hasInPersonWorkshop(this.SOARModule)) {
       const workshops: any = this.selectedCompany.inPersonWorkshops[this.SOARModule]
@@ -409,6 +464,19 @@ export default class SOARModuleAnalysis extends Vue {
   margin: 0 auto;
   width: 80%;
   overflow: scroll;
+}
+
+.initial-survey-grid {
+  display: grid;
+  grid-template-columns: 300px 120px 120px;
+  gap: 25px;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.question-name-in-grid {
+  font-size: 12px;
+  text-align: left;
 }
 
 </style>
