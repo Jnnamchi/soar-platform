@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="section-title">{{appData.companies[companyUuid].name}}</div>
+  <div v-if="selectedCompany">
+    <div class="section-title">{{selectedCompany.name}}</div>
     <div>
       <div>{{selectedCompany.size}}</div>
       <div>{{selectedCompany.description}}</div>
@@ -10,7 +10,7 @@
     <div class="subsection">
         <div class="subsection-title">Participants</div>
         <div>
-            There are currently {{selectedCompany.participants.length}} participants registered
+          There are currently {{selectedCompany.participants.length}} participants registered
         </div>
         <div>
             <div>Existing Users</div>
@@ -66,22 +66,21 @@
         No modules yet, select one below!
       </div>
       <div v-else>
-        <div v-for="module in selectedCompany.modules" v-bind:key="module.name">
-          <router-link
-            :to="{
-              name: 'SOARModuleAnalysis',
-              params: { appData: appData, selectedCompany: selectedCompany, SOARModule: module }
-            }"
-            v-if="!(selectedCompany.modules.includes(module.uuid))"
-            class="company-select">
-            {{appData.getModuleName(module)}}
-          </router-link>
+        <div v-for="moduleId in selectedCompany.modules" v-bind:key="moduleId">
+          <div class="company-select"
+            v-on:click="openModuleAnalysis(moduleId)">
+            {{appData.getModuleName(moduleId)}}
+          </div>
         </div>
       </div>
     </div>
     <div class="subsection">
       <div class="subsection-title">Add another module</div>
       <span v-for="module in modules" v-bind:key="module.name">
+        <!-- SAME FOR MODULE VIEW <div class="company-select"
+          v-on:click="openModuleAnalysis(module.uuid)">
+          {{module.name}}
+        </div> -->
         <router-link
         :to="{
           name: 'SOARModuleView',
@@ -96,10 +95,9 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { Component, Vue, Prop } from "vue-property-decorator"
 import { CreateUserFromObject } from '../data/User'
-import { AppData } from '../data/App'
 import { getServerUrl } from '../requests/requests'
 import { CreateCompanyFromObject } from '../data/Company'
 
@@ -111,22 +109,51 @@ import axios from 'axios'
 
 @Component
 export default class CompanyDashboard extends Vue {
-  @Prop() private appData!: AppData
-  @Prop() private companyUuid!: string
+  @Prop() appData
+  @Prop() companyUuid
 
-  modules: SOARModule[] = []
-  selectedCompany = this.appData.companies[this.companyUuid]
-  participantsToAdd : any[] = []
+  modules = []
+  selectedCompany = this.getSelectedCompany(this.companyUuid)
+  participantsToAdd = []
   newParticipantData = {
     name: "",
     email: ""
   }
 
   mounted () {
-    this.getAllModules()
+    if (this.checkHasCompany(this.companyUuid)) {
+      this.getAllModules()
+    }
   }
-  openModuleAnalysis (SOARModuleName: string) {
-    this.$router.push({name: 'SOARModuleAnalysis', params: {companyUuid: this.companyUuid, SOARModuleName: SOARModuleName}})
+  checkHasCompany (companyUuid) {
+    if (companyUuid) {
+      return true
+    }
+    const altCompanyUuid = localStorage.getItem('selectedCompanyUuid')
+    if (altCompanyUuid) {
+      return true
+    }
+    this.$router.push('/home')
+    return false
+  }
+  getSelectedCompany (companyUuid) {
+    if (companyUuid) {
+      return this.appData.companies[companyUuid]
+    }
+    const altCompanyUuid = localStorage.getItem('selectedCompanyUuid')
+    if (altCompanyUuid) {
+      if (!(altCompanyUuid in this.appData.companies)) {
+        this.$router.push('/home')
+        return null
+      }
+      return this.appData.companies[altCompanyUuid]
+    }
+    this.$router.push('/home')
+    return null
+  }
+  openModuleAnalysis (moduleId) {
+    localStorage.setItem('selectedSOARModule', moduleId)
+    this.$router.push({name: 'SOARModuleAnalysis', params: { appData: this.appData, selectedCompany: this.selectedCompany, SOARModule: moduleId }})
   }
   addParticipant () {
     if (this.newParticipantData.name != "" && this.newParticipantData.email != "") {

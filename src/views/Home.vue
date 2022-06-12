@@ -6,9 +6,9 @@
       <div class="flex-parent">
         <div v-for="company in appData.companies" v-bind:key="company.uid">
           <div v-if="company.isOwndeBy(user.uuid)">
-            <router-link :to="{ name: 'CompanyDashboard', params: { appData: appData, companyUuid: company.uuid }}" class="unstyle-link company-select">
+            <div class="unstyle-link company-select" v-on:click="openCompanyPage(company)">
               {{company.name}}
-            </router-link>
+            </div>
           </div>
         </div>
         <div>
@@ -56,13 +56,12 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { Component, Vue, Prop } from "vue-property-decorator"
 
 import { getCurrentUserId, getCurrentUser } from '../firebase/firebase'
 import { getServerUrl } from '../requests/requests'
 
-import { AppData } from '../data/App'
 import { CreateCompanyFromObject } from '../data/Company'
 import { CreateModuleFromObject } from '../data/SOARModule'
 import { CreateUserFromObject } from '../data/User'
@@ -73,7 +72,7 @@ import axios from 'axios'
 
 @Component
 export default class Home extends Vue {
-  @Prop() private appData!: AppData
+  @Prop() appData
 
   mounted () {
     this.getUserData()
@@ -109,8 +108,18 @@ export default class Home extends Vue {
       alert("Error fetching data")
     })
   }
-  openStartModule (companyName: string, SOARModuleName: string) {
+  openStartModule (companyName, SOARModuleName) {
     this.$router.push({name: 'SurveySection', params: {companyName: companyName, SOARModuleName: SOARModuleName}})
+  }
+  openCompanyPage (company) {
+    localStorage.setItem('selectedCompanyUuid', company.uuid)
+    this.$router.push({
+      name: 'CompanyDashboard',
+      params: {
+        companyUuid: company.uuid,
+        appData: this.appData
+      }
+    })
   }
 }
 </script>

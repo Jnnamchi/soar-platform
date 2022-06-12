@@ -4,7 +4,9 @@
       <router-link to="/home" class="nav-item">Home</router-link>
       <a v-on:click="logout()" v-if="userLoggedIn" class="nav-item">Logout</a>
     </div>
-    <router-view :appData="appData" />
+    <!-- <keep-alive> -->
+    <router-view :key="$route.fullPath" :appData="appData" />
+    <!-- </keep-alive> -->
     <!-- {{appData}} -->
   </div>
 </template>
