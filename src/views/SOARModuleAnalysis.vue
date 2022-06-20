@@ -452,7 +452,8 @@ export default class SOARModuleAnalysis extends Vue {
   }
   scheduleVideoConference () {
     // TODO:
-    // 1. Open a modal allowing the user to select a date and time
+    // 1. Open a modal allowing the user to select a date and time, and an optional name for the
+    // video conference meeting
     // 2. Once selected, submit button calls submitScheduleVideoConference
   }
   submitScheduleVideoConference () {
@@ -464,6 +465,7 @@ export default class SOARModuleAnalysis extends Vue {
     // const data = {
     //   companyId: this.selectedCompany.uuid,
     //   moduleId: this.SOARModule,
+    //   conferenceName: "Video conference 1"
     //   datetime: <selected date and time>
     // }
     // const response = await axios.post(url + "/scheduleVideoConference", data)
