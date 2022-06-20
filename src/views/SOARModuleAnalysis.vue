@@ -129,6 +129,14 @@
             <div v-else v-on:click="selectWorkshop(inPersonWorkshop.name)">{{inPersonWorkshop.name}}</div>
           </div>
         </div>
+        <div class="medium-space"></div>
+        <div  v-if="'videoConferenceDate' in selectedCompany.inPersonWorkshops[SOARModule]" class="notice-message">
+          In-person workshop scheduled for:
+          (include zoom link to workshop)
+        </div>
+        <div v-else v-on:click="scheduleVideoConference()" class="general-select">
+          Schedule in person workshop
+        </div>
       </div>
       <div class="medium-space"></div>
       <div v-on:click="saveWorkshopState()">
@@ -441,6 +449,27 @@ export default class SOARModuleAnalysis extends Vue {
     }
     const response = await axios.post(url + "/saveWorkshopState", data)
     this.selectedCompany.inPersonWorkshops = response.data.inPersonWorkshops
+  }
+  scheduleVideoConference () {
+    // TODO:
+    // 1. Open a modal allowing the user to select a date and time
+    // 2. Once selected, submit button calls submitScheduleVideoConference
+  }
+  submitScheduleVideoConference () {
+    // TODO:
+    // 1. When
+    // 2. Send request to backend scheduleVideoConference
+    //    data must contain: companyId (this.selectedCompany.uuid), moduleId (this.SOARModule)
+    // e.g.:
+    // const data = {
+    //   companyId: this.selectedCompany.uuid,
+    //   moduleId: this.SOARModule,
+    //   datetime: <selected date and time>
+    // }
+    // const response = await axios.post(url + "/scheduleVideoConference", data)
+    // When response received, update the current selectedCompany to the received one
+    // and that should contain the new "videoConferenceDate" key in the inPersonWorkshops key of
+    // the company object
   }
 }
 </script>
