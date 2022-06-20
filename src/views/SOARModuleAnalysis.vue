@@ -135,7 +135,7 @@
           (include zoom link to workshop)
         </div>
         <div v-else v-on:click="scheduleVideoConference()" class="general-select">
-          Schedule in person workshop
+          Schedule video conference
         </div>
       </div>
       <div class="medium-space"></div>
