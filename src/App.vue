@@ -2,6 +2,7 @@
   <div id="app">
     <div id="nav">
       <router-link to="/home" class="nav-item">Home</router-link>
+      <router-link to="/payment" class="nav-item">Payment</router-link>
       <a v-on:click="logout()" v-if="userLoggedIn" class="nav-item">Logout</a>
     </div>
     <!-- <keep-alive> -->
@@ -42,6 +43,9 @@ export default class App extends Vue {
     firebasePackage.auth().signOut().then(() => {
       this.$router.push("/login")
     })
+  }
+  goToPayments () {
+    this.$router.push("/payment")
   }
   generateAppData () {
     const newAppData = new AppData()
@@ -84,5 +88,10 @@ export default class App extends Vue {
 .nav-item {
     margin: auto 15px;
     text-decoration: none;
+}
+
+.nav-item:hover {
+    cursor: pointer;
+    font-weight: bold;
 }
 </style>
