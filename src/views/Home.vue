@@ -17,8 +17,8 @@
       </div>
     </div>
     <div class="subsection">
-      <div class="subsection-title">Your surveys to complete</div>
-      <div v-for="company in appData.companies" v-bind:key="company.name" >
+      <div class="subsection-title">Your surveys to complete:</div>
+      <div v-for="company in appData.companies" v-bind:key="company.name">
         <div v-if="company.isParticipating(user.uuid) && company.modules.length > 0">
           <div class="company-name">{{company.name}}</div>
           <div v-if="company.userHasCompletedAllModules(user.uuid)">

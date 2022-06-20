@@ -24,15 +24,19 @@
         Completion: {{selectedCompany.countModuleAnswers(SOARModule)}} out of {{selectedCompany.participants.length}} registered participants
       </div>
       <div class="medium-space"></div>
-      <div
-      class="general-select" v-on:click="startVirtualWorkshops()"
-      v-if="!selectedCompany.hasMovedToNextRound()">
-        Start Virtual Workshops
+      <div v-if="!selectedCompany.hasMovedToNextRound()">
+        <div v-if="selectedCompany.countModuleAnswers(SOARModule) == 0" class="notice-message">
+          No answers yet, at least one response is needed to start the next workshop
+        </div>
+        <div v-else class="general-select" v-on:click="startVirtualWorkshops()">
+          Start Virtual Workshops
+        </div>
       </div>
       <div v-if="selectedSOARModule.answers.length == 0">
         No answers yet
       </div>
-      <div>
+      <div class="medium-space"></div>
+      <div v-if="selectedCompany.countModuleAnswers(SOARModule) > 0">
         <div style="width: 95%; margin: 0 auto;">
           <div class="initial-survey-grid table-column-header">
             <div>
@@ -65,24 +69,30 @@
             Completion: {{Object.keys(workshop.moduleAnswers).length}} out of {{selectedCompany.participants.length}} registered participants
           </div>
           <div v-if="workshopNum == getLastVirtualWorkshopNumber()">
-            <div v-if="workshop.hasNextWorkshop">
-              <div class="medium-space"></div>
-              <div class="general-select" v-on:click="moveToNextVirtualWorkshop()">
-                Start Next Workshop
+            <div v-if="Object.keys(workshop.moduleAnswers).length > 0">
+              <div v-if="workshop.hasNextWorkshop">
+                <div class="medium-space"></div>
+                <div class="general-select" v-on:click="moveToNextVirtualWorkshop()">
+                  Start Next Workshop
+                </div>
+                <div class="medium-space"></div>
               </div>
-              <div class="medium-space"></div>
-            </div>
-            <div v-else-if="!hasInPersonWorkshops">
-              <div class="medium-space"></div>
-              <div v-on:click="startInPersonWorkshops()"
-              class="notice-message">
-                Start in person workshops
+              <div v-else-if="!hasInPersonWorkshops">
+                <div class="medium-space"></div>
+                <div v-on:click="startInPersonWorkshops()"
+                class="notice-message">
+                  Start in person workshops
+                </div>
+                <div class="medium-space"></div>
               </div>
-              <div class="medium-space"></div>
             </div>
-            {{getVirtualWorkshop()}}
+            <div v-else>
+              <div class="notice-message">
+                No answers yet, at least one response is needed to start the next workshop
+              </div>
+            </div>
           </div>
-          <div style="width: 95%; margin: 0 auto;">
+          <div style="width: 95%; margin: 0 auto;" v-if="Object.keys(workshop.moduleAnswers).length > 0">
             <div :style="getVirtualWorkshopRequiredColumns(rankWorkshopAnswers(workshop.answerAnalysis)[0])">
               <div></div>
               <div v-for="workshopQuestion in getVirtualWorkshopQuestions(rankWorkshopAnswers(workshop.answerAnalysis)[0])" v-bind:key="workshopQuestion">
@@ -259,7 +269,6 @@ export default class SOARModuleAnalysis extends Vue {
     answers.sort(this.compare)
     this.selectedSOARModule.addQuestionNamesById(answers)
     this.topAnswers = answers
-    console.log(answers)
     return answers
   }
   startVirtualWorkshops () {
