@@ -2,85 +2,123 @@
   <div>
     <div class="section-title">SOAR MODULE ANALYSIS</div>
     <!-- <div class="subsection-title">{{selectedSOARModule.name}}</div> -->
-    <div class="subsection-title-description">View your company's progress here</div>
+    <div class="subsection-title-description">
+      View your company's progress here
+    </div>
     <div>
       <div v-if="!isViewingInPersonWorkshops">
-        <span class="click-text" v-if="selectedWorkshopStage > 0" v-on:click="previousStage()">&#60;</span>
-        <span class="click-text" v-if="selectedWorkshopStage < getLastVirtualWorkshopNumber()" v-on:click="nextStage()">&#62;</span>
-        <span class="click-text" v-if="selectedWorkshopStage == getLastVirtualWorkshopNumber() && hasInPersonWorkshops" v-on:click="isViewingInPersonWorkshops = true">&#62;</span>
+        <span
+          class="click-text"
+          v-if="selectedWorkshopStage > 0"
+          v-on:click="previousStage()"
+          >&#60;</span
+        >
+        <span
+          class="click-text"
+          v-if="selectedWorkshopStage < getLastVirtualWorkshopNumber()"
+          v-on:click="nextStage()"
+          >&#62;</span
+        >
+        <span
+          class="click-text"
+          v-if="
+            selectedWorkshopStage == getLastVirtualWorkshopNumber() &&
+            hasInPersonWorkshops
+          "
+          v-on:click="isViewingInPersonWorkshops = true"
+          >&#62;</span
+        >
       </div>
       <div v-else>
-        <span class="click-text" v-if="selectedWorkshopStage == getLastVirtualWorkshopNumber() && hasInPersonWorkshops" v-on:click="isViewingInPersonWorkshops = false">&#60;</span>
+        <span
+          class="click-text"
+          v-if="
+            selectedWorkshopStage == getLastVirtualWorkshopNumber() &&
+            hasInPersonWorkshops
+          "
+          v-on:click="isViewingInPersonWorkshops = false"
+          >&#60;</span
+        >
       </div>
     </div>
     <div v-if="selectedWorkshopStage === 0">
+      <div>Initial Survey</div>
       <div>
-        Initial Survey
+        Total Questions:
+        {{ selectedSOARModule.initialSurvey.countTotalQuestions() }}
       </div>
       <div>
-        Total Questions: {{selectedSOARModule.initialSurvey.countTotalQuestions()}}
-      </div>
-      <div>
-        Completion: {{selectedCompany.countModuleAnswers(SOARModule)}} out of {{selectedCompany.participants.length}} registered participants
+        Completion: {{ selectedCompany.countModuleAnswers(SOARModule) }} out of
+        {{ selectedCompany.participants.length }} registered participants
       </div>
       <div class="medium-space"></div>
       <div v-if="!selectedCompany.hasMovedToNextRound()">
-        <div v-if="selectedCompany.countModuleAnswers(SOARModule) == 0" class="notice-message">
-          No answers yet, at least one response is needed to start the next workshop
+        <div
+          v-if="selectedCompany.countModuleAnswers(SOARModule) == 0"
+          class="notice-message"
+        >
+          No answers yet, at least one response is needed to start the next
+          workshop
         </div>
         <div v-else class="general-select" v-on:click="startVirtualWorkshops()">
           Start Virtual Workshops
         </div>
       </div>
-      <div v-if="selectedSOARModule.answers.length == 0">
-        No answers yet
-      </div>
+      <div v-if="selectedSOARModule.answers.length == 0">No answers yet</div>
       <div class="medium-space"></div>
       <div v-if="selectedCompany.countModuleAnswers(SOARModule) > 0">
-        <div style="width: 95%; margin: 0 auto;">
+        <div style="width: 95%; margin: 0 auto">
           <div class="initial-survey-grid table-column-header">
-            <div>
-            </div>
-            <div>
-              Opportunity Score
-            </div>
-            <div>
-              Necessity Score
-            </div>
+            <div></div>
+            <div>Opportunity Score</div>
+            <div>Necessity Score</div>
           </div>
           <div class="medium-space"></div>
-          <div v-for="answer in rankAnswers(selectedCompany.answerAnalysis)" v-bind:key="answer.id" style="margin-top: 20px; flex: 0 0 400px;">
+          <div
+            v-for="answer in rankAnswers(selectedCompany.answerAnalysis)"
+            v-bind:key="answer.id"
+            style="margin-top: 20px; flex: 0 0 400px"
+          >
             <div class="initial-survey-grid">
-              <div class="question-name-in-grid">{{answer.questionName}}</div>
-              <div>{{answer.opportunityScore}}</div>
-              <div>{{answer.necessityScore}}</div>
+              <div class="question-name-in-grid">{{ answer.questionName }}</div>
+              <div>{{ answer.opportunityScore }}</div>
+              <div>{{ answer.necessityScore }}</div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div v-else-if="!isViewingInPersonWorkshops">
-      <div v-for="(workshop, workshopNum) in getVirtualWorkshop()" v-bind:key="workshopNum">
+      <div
+        v-for="(workshop, workshopNum) in getVirtualWorkshop()"
+        v-bind:key="workshopNum"
+      >
         <div v-if="workshopNum == selectedWorkshopStage">
           <div>
-            {{workshop.title}}
+            {{ workshop.title }}
           </div>
           <div>
-            Completion: {{Object.keys(workshop.moduleAnswers).length}} out of {{selectedCompany.participants.length}} registered participants
+            Completion: {{ Object.keys(workshop.moduleAnswers).length }} out of
+            {{ selectedCompany.participants.length }} registered participants
           </div>
           <div v-if="workshopNum == getLastVirtualWorkshopNumber()">
             <div v-if="Object.keys(workshop.moduleAnswers).length > 0">
               <div v-if="workshop.hasNextWorkshop">
                 <div class="medium-space"></div>
-                <div class="general-select" v-on:click="moveToNextVirtualWorkshop()">
+                <div
+                  class="general-select"
+                  v-on:click="moveToNextVirtualWorkshop()"
+                >
                   Start Next Workshop
                 </div>
                 <div class="medium-space"></div>
               </div>
               <div v-else-if="!hasInPersonWorkshops">
                 <div class="medium-space"></div>
-                <div v-on:click="startInPersonWorkshops()"
-                class="notice-message">
+                <div
+                  v-on:click="startInPersonWorkshops()"
+                  class="notice-message"
+                >
                   Start in person workshops
                 </div>
                 <div class="medium-space"></div>
@@ -88,28 +126,53 @@
             </div>
             <div v-else>
               <div class="notice-message">
-                No answers yet, at least one response is needed to start the next workshop
+                No answers yet, at least one response is needed to start the
+                next workshop
               </div>
             </div>
           </div>
-          <div style="width: 95%; margin: 0 auto;" v-if="Object.keys(workshop.moduleAnswers).length > 0">
-            <div :style="getVirtualWorkshopRequiredColumns(rankWorkshopAnswers(workshop.answerAnalysis)[0])">
+          <div
+            style="width: 95%; margin: 0 auto"
+            v-if="Object.keys(workshop.moduleAnswers).length > 0"
+          >
+            <div
+              :style="
+                getVirtualWorkshopRequiredColumns(
+                  rankWorkshopAnswers(workshop.answerAnalysis)[0]
+                )
+              "
+            >
               <div></div>
-              <div v-for="workshopQuestion in getVirtualWorkshopQuestions(rankWorkshopAnswers(workshop.answerAnalysis)[0])" v-bind:key="workshopQuestion">
-                {{workshopQuestion}} <div class="table-column-header">Consensus Answer</div>
+              <div
+                v-for="workshopQuestion in getVirtualWorkshopQuestions(
+                  rankWorkshopAnswers(workshop.answerAnalysis)[0]
+                )"
+                v-bind:key="workshopQuestion"
+              >
+                {{ workshopQuestion }}
+                <div class="table-column-header">Consensus Answer</div>
               </div>
               <div>Updated Score</div>
             </div>
-            <div v-for="answer in rankWorkshopAnswers(workshop.answerAnalysis)" v-bind:key="answer.id" style="margin-top: 20px; flex: 0 0 400px;">
+            <div
+              v-for="answer in rankWorkshopAnswers(workshop.answerAnalysis)"
+              v-bind:key="answer.id"
+              style="margin-top: 20px; flex: 0 0 400px"
+            >
               <div :style="getVirtualWorkshopRequiredColumns(answer)">
                 <div class="question-name-in-grid">
-                  {{answer.questionName}}
+                  {{ answer.questionName }}
                 </div>
-                <div v-for="workshopQuestion in getVirtualWorkshopQuestions(answer)" v-bind:key="workshopQuestion">
-                  {{getConsensusAnswer(answer[workshopQuestion])}}
+                <div
+                  v-for="workshopQuestion in getVirtualWorkshopQuestions(
+                    answer
+                  )"
+                  v-bind:key="workshopQuestion"
+                >
+                  {{ getConsensusAnswer(answer[workshopQuestion]) }}
                 </div>
-                <div style="font-size: 16px;">
-                  {{answer.score}}
+                <div style="font-size: 16px">
+                  {{ answer.score }}
                 </div>
               </div>
             </div>
@@ -120,69 +183,120 @@
     <div v-else>
       <div class="medium-space"></div>
       <div>
+        <div>Workshops:</div>
         <div>
-          Workshops:
-        </div>
-        <div>
-          <div v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="inPersonWorkshop.name">
-            <div v-if="inPersonWorkshop.name == selectedWorkshop" style="font-weight: bold">{{inPersonWorkshop.name}}</div>
-            <div v-else v-on:click="selectWorkshop(inPersonWorkshop.name)">{{inPersonWorkshop.name}}</div>
+          <div
+            v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[
+              SOARModule
+            ]"
+            v-bind:key="inPersonWorkshop.name"
+          >
+            <div
+              v-if="inPersonWorkshop.name == selectedWorkshop"
+              style="font-weight: bold"
+            >
+              {{ inPersonWorkshop.name }}
+            </div>
+            <div v-else v-on:click="selectWorkshop(inPersonWorkshop.name)">
+              {{ inPersonWorkshop.name }}
+            </div>
           </div>
         </div>
         <div class="medium-space"></div>
-        <div  v-if="'videoConferenceDate' in selectedCompany.inPersonWorkshops[SOARModule]" class="notice-message">
-          In-person workshop scheduled for:
-          (include zoom link to workshop)
+        <div
+          v-if="
+            'videoConferenceDate' in
+            selectedCompany.inPersonWorkshops[SOARModule]
+          "
+          class="notice-message"
+        >
+          In-person workshop scheduled for: (include zoom link to workshop)
         </div>
-        <div v-else v-on:click="scheduleVideoConference()" class="general-select">
+        <div
+          v-else
+          v-on:click="scheduleVideoConference()"
+          class="general-select"
+        >
           Schedule video conference
         </div>
       </div>
       <div class="medium-space"></div>
-      <div v-on:click="saveWorkshopState()">
-        SAVE
-      </div>
+      <div v-on:click="saveWorkshopState()">SAVE</div>
       <div class="medium-space"></div>
-      <div v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="inPersonWorkshop.name">
-        <div v-if="inPersonWorkshop.name == selectedWorkshop" class="in-person-workshop-container">
+      <div
+        v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[
+          SOARModule
+        ]"
+        v-bind:key="inPersonWorkshop.name"
+      >
+        <div
+          v-if="inPersonWorkshop.name == selectedWorkshop"
+          class="in-person-workshop-container"
+        >
           <div :style="getRequiredColumns(inPersonWorkshop.columns)">
             <div></div>
             <div></div>
-            <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum">
-              <div class="table-column-header">{{column.title}}</div>
-              <div style="font-size: 11px;">{{column.subtitle}}</div>
+            <div
+              v-for="(column, columnNum) in inPersonWorkshop.columns"
+              v-bind:key="columnNum"
+            >
+              <div class="table-column-header">{{ column.title }}</div>
+              <div style="font-size: 11px">{{ column.subtitle }}</div>
             </div>
           </div>
           <div class="medium-space"></div>
           <div>
-            <draggable tag="ul" :list="inPersonWorkshop.rows" class="list-group" handle=".dragPoint">
-              <div
-                v-for="(row) in inPersonWorkshop.rows"
-                :key="row.questionName"
-              >
+            <draggable
+              tag="ul"
+              :list="inPersonWorkshop.rows"
+              class="list-group"
+              handle=".dragPoint"
+            >
+              <div v-for="row in inPersonWorkshop.rows" :key="row.questionName">
                 <div class="small-space"></div>
                 <div :style="getRequiredColumns(inPersonWorkshop.columns)">
                   <div>
                     <i class="drag-icon fa-solid fa-bars dragPoint"></i>
                   </div>
                   <div class="question-name-in-grid">
-                    {{row.questionName}}
+                    {{ row.questionName }}
                   </div>
-                  <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum" class="table-column-header">
+                  <div
+                    v-for="(column, columnNum) in inPersonWorkshop.columns"
+                    v-bind:key="columnNum"
+                    class="table-column-header"
+                  >
                     <div v-if="column.type == 'text'">
-                      <input class="text-input" v-model="row.answers[columnNum]">
+                      <input
+                        class="text-input"
+                        v-model="row.answers[columnNum]"
+                      />
                     </div>
-                    <div v-if="column.type == 'textarea'" style="width:">
-                      <textarea rows="4" cols="25" class="textarea-input" v-model="row.answers[columnNum]">
+                    <div v-if="column.type == 'textarea'" style="width: ">
+                      <textarea
+                        rows="4"
+                        cols="25"
+                        class="textarea-input"
+                        v-model="row.answers[columnNum]"
+                      >
                       </textarea>
                     </div>
                     <div v-if="column.type == 'date'">
-                      <input type="date" class="date-input" v-model="row.answers[columnNum]">
+                      <input
+                        type="date"
+                        class="date-input"
+                        v-model="row.answers[columnNum]"
+                      />
                     </div>
                     <div v-if="column.type == 'dropdown'">
-                      <div style="font-size: 12px;">
+                      <div style="font-size: 12px">
                         <select v-model="row.answers[columnNum]">
-                          <option v-for="option in column.options" v-bind:key="option">{{option}}</option>
+                          <option
+                            v-for="option in column.options"
+                            v-bind:key="option"
+                          >
+                            {{ option }}
+                          </option>
                         </select>
                       </div>
                     </div>
@@ -194,50 +308,210 @@
         </div>
       </div>
     </div>
+    <div v-if="!showModal">
+      <button class="add-conference-button" v-on:click="toggleModal">
+        Add New Conference
+      </button>
+    </div>
+    <div class="add-conference-modal" v-if="showModal">
+      <date-picker
+        v-model="time1"
+        show-hour
+        show-minute
+        placeholder="Click to select date"
+        valueType="format"
+        :disabled-date="disabledRange"
+      >
+        ></date-picker
+      >
+      <date-picker
+        format="hh:mm"
+        value-type="format"
+        v-model="time2"
+        type="time"
+        placeholder="Click to select time"
+      ></date-picker>
+      <input
+        class="conference-name-input"
+        placeholder="Conference name"
+        v-model="conferenceName"
+      />
+      <button class="add-conference-button" v-on:click="getTime">
+        Add New Conference
+      </button>
+      <button v-on:click="toggleModal" class="close-conference-modal">
+        <span class="icon-cross"></span>
+      </button>
+    </div>
+    <div v-if="conferences" class="conferences">
+      <div
+        class="conference-window"
+        v-for="(conference, index) in conferences"
+        :key="conference.id"
+      >
+        <span class="conference-name">{{ conference.name }}</span>
+        <span class="conference-date">{{ conference.date }}</span>
+        <span class="conference-time">{{ conference.time }}</span>
+        <button
+          v-on:click="deleteConference(index)"
+          class="delete-conference close-conference-modal"
+        >
+          <span class="icon-cross"></span>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator"
+import { Component, Vue, Prop } from "vue-property-decorator";
+import { AppData } from "../data/App";
+import { Company } from "../data/Company";
+import { getServerUrl } from "../requests/requests";
 
-import { AppData } from '../data/App'
-import { Company } from '../data/Company'
-import { getServerUrl } from '../requests/requests'
+import axios from "axios";
 
-import axios from 'axios'
-
-import '../styles/text.css'
-import draggable from 'vuedraggable'
+import "../styles/text.css";
+import draggable from "vuedraggable";
 // import RadarChart from '../chart-js/RadarChart.vue'
+//@ts-ignore:next-line
+import DatePicker from "vue2-datepicker";
+import "vue2-datepicker/index.css";
+
+interface Conference {
+  id: number;
+  date: string | null;
+  time: string | null;
+  name: string;
+}
+
+// interface MeetingsResponse {
+//   page_count: number;
+//   page_number: number;
+//   page_size: number;
+//   total_records: number;
+//   meetings: Meeting[];
+// }
+
+// interface Meeting {
+//   agenda: string;
+//   created_at: string;
+//   duration: number;
+//   id: number;
+//   join_url: string;
+//   start_time: string;
+//   topic: string;
+// }
 
 @Component({
   components: {
-    draggable
+    draggable,
+    DatePicker,
     // RadarChart,
-  }
+  },
 })
 export default class SOARModuleAnalysis extends Vue {
-  @Prop() private appData!: AppData
-  @Prop() private selectedCompany!: Company
-  @Prop() private SOARModule!: string
+  @Prop() private appData!: AppData;
+  @Prop() private selectedCompany!: Company;
+  @Prop() private SOARModule!: string;
 
-  selectedSOARModule = this.appData.modules[this.SOARModule]
-  topAnswers: any[] = []
-  selectedWorkshopStage = parseInt(this.getLastVirtualWorkshopNumber())
-  hasInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(this.SOARModule)
-  isViewingInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(this.SOARModule)
-  selectedWorkshop: string = this.getSelectedWorkshop()
+  showModal: boolean = false;
+  date: Date = new Date();
+  time1: null = null;
+  time2: null = null;
+  conferences: Conference[] = [];
+  conferenceName: string = "";
 
-  compare( a: any, b: any ) {
-    if ( a.score < b.score ){
+  horizontalScroll(element: Element, eventType: WheelEvent) {
+    let modifier: number = 1;
+    if (eventType.deltaMode == eventType.DOM_DELTA_LINE) {
+      modifier = parseInt(getComputedStyle(element).lineHeight);
+    } else if (eventType.deltaMode == eventType.DOM_DELTA_PAGE) {
+      modifier = element.clientHeight;
+    }
+    if (eventType.deltaY != 0) {
+      // changing vertical scroll to horizontal
+      element.scrollLeft += modifier * eventType.deltaY;
+      eventType.preventDefault();
+    }
+  }
+  mounted() {
+    // horizontal scroll on conferences window functionality
+    const conference = document.querySelector(".conferences");
+
+    if (conference) {
+      conference.addEventListener("wheel", (event) => {
+        this.horizontalScroll(conference, event as WheelEvent);
+      });
+    }
+  }
+  unmounted() {
+    const conference = document.querySelector(".conferences");
+    if (conference) {
+      conference.removeEventListener("wheel", (event) => {
+        this.horizontalScroll(conference, event as WheelEvent);
+      });
+    }
+  }
+
+  disabledRange(date: Date) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  }
+
+  toggleModal() {
+    this.showModal = !this.showModal;
+  }
+
+  getTime() {
+    let newConference: Conference = {
+      id: Math.round(Math.random() * 10000),
+      date: this.time1,
+      time: this.time2,
+      name: this.conferenceName,
+    };
+    if (
+      newConference.id &&
+      newConference.date &&
+      newConference.time &&
+      newConference.name
+    ) {
+      console.log(`${this.time1}T${this.time2}:00Z`);
+      this.conferences.push(newConference);
+      this.time1 = null;
+      this.time2 = null;
+      this.conferenceName = "";
+    } else {
+      alert("You must fill the empty fields");
+    }
+  }
+
+  deleteConference(index: any) {
+    this.conferences.splice(index, 1);
+  }
+
+  selectedSOARModule = this.appData.modules[this.SOARModule];
+  topAnswers: any[] = [];
+  selectedWorkshopStage = parseInt(this.getLastVirtualWorkshopNumber());
+  hasInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(
+    this.SOARModule
+  );
+  isViewingInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(
+    this.SOARModule
+  );
+  selectedWorkshop: string = this.getSelectedWorkshop();
+
+  compare(a: any, b: any) {
+    if (a.score < b.score) {
       return 1;
     }
-    if ( a.score > b.score ){
+    if (a.score > b.score) {
       return -1;
     }
     return 0;
   }
-  compareOpportunities (a: any, b: any) {
+  compareOpportunities(a: any, b: any) {
     if (a.opportunityScore < b.opportunityScore) {
       return 1;
     }
@@ -246,7 +520,7 @@ export default class SOARModuleAnalysis extends Vue {
     }
     return 0;
   }
-  compareNecessities (a: any, b: any) {
+  compareNecessities(a: any, b: any) {
     if (a.necessityScore < b.necessityScore) {
       return 1;
     }
@@ -255,208 +529,225 @@ export default class SOARModuleAnalysis extends Vue {
     }
     return 0;
   }
-  rankAnswers (answerAnalysis: any) {
-    const answers = []
+  rankAnswers(answerAnalysis: any) {
+    const answers = [];
     for (const answerId in answerAnalysis[this.selectedSOARModule.uuid]) {
       if (answerAnalysis[this.selectedSOARModule.uuid][answerId].score > 0) {
-        answers.push(Object.assign(answerAnalysis[this.selectedSOARModule.uuid][answerId], {id: answerId}))
+        answers.push(
+          Object.assign(
+            answerAnalysis[this.selectedSOARModule.uuid][answerId],
+            { id: answerId }
+          )
+        );
       }
     }
-    answers.sort(this.compareOpportunities)
-    this.selectedSOARModule.addQuestionNamesById(answers)
-    this.topAnswers = answers
-    return answers
+    answers.sort(this.compareOpportunities);
+    this.selectedSOARModule.addQuestionNamesById(answers);
+    this.topAnswers = answers;
+    return answers;
   }
-  rankWorkshopAnswers (answerAnalysis: any) {
-    const answers = []
+  rankWorkshopAnswers(answerAnalysis: any) {
+    const answers = [];
     for (const answerId in answerAnalysis) {
       if (answerAnalysis[answerId].score > 0) {
-        answers.push(Object.assign(answerAnalysis[answerId], {id: answerId}))
+        answers.push(Object.assign(answerAnalysis[answerId], { id: answerId }));
       }
     }
-    answers.sort(this.compare)
-    this.selectedSOARModule.addQuestionNamesById(answers)
-    this.topAnswers = answers
-    return answers
+    answers.sort(this.compare);
+    this.selectedSOARModule.addQuestionNamesById(answers);
+    this.topAnswers = answers;
+    return answers;
   }
-  startVirtualWorkshops () {
+  startVirtualWorkshops() {
     // Add question names by id
-    this.moveToNextRound()
+    this.moveToNextRound();
   }
-  moveToNextRound () {
-    this.selectedSOARModule.addQuestionNamesById(this.topAnswers)
-    this.runMoveToNextRound()
+  moveToNextRound() {
+    this.selectedSOARModule.addQuestionNamesById(this.topAnswers);
+    this.runMoveToNextRound();
   }
-  async runMoveToNextRound () {
-    const url = getServerUrl()
-    this.selectedCompany.addTopAnswers(this.topAnswers.slice(0, 15))
+  async runMoveToNextRound() {
+    const url = getServerUrl();
+    this.selectedCompany.addTopAnswers(this.topAnswers.slice(0, 15));
     const data = {
-        company: this.selectedCompany,
-        moduleId: this.selectedSOARModule.uuid
-    }
-    const response = await axios.post(url + "/createNextWorkshop", data)
-    this.selectedCompany.virtualWorkshops = response.data.virtualWorkshops
-    this.nextStage()
+      //     company: this.selectedCompany,
+      moduleId: this.selectedSOARModule.uuid,
+    };
+    const response = await axios.post(url + "/createNextWorkshop", data);
+    this.selectedCompany.virtualWorkshops = 12;
+    this.selectedCompany.virtualWorkshops = response.data.virtualWorkshops;
+    this.nextStage();
   }
-  getVirtualWorkshop () {
-    return this.selectedCompany.virtualWorkshops[this.SOARModule]
+  getVirtualWorkshop() {
+    return this.selectedCompany
+      ? this.selectedCompany.virtualWorkshops[this.SOARModule]
+      : null;
   }
-  getLastVirtualWorkshopNumber () {
-    let lastVirtualWorkshopNumber = "0"
+  getLastVirtualWorkshopNumber() {
+    let lastVirtualWorkshopNumber = "0";
     for (const key in this.getVirtualWorkshop()) {
       if (key > lastVirtualWorkshopNumber) {
-        lastVirtualWorkshopNumber = key
+        lastVirtualWorkshopNumber = key;
       }
     }
-    return lastVirtualWorkshopNumber
+    return lastVirtualWorkshopNumber;
   }
-  moveToNextVirtualWorkshop () {
-    this.selectedSOARModule.addQuestionNamesById(this.topAnswers)
+  moveToNextVirtualWorkshop() {
+    this.selectedSOARModule.addQuestionNamesById(this.topAnswers);
     // console.log(this.topAnswers)
-    this.runMoveToNextRound()
+    this.runMoveToNextRound();
   }
-  async runMoveToNextVirtualWorkshop () {
-    const url = getServerUrl()
-    this.selectedCompany.addTopAnswers(this.topAnswers.slice(0, 15))
+  async runMoveToNextVirtualWorkshop() {
+    const url = getServerUrl();
+    this.selectedCompany.addTopAnswers(this.topAnswers.slice(0, 15));
     const data = {
-        company: this.selectedCompany,
-        moduleId: this.selectedSOARModule.uuid
-    }
-    const response = await axios.post(url + "/createNextWorkshop", data)
-    this.selectedCompany.virtualWorkshops = response.data.virtualWorkshops
-    this.nextStage()
+      company: this.selectedCompany,
+      moduleId: this.selectedSOARModule.uuid,
+    };
+    const response = await axios.post(url + "/createNextWorkshop", data);
+    this.selectedCompany.virtualWorkshops = response.data.virtualWorkshops;
+    this.nextStage();
   }
   // Create In-Person Workshops
-  startInPersonWorkshops () {
-    this.runStartInPersonWorkshop()
+  startInPersonWorkshops() {
+    this.runStartInPersonWorkshop();
   }
-  async runStartInPersonWorkshop () {
-    const url = getServerUrl()
+  async runStartInPersonWorkshop() {
+    const url = getServerUrl();
     const data = {
-        company: this.selectedCompany,
-        moduleId: this.selectedSOARModule.uuid
-    }
-    const response = await axios.post(url + "/createInPersonWorkshops", data)
-    this.selectedCompany.addInPersonWorkshops(response.data.inPersonWorkshops)
-    this.hasInPersonWorkshops = true
-    this.isViewingInPersonWorkshops = true
-    this.$forceUpdate()
+      company: this.selectedCompany,
+      moduleId: this.selectedSOARModule.uuid,
+    };
+    const response = await axios.post(url + "/createInPersonWorkshops", data);
+    this.selectedCompany.addInPersonWorkshops(response.data.inPersonWorkshops);
+    this.hasInPersonWorkshops = true;
+    this.isViewingInPersonWorkshops = true;
+    this.$forceUpdate();
   }
   // Navigation
-  previousStage () {
-    this.isViewingInPersonWorkshops = false
-    this.selectedWorkshopStage = Math.max(this.selectedWorkshopStage - 1, 0)
+  previousStage() {
+    this.isViewingInPersonWorkshops = false;
+    this.selectedWorkshopStage = Math.max(this.selectedWorkshopStage - 1, 0);
   }
-  nextStage () {
-    this.selectedWorkshopStage = Math.min(this.selectedWorkshopStage + 1, parseInt(this.getLastVirtualWorkshopNumber()))
+  nextStage() {
+    this.selectedWorkshopStage = Math.min(
+      this.selectedWorkshopStage + 1,
+      parseInt(this.getLastVirtualWorkshopNumber())
+    );
   }
-  buildChartDataFromAnswer (answer: any) {
-    const illegalKeys = ["questionName", "score", "id"]
-    let labels = []
-    let data = []
+  buildChartDataFromAnswer(answer: any) {
+    const illegalKeys = ["questionName", "score", "id"];
+    let labels = [];
+    let data = [];
     for (const key in answer) {
-      if (!(illegalKeys.includes(key))) {
-        labels.push(key)
-        data.push(answer[key])
+      if (!illegalKeys.includes(key)) {
+        labels.push(key);
+        data.push(answer[key]);
       }
     }
     const chartData = {
       labels: labels,
-      datasets: [{
-        label: 'My First Dataset',
-        data: data,
-        fill: true,
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgb(255, 99, 132)',
-        pointBackgroundColor: 'rgb(255, 99, 132)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgb(255, 99, 132)'
-      }]
-    }
-    return chartData
+      datasets: [
+        {
+          label: "My First Dataset",
+          data: data,
+          fill: true,
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgb(255, 99, 132)",
+          pointBackgroundColor: "rgb(255, 99, 132)",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgb(255, 99, 132)",
+        },
+      ],
+    };
+    return chartData;
   }
-  getRequiredColumns (columns: any) {
-    let templateColumns = "grid-template-columns: 30px 300px"
+  getRequiredColumns(columns: any) {
+    let templateColumns = "grid-template-columns: 30px 300px";
     for (let column of columns) {
-      if (column.type == 'textarea') {
-        templateColumns = templateColumns + " var(--large-width)"
+      if (column.type == "textarea") {
+        templateColumns = templateColumns + " var(--large-width)";
       } else {
-        templateColumns = templateColumns + " var(--std-width)"
+        templateColumns = templateColumns + " var(--std-width)";
       }
     }
-    templateColumns = templateColumns + ";"
-    return "display: grid; gap: 15px; " + templateColumns
+    templateColumns = templateColumns + ";";
+    return "display: grid; gap: 15px; " + templateColumns;
   }
-  getVirtualWorkshopRequiredColumns (workshopQuestion: any) {
-    let totalColumns = 0
-    const illegalKeys = "score id questionName"
+  getVirtualWorkshopRequiredColumns(workshopQuestion: any) {
+    let totalColumns = 0;
+    const illegalKeys = "score id questionName";
     for (let key in workshopQuestion) {
-      if (!(illegalKeys.includes(key))) {
-        totalColumns = totalColumns + 1
+      if (!illegalKeys.includes(key)) {
+        totalColumns = totalColumns + 1;
       }
     }
-    let templateColumns = "grid-template-columns: 300px"
+    let templateColumns = "grid-template-columns: 300px";
     for (let i = 0; i < totalColumns; i++) {
-      templateColumns = templateColumns + " var(--large-width)"
+      templateColumns = templateColumns + " var(--large-width)";
     }
-    templateColumns = templateColumns + " var(--large-width);"
-    return "display: grid; gap: 25px; margin: 0 auto; font-size: 12px; width: fit-content; " + templateColumns
+    templateColumns = templateColumns + " var(--large-width);";
+    return (
+      "display: grid; gap: 25px; margin: 0 auto; font-size: 12px; width: fit-content; " +
+      templateColumns
+    );
   }
-  getVirtualWorkshopQuestions (workshopQuestion: any) {
-    let totalQuestions = []
-    const illegalKeys = "score id questionName"
+  getVirtualWorkshopQuestions(workshopQuestion: any) {
+    let totalQuestions = [];
+    const illegalKeys = "score id questionName";
     for (let keyName in workshopQuestion) {
-      if (!(illegalKeys.includes(keyName))) {
-        totalQuestions.push(keyName)
+      if (!illegalKeys.includes(keyName)) {
+        totalQuestions.push(keyName);
       }
     }
-    return totalQuestions
+    return totalQuestions;
   }
-  getConsensusAnswer (answerTally: any) {
-    let consensusAnswers: Array<any> = []
-    let maxScore = 0
+  getConsensusAnswer(answerTally: any) {
+    let consensusAnswers: Array<any> = [];
+    let maxScore = 0;
     for (let answer in answerTally) {
-      const answerScore = answerTally[answer]
+      const answerScore = answerTally[answer];
       if (answerScore === maxScore) {
-        consensusAnswers.push(answer)
+        consensusAnswers.push(answer);
       }
       if (answerScore > maxScore) {
-        consensusAnswers = [answer]
-        maxScore = answerScore
+        consensusAnswers = [answer];
+        maxScore = answerScore;
       }
     }
-    return consensusAnswers.join(", ") + " (" + maxScore + ")"
+    return consensusAnswers.join(", ") + " (" + maxScore + ")";
   }
-  getSelectedWorkshop () :string {
+  getSelectedWorkshop(): string {
     if (this.selectedCompany.hasInPersonWorkshop(this.SOARModule)) {
-      const workshops: any = this.selectedCompany.inPersonWorkshops[this.SOARModule]
+      const workshops: any =
+        this.selectedCompany.inPersonWorkshops[this.SOARModule];
       for (let workshop of workshops) {
-        return workshop.name
+        return workshop.name;
       }
     }
-    return ""
+    return "";
   }
-  selectWorkshop (workshopName: string) {
-    this.selectedWorkshop = workshopName
+  selectWorkshop(workshopName: string) {
+    this.selectedWorkshop = workshopName;
   }
-  async saveWorkshopState () {
-    const url = getServerUrl()
+  async saveWorkshopState() {
+    const url = getServerUrl();
     const data = {
       companyId: this.selectedCompany.uuid,
       workshops: this.selectedCompany.inPersonWorkshops[this.SOARModule],
-      moduleId: this.SOARModule
-    }
-    const response = await axios.post(url + "/saveWorkshopState", data)
-    this.selectedCompany.inPersonWorkshops = response.data.inPersonWorkshops
+      moduleId: this.SOARModule,
+    };
+    const response = await axios.post(url + "/saveWorkshopState", data);
+    this.selectedCompany.inPersonWorkshops = response.data.inPersonWorkshops;
   }
-  scheduleVideoConference () {
+  scheduleVideoConference() {
     // TODO:
     // 1. Open a modal allowing the user to select a date and time, and an optional name for the
     // video conference meeting
     // 2. Once selected, submit button calls submitScheduleVideoConference
   }
-  submitScheduleVideoConference () {
+  submitScheduleVideoConference() {
     // TODO:
     // 1. When
     // 2. Send request to backend scheduleVideoConference
@@ -476,11 +767,10 @@ export default class SOARModuleAnalysis extends Vue {
 }
 </script>
 
-<style>
-
+<style  lang="scss">
 :root {
-    --std-width: 100px;
-    --large-width: 150px;
+  --std-width: 100px;
+  --large-width: 150px;
 }
 .table-column-header {
   font-size: 13px;
@@ -492,12 +782,14 @@ export default class SOARModuleAnalysis extends Vue {
   font-weight: bold;
 }
 
-.text-input, .date-input, .dropdown-input  {
-    width: var(--std-width);
+.text-input,
+.date-input,
+.dropdown-input {
+  width: var(--std-width);
 }
 
 .textarea-input {
-    width: var(--large-width);
+  width: var(--large-width);
 }
 
 .in-person-workshop-container {
@@ -519,4 +811,205 @@ export default class SOARModuleAnalysis extends Vue {
   text-align: left;
 }
 
+/* Modal styles */
+.add-conference-button {
+  background: #42b983;
+  padding: 10px 15px;
+  border: 1px solid transparent;
+  outline: none;
+  font-size: 22px;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 4px;
+  max-width: 250px;
+  cursor: pointer;
+  &:hover {
+    transition: all 0.5s ease-out;
+    transition-property: color, background, border;
+    color: #42b983;
+    background-color: #fff;
+    border: 1px solid #42b983;
+  }
+}
+
+.add-conference-modal {
+  box-shadow: 10px 10px 5px 0px rgba(201, 201, 201, 1);
+  background-color: rgba(243, 243, 243, 0.356);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 500px;
+  margin: 0 auto;
+  border: 1px solid rgb(219, 219, 219);
+  padding: 10px;
+  border-radius: 4px;
+
+  button {
+    margin: 0 auto;
+    margin-top: 10px;
+  }
+  .mx-datepicker {
+    margin: 0 auto;
+    .mx-input-wrapper {
+      margin-bottom: 10px;
+    }
+  }
+  input {
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+    color: #555;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    outline: none;
+    height: 34px;
+    margin: 0 auto;
+  }
+  .conference-name-input {
+    padding: 6px 30px;
+    padding-left: 10px;
+    font-size: 14px;
+  }
+}
+@mixin cross($size: 20px, $color: currentColor, $thickness: 1px) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  position: relative;
+  width: $size;
+  height: $size;
+
+  &:before,
+  &:after {
+    content: "";
+    position: absolute;
+    top: ($size - $thickness) / 2;
+    left: 0;
+    right: 0;
+    height: $thickness;
+    background: $color;
+    border-radius: $thickness;
+  }
+
+  &:before {
+    transform: rotate(45deg);
+  }
+
+  &:after {
+    transform: rotate(-45deg);
+  }
+
+  span {
+    display: block;
+  }
+}
+
+.close-conference-modal {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background: #42b983;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 150ms;
+
+  .icon-cross {
+    @include cross(22px, #fff, 3px);
+  }
+
+  &:hover,
+  &:focus {
+    transform: rotateZ(90deg);
+    background: #42b983;
+  }
+}
+
+.conferences {
+  margin-top: 30px;
+  margin-left: 30px;
+  margin-right: 30px;
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 0;
+  border-radius: 4px;
+}
+
+.conference-window {
+  margin-right: 10px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  min-height: 200px;
+  cursor: pointer;
+  box-shadow: 5px 5px 5px 0px rgba(201, 201, 201, 1);
+  position: relative;
+}
+
+.conference-name,
+.conference-date,
+.conference-time {
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  background-color: rgb(218, 218, 218);
+  border-bottom: 1px solid rgb(168, 168, 168);
+  padding: 20px;
+}
+
+.conference-date,
+.conference-time {
+  font-size: 16px;
+  padding: 15px;
+}
+
+.conference-time {
+  height: 100%;
+  border-bottom: none;
+}
+
+.conferences::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #f5f5f5;
+}
+
+.conferences::-webkit-scrollbar {
+  width: 12px;
+  height: 7px;
+  background-color: #f5f5f5;
+}
+
+.conferences::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #42b983;
+}
+
+.delete-conference {
+  right: 10px;
+  top: 10px;
+  background: #a7a7a7;
+  transform: scale(0.7);
+  .icon-cross {
+    @include cross(22px, #fff, 3px);
+  }
+
+  &:hover,
+  &:focus {
+    transform: rotateZ(90deg);
+    background: #fca5a5;
+  }
+}
 </style>
