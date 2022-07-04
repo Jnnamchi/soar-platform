@@ -212,13 +212,13 @@
         >
           In-person workshop scheduled for: (include zoom link to workshop)
         </div>
-        <div
+        <!-- <div
           v-else
           v-on:click="scheduleVideoConference()"
           class="general-select"
         >
           Schedule video conference
-        </div>
+        </div> -->
       </div>
       <div class="medium-space"></div>
       <div v-on:click="saveWorkshopState()">SAVE</div>
@@ -309,13 +309,13 @@
       </div>
     </div>
     <div v-if="!showModal">
-      <button class="add-conference-button" v-on:click="toggleModal">
-        Add New Conference
-      </button>
+      <div v-on:click="scheduleVideoConference()" class="general-select">
+        Schedule video conference
+      </div>
     </div>
     <div class="add-conference-modal" v-if="showModal">
       <date-picker
-        v-model="time1"
+        v-model="dateData"
         show-hour
         show-minute
         placeholder="Click to select date"
@@ -327,13 +327,13 @@
       <date-picker
         format="hh:mm"
         value-type="format"
-        v-model="time2"
+        v-model="timeData"
         type="time"
         placeholder="Click to select time"
       ></date-picker>
       <input
         class="conference-name-input duration-input"
-        v-model="duration"
+        v-model.number="duration"
         type="number"
         placeholder="Select duration"
         min="0"
@@ -344,7 +344,10 @@
         placeholder="Conference name"
         v-model="conferenceName"
       />
-      <button class="add-conference-button" v-on:click="getTime">
+      <button
+        class="add-conference-button"
+        v-on:click="submitScheduleVideoConference"
+      >
         Add New Conference
       </button>
       <button v-on:click="toggleModal" class="close-conference-modal">
@@ -354,14 +357,14 @@
     <div v-if="conferences" class="conferences">
       <div
         class="conference-window"
-        v-for="(conference, index) in conferences"
-        :key="conference.id"
+        v-for="conference in conferences"
+        :key="conference.meeting.id"
       >
-        <span class="conference-name">{{ conference.name }}</span>
-        <span class="conference-date">{{ conference.date }}</span>
-        <span class="conference-time">{{ conference.time }}</span>
+        <span class="conference-name">{{ conference.meeting.agenda }}</span>
+        <span class="conference-date">{{ conference.meeting.start_time }}</span>
+        <span class="conference-time">{{ conference.meeting.duration }}</span>
         <button
-          v-on:click="deleteConference(index)"
+          v-on:click="deleteZoomMeeting(conference.id)"
           class="delete-conference close-conference-modal"
         >
           <span class="icon-cross"></span>
@@ -386,30 +389,45 @@ import draggable from "vuedraggable";
 import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
 
-interface Conference {
-  id: number;
-  date: string | null;
-  time: string | null;
-  name: string;
-}
+// interface Conference {
+//   id: number;
+//   date: string | null;
+//   time: string | null;
+//   name: string;
+// }
 
 // interface MeetingsResponse {
-//   page_count: number;
-//   page_number: number;
-//   page_size: number;
-//   total_records: number;
-//   meetings: Meeting[];
+//   data: {
+//     results: Meeting[];
+//   };
 // }
 
-// interface Meeting {
-//   agenda: string;
-//   created_at: string;
-//   duration: number;
-//   id: number;
-//   join_url: string;
-//   start_time: string;
-//   topic: string;
-// }
+interface Meeting {
+  id: string;
+  company_id: string;
+  created_at: string;
+  created_by: string;
+  module_id: string;
+  meeting: {
+    agenda: string | null;
+    created_at: string;
+    duration: number;
+    id: number;
+    join_url: string;
+    start_time: string;
+    topic: string;
+  };
+}
+
+interface createMeeting {
+  created_by: string;
+  start_time: string;
+  topic?: string;
+  agenda?: string;
+  duration: number;
+  company_id: string;
+  module_id: string;
+}
 
 @Component({
   components: {
@@ -425,11 +443,11 @@ export default class SOARModuleAnalysis extends Vue {
 
   showModal: boolean = false;
   date: Date = new Date();
-  time1: null = null;
-  time2: null = null;
-  conferences: Conference[] = [];
+  dateData: null = null;
+  timeData: null = null;
+  conferences: Meeting[] = [];
   conferenceName: string = "";
-  duration: string = '';
+  duration: number | null = null;
 
   horizontalScroll(element: Element, eventType: WheelEvent) {
     let modifier: number = 1;
@@ -447,12 +465,12 @@ export default class SOARModuleAnalysis extends Vue {
   mounted() {
     // horizontal scroll on conferences window functionality
     const conference = document.querySelector(".conferences");
-
     if (conference) {
       conference.addEventListener("wheel", (event) => {
         this.horizontalScroll(conference, event as WheelEvent);
       });
     }
+    this.getZoomMeetings();
   }
   unmounted() {
     const conference = document.querySelector(".conferences");
@@ -463,6 +481,7 @@ export default class SOARModuleAnalysis extends Vue {
     }
   }
 
+  //disabled range of values for date picker
   disabledRange(date: Date) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -473,32 +492,6 @@ export default class SOARModuleAnalysis extends Vue {
     this.showModal = !this.showModal;
   }
 
-  getTime() {
-    let newConference: Conference = {
-      id: Math.round(Math.random() * 10000),
-      date: this.time1,
-      time: this.time2,
-      name: this.conferenceName,
-    };
-    if (
-      newConference.id &&
-      newConference.date &&
-      newConference.time &&
-      newConference.name
-    ) {
-      console.log(`${this.time1}T${this.time2}:00Z`);
-      this.conferences.push(newConference);
-      this.time1 = null;
-      this.time2 = null;
-      this.conferenceName = "";
-    } else {
-      alert("You must fill the empty fields");
-    }
-  }
-
-  deleteConference(index: any) {
-    this.conferences.splice(index, 1);
-  }
 
   selectedSOARModule = this.appData.modules[this.SOARModule];
   topAnswers: any[] = [];
@@ -751,12 +744,45 @@ export default class SOARModuleAnalysis extends Vue {
     this.selectedCompany.inPersonWorkshops = response.data.inPersonWorkshops;
   }
   scheduleVideoConference() {
+    this.toggleModal();
     // TODO:
     // 1. Open a modal allowing the user to select a date and time, and an optional name for the
     // video conference meeting
     // 2. Once selected, submit button calls submitScheduleVideoConference
   }
+
+  async getZoomMeetings() {
+    const url = getServerUrl();
+    const response = await axios.get(url + "/zoom/meeting");
+    this.conferences = response.data.results;
+  }
+
+  async createNewMeeting(data: createMeeting) {
+    const url = getServerUrl();
+    await axios.post(url + "/zoom/meeting", data);
+    this.getZoomMeetings();
+  }
+
+  async deleteZoomMeeting(meetingId: string) {
+    const url = getServerUrl();
+    await axios.delete(url + "/zoom/meeting/" + meetingId);
+    this.getZoomMeetings();
+  }
+
   submitScheduleVideoConference() {
+    let newConference: createMeeting = {
+      created_by: Object.keys(this.appData.users)[0],
+      company_id: this.selectedCompany.uuid,
+      start_time: `${this.dateData}T${this.timeData}:00Z`,
+      duration: this.duration ? this.duration : 0,
+      module_id: this.SOARModule,
+      agenda: this.conferenceName,
+    };
+    this.createNewMeeting(newConference);
+    this.dateData = null;
+    this.timeData = null;
+    this.conferenceName = "";
+    this.duration = null;
     // TODO:
     // 1. When
     // 2. Send request to backend scheduleVideoConference
