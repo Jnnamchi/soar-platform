@@ -332,6 +332,14 @@
         placeholder="Click to select time"
       ></date-picker>
       <input
+        class="conference-name-input duration-input"
+        v-model="duration"
+        type="number"
+        placeholder="Select duration"
+        min="0"
+        step="5"
+      />
+      <input
         class="conference-name-input"
         placeholder="Conference name"
         v-model="conferenceName"
@@ -421,6 +429,7 @@ export default class SOARModuleAnalysis extends Vue {
   time2: null = null;
   conferences: Conference[] = [];
   conferenceName: string = "";
+  duration: string = '';
 
   horizontalScroll(element: Element, eventType: WheelEvent) {
     let modifier: number = 1;
@@ -1011,5 +1020,15 @@ export default class SOARModuleAnalysis extends Vue {
     transform: rotateZ(90deg);
     background: #fca5a5;
   }
+}
+
+.duration-input {
+  padding-bottom: 1000px;
+}
+
+.duration-input::-webkit-inner-spin-button,
+.duration-input::-webkit-outer-spin-button {
+  padding: 15px;
+  margin-right: -30px;
 }
 </style>
