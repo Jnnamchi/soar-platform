@@ -325,7 +325,7 @@
         ></date-picker
       >
       <date-picker
-        format="hh:mm"
+        format="HH:mm"
         value-type="format"
         v-model="timeData"
         type="time"
@@ -355,21 +355,39 @@
       </button>
     </div>
     <div v-if="conferences" class="conferences">
-      <div
+      <a
+        target="_blank"
+        :href="conference.meeting.join_url"
         class="conference-window"
         v-for="conference in conferences"
         :key="conference.meeting.id"
       >
+        <span class="conference-date">
+          <i class="fa fa-calendar"></i>
+          {{ conference.meeting.start_time.substring(0, 10) }}</span
+        >
+        <span class="conference-date">{{
+          conference.meeting.start_time.substring(11, 16)
+        }} o'clock</span>
+        <span class="conference-time">
+          <i class="fa fa-clock"></i>
+          {{ conference.meeting.duration }} mins</span
+        >
         <span class="conference-name">{{ conference.meeting.agenda }}</span>
-        <span class="conference-date">{{ conference.meeting.start_time }}</span>
-        <span class="conference-time">{{ conference.meeting.duration }}</span>
         <button
-          v-on:click="deleteZoomMeeting(conference.id)"
+          v-if="selectedId.includes(conference.id)"
+          class="delete-conference close-conference-modal"
+        >
+          <div class="lds-dual-ring"></div>
+        </button>
+        <button
+          v-else
+          v-on:click.prevent="deleteZoomMeeting(conference.id)"
           class="delete-conference close-conference-modal"
         >
           <span class="icon-cross"></span>
         </button>
-      </div>
+      </a>
     </div>
   </div>
 </template>
@@ -448,6 +466,8 @@ export default class SOARModuleAnalysis extends Vue {
   conferences: Meeting[] = [];
   conferenceName: string = "";
   duration: number | null = null;
+  selectedId: string[] = [];
+  loading: boolean = false;
 
   horizontalScroll(element: Element, eventType: WheelEvent) {
     let modifier: number = 1;
@@ -491,7 +511,6 @@ export default class SOARModuleAnalysis extends Vue {
   toggleModal() {
     this.showModal = !this.showModal;
   }
-
 
   selectedSOARModule = this.appData.modules[this.SOARModule];
   topAnswers: any[] = [];
@@ -764,9 +783,11 @@ export default class SOARModuleAnalysis extends Vue {
   }
 
   async deleteZoomMeeting(meetingId: string) {
+    this.selectedId.push(meetingId);
     const url = getServerUrl();
     await axios.delete(url + "/zoom/meeting/" + meetingId);
-    this.getZoomMeetings();
+    await this.getZoomMeetings();
+    this.selectedId = this.selectedId.filter((id) => id !== meetingId);
   }
 
   submitScheduleVideoConference() {
@@ -980,6 +1001,8 @@ export default class SOARModuleAnalysis extends Vue {
 }
 
 .conference-window {
+  color: #000;
+  text-decoration: none;
   margin-right: 10px;
   width: 200px;
   display: flex;
@@ -989,14 +1012,18 @@ export default class SOARModuleAnalysis extends Vue {
   cursor: pointer;
   box-shadow: 5px 5px 5px 0px rgba(201, 201, 201, 1);
   position: relative;
+  &:hover {
+    box-shadow: 5px 5px 5px 0px rgb(152, 253, 165);
+    transition-property: box-shadow;
+    transition-duration: 0.5s;
+  }
 }
 
 .conference-name,
 .conference-date,
 .conference-time {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
-  text-transform: uppercase;
   padding-bottom: 10px;
   background-color: rgb(218, 218, 218);
   border-bottom: 1px solid rgb(168, 168, 168);
@@ -1048,13 +1075,38 @@ export default class SOARModuleAnalysis extends Vue {
   }
 }
 
-.duration-input {
-  padding-bottom: 1000px;
-}
-
 .duration-input::-webkit-inner-spin-button,
 .duration-input::-webkit-outer-spin-button {
   padding: 15px;
   margin-right: -30px;
+}
+
+.duration-input {
+  margin-bottom: 10px !important;
+}
+//loader
+.lds-dual-ring {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 16px;
+  height: 16px;
+
+  border-radius: 50%;
+  border: 6px solid rgb(255, 255, 255);
+  border-color: rgb(255, 0, 0) transparent rgb(255, 0, 0) transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
