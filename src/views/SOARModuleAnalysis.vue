@@ -828,24 +828,28 @@ export default class SOARModuleAnalysis extends Vue {
   }
 
   submitScheduleVideoConference() {
-    let newdate = `${this.dateData}T${this.convertTo24(this.timeData!)}`;
-    let startTime = new Date(newdate).toISOString();
-    console.log(startTime);
+    if (!this.dateData || !this.timeData) {
+      alert("You must select date and time");
+    } else {
+      let startTime = new Date(
+        `${this.dateData}T${this.convertTo24(this.timeData!)}`
+      ).toISOString();
+      let newConference: createMeeting = {
+        created_by: Object.keys(this.appData.users)[0],
+        company_id: this.selectedCompany.uuid,
+        start_time: startTime,
+        duration: this.duration ? this.duration : 0,
+        module_id: this.SOARModule,
+        agenda: this.conferenceName,
+      };
+      this.createNewMeeting(newConference);
 
-    let newConference: createMeeting = {
-      created_by: Object.keys(this.appData.users)[0],
-      company_id: this.selectedCompany.uuid,
-      start_time: startTime,
-      duration: this.duration ? this.duration : 0,
-      module_id: this.SOARModule,
-      agenda: this.conferenceName,
-    };
+      this.dateData = null;
+      this.timeData = null;
+      this.conferenceName = "";
+      this.duration = null;
+    }
 
-    this.createNewMeeting(newConference);
-    this.dateData = null;
-    this.timeData = null;
-    this.conferenceName = "";
-    this.duration = null;
     // TODO:
     // 1. When
     // 2. Send request to backend scheduleVideoConference
