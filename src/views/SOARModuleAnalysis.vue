@@ -325,7 +325,7 @@
         ></date-picker
       >
       <date-picker
-        format="HH:mm"
+        format="hh:mm A"
         value-type="format"
         v-model="timeData"
         type="time"
@@ -367,8 +367,12 @@
           {{ conference.meeting.start_time.substring(0, 10) }}</span
         >
         <span class="conference-date">{{
-          conference.meeting.start_time.substring(11, 16)
-        }} o'clock</span>
+          new Date(conference.meeting.start_time).toLocaleString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          })
+        }}</span>
         <span class="conference-time">
           <i class="fa fa-clock"></i>
           {{ conference.meeting.duration }} mins</span
@@ -393,7 +397,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { AppData } from "../data/App";
 import { Company } from "../data/Company";
 import { getServerUrl } from "../requests/requests";
@@ -406,19 +410,6 @@ import draggable from "vuedraggable";
 //@ts-ignore:next-line
 import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
-
-// interface Conference {
-//   id: number;
-//   date: string | null;
-//   time: string | null;
-//   name: string;
-// }
-
-// interface MeetingsResponse {
-//   data: {
-//     results: Meeting[];
-//   };
-// }
 
 interface Meeting {
   id: string;
@@ -469,6 +460,18 @@ export default class SOARModuleAnalysis extends Vue {
   selectedId: string[] = [];
   loading: boolean = false;
 
+  @Watch("duration")
+  watchDuration(newValue: any) {
+    if (newValue == "") {
+      this.duration = 0;
+    }
+    newValue > 1440
+      ? (this.duration = 1440)
+      : this.duration && newValue < 0
+      ? (this.duration = 0)
+      : this.duration;
+  }
+
   horizontalScroll(element: Element, eventType: WheelEvent) {
     let modifier: number = 1;
     if (eventType.deltaMode == eventType.DOM_DELTA_LINE) {
@@ -499,6 +502,23 @@ export default class SOARModuleAnalysis extends Vue {
         this.horizontalScroll(conference, event as WheelEvent);
       });
     }
+  }
+
+  convertTime(isoTime: string) {
+    var hours = parseInt(isoTime.substring(0, 2), 10),
+      minutes = isoTime.substring(3, 5),
+      ampm = "am";
+
+    if (hours == 12) {
+      ampm = "pm";
+    } else if (hours == 0) {
+      hours = 12;
+    } else if (hours > 12) {
+      hours -= 12;
+      ampm = "pm";
+    }
+
+    return hours + ":" + minutes + " " + ampm;
   }
 
   //disabled range of values for date picker
@@ -771,8 +791,11 @@ export default class SOARModuleAnalysis extends Vue {
   }
 
   async getZoomMeetings() {
+    const companyId = this.selectedCompany.uuid;
     const url = getServerUrl();
-    const response = await axios.get(url + "/zoom/meeting");
+    const response = await axios.get(
+      url + `/zoom/meeting?compny_id=${companyId}`
+    );
     this.conferences = response.data.results;
   }
 
@@ -790,15 +813,34 @@ export default class SOARModuleAnalysis extends Vue {
     this.selectedId = this.selectedId.filter((id) => id !== meetingId);
   }
 
+  //convert time from am pm to 24 hours
+  convertTo24(time: string) {
+    let hours = Number(time.match(/^(\d+)/)![1]);
+    let minutes = Number(time.match(/:(\d+)/)![1]);
+    let AMPM = time.match(/\s(.*)$/)![1];
+    if (AMPM === "PM" && hours < 12) hours = hours + 12;
+    if (AMPM === "AM" && hours === 12) hours = hours - 12;
+    let sHours = hours.toString();
+    let sMinutes = minutes.toString();
+    if (hours < 10) sHours = "0" + sHours;
+    if (minutes < 10) sMinutes = "0" + sMinutes;
+    return sHours + ":" + sMinutes;
+  }
+
   submitScheduleVideoConference() {
+    let newdate = `${this.dateData}T${this.convertTo24(this.timeData!)}`;
+    let startTime = new Date(newdate).toISOString();
+    console.log(startTime);
+
     let newConference: createMeeting = {
       created_by: Object.keys(this.appData.users)[0],
       company_id: this.selectedCompany.uuid,
-      start_time: `${this.dateData}T${this.timeData}:00Z`,
+      start_time: startTime,
       duration: this.duration ? this.duration : 0,
       module_id: this.SOARModule,
       agenda: this.conferenceName,
     };
+
     this.createNewMeeting(newConference);
     this.dateData = null;
     this.timeData = null;
