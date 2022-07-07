@@ -355,43 +355,88 @@
       </button>
     </div>
     <div v-if="conferences" class="conferences">
-      <a
-        target="_blank"
-        :href="conference.meeting.join_url"
-        class="conference-window"
-        v-for="conference in conferences"
-        :key="conference.meeting.id"
-      >
-        <span class="conference-date">
-          <i class="fa fa-calendar"></i>
-          {{ conference.meeting.start_time.substring(0, 10) }}</span
+      <div v-for="conference in conferences" :key="conference.meeting.id">
+        <div
+          v-if="editList.includes(conference.id)"
+          class="conference-window edit-window"
         >
-        <span class="conference-date">{{
-          new Date(conference.meeting.start_time).toLocaleString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-          })
-        }}</span>
-        <span class="conference-time">
-          <i class="fa fa-clock"></i>
-          {{ conference.meeting.duration }} mins</span
-        >
-        <span class="conference-name">{{ conference.meeting.agenda }}</span>
-        <button
-          v-if="selectedId.includes(conference.id)"
-          class="delete-conference close-conference-modal"
-        >
-          <div class="lds-dual-ring"></div>
-        </button>
-        <button
-          v-else
-          v-on:click.prevent="deleteZoomMeeting(conference.id)"
-          class="delete-conference close-conference-modal"
-        >
-          <span class="icon-cross"></span>
-        </button>
-      </a>
+          <date-picker
+            show-hour
+            show-minute
+            placeholder="Click to select date"
+            value-type="format"
+            v-model="editDate"
+          >
+            ></date-picker
+          >
+          <date-picker
+            format="hh:mm A"
+            value-type="format"
+            type="time"
+            placeholder="Click to select time"
+            v-model="editTime"
+          ></date-picker>
+          <input
+            class="conference-name-input duration-input"
+            v-model="editDuration"
+            type="number"
+            placeholder="Select duration"
+            min="0"
+            step="5"
+          />
+          <input
+            class="conference-name-input"
+            placeholder="Conference name"
+            v-model="editName"
+          />
+          <button
+            v-on:click.prevent="doneEditing(conference.id)"
+            class="edit-button"
+          >
+            Confirm changes
+          </button>
+        </div>
+        <div v-else class="conference-window">
+          <a
+            :href="conference.meeting.join_url"
+            class="conference-window"
+            target="_blank"
+          >
+            <span class="conference-date">
+              <i class="fa fa-calendar"></i>
+              {{ conference.meeting.start_time.substring(0, 10) }}</span
+            >
+            <span class="conference-date">{{
+              getAMPMFormat(conference.meeting.start_time)
+            }}</span>
+            <span class="conference-time">
+              <i class="fa fa-clock"></i>
+              {{ conference.meeting.duration }} mins</span
+            >
+            <span class="conference-name">{{ conference.meeting.agenda }}</span>
+            <button
+              v-if="selectedId.includes(conference.id)"
+              class="delete-conference close-conference-modal"
+            >
+              <div class="lds-dual-ring"></div>
+            </button>
+            <button
+              v-else
+              v-on:click.prevent="deleteZoomMeeting(conference.id)"
+              class="delete-conference close-conference-modal"
+            >
+              <span class="icon-cross"></span>
+            </button>
+            <button
+              v-on:click.prevent="editModeHandler(conference.id, conference)"
+              :disabled="editMode"
+              class="edit-button"
+            >
+              Edit
+            </button>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -458,7 +503,13 @@ export default class SOARModuleAnalysis extends Vue {
   conferenceName: string = "";
   duration: number | null = null;
   selectedId: string[] = [];
-  loading: boolean = false;
+  editList: string[] = [];
+  computedTime: string = "";
+  editName: string = "";
+  editTime: string = "";
+  editDate: string = "";
+  editDuration!: number;
+  editMode: boolean = false;
 
   @Watch("duration")
   watchDuration(newValue: any) {
@@ -470,6 +521,17 @@ export default class SOARModuleAnalysis extends Vue {
       : this.duration && newValue < 0
       ? (this.duration = 0)
       : this.duration;
+  }
+  @Watch("editDuration")
+  watchEditDuration(newValue: any) {
+    if (newValue == "") {
+      this.editDuration = 0;
+    }
+    newValue > 1440
+      ? (this.editDuration = 1440)
+      : this.editDuration && newValue < 0
+      ? (this.editDuration = 0)
+      : this.editDuration;
   }
 
   horizontalScroll(element: Element, eventType: WheelEvent) {
@@ -501,6 +563,19 @@ export default class SOARModuleAnalysis extends Vue {
       conference.removeEventListener("wheel", (event) => {
         this.horizontalScroll(conference, event as WheelEvent);
       });
+    }
+  }
+
+  getAMPMFormat(time: string) {
+    let ampmTime = new Date(time).toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+    if (ampmTime.length === 7) {
+      return (ampmTime = "0" + ampmTime);
+    } else {
+      return ampmTime;
     }
   }
 
@@ -813,6 +888,33 @@ export default class SOARModuleAnalysis extends Vue {
     this.selectedId = this.selectedId.filter((id) => id !== meetingId);
   }
 
+  editModeHandler(meetingId: string, conference: Meeting) {
+    this.editMode = true;
+    this.editList.push(meetingId);
+
+    this.editTime = this.getAMPMFormat(conference.meeting.start_time);
+    this.editDate = conference.meeting.start_time;
+    this.editDuration = conference.meeting.duration;
+    this.editName = conference.meeting.agenda!;
+  }
+
+  async doneEditing(meetingId: string) {
+    let startTime = new Date(
+      `${this.editDate.substring(0, 10)}T${this.convertTo24(this.editTime)}`
+    ).toISOString();
+    const url = getServerUrl();
+
+    let editMeeting = {
+      duration: this.editDuration,
+      agenda: this.editName,
+      start_time: startTime,
+    };
+    await axios.patch(url + "/zoom/meeting/" + meetingId, editMeeting);
+    await this.getZoomMeetings();
+    this.editList = this.editList.filter((id) => id !== meetingId);
+    this.editMode = false;
+  }
+
   //convert time from am pm to 24 hours
   convertTo24(time: string) {
     let hours = Number(time.match(/^(\d+)/)![1]);
@@ -1046,7 +1148,13 @@ export default class SOARModuleAnalysis extends Vue {
   border-radius: 4px;
 }
 
+.conference-link {
+  text-decoration: none;
+  height: 100%;
+}
+
 .conference-window {
+  height: 100%;
   color: #000;
   text-decoration: none;
   margin-right: 10px;
@@ -1154,5 +1262,48 @@ export default class SOARModuleAnalysis extends Vue {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.edit-window {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding-right: 5px;
+  input {
+    height: 50px;
+    padding: 0 25px 0 10px;
+  }
+  .mx-datepicker {
+    width: 100%;
+  }
+  .conference-name-input {
+    margin-bottom: 0 !important;
+  }
+}
+
+.edit-button {
+  background-color: #42b983;
+  border: 1px solid transparent;
+  outline: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  padding: 5px 0;
+  cursor: pointer;
+  &:hover {
+    border: 1px solid #42b983;
+    background-color: #fff;
+    color: #42b983;
+    transition: border 0.3s, color 0.3s;
+  }
+}
+
+.edit-button:disabled,
+.edit-button[disabled] {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+  cursor: no-drop;
 }
 </style>
