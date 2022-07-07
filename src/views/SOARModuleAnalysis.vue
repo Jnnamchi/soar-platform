@@ -212,6 +212,7 @@ export default class SOARModuleAnalysis extends Vue {
   @Prop() private appData!: AppData
   @Prop() private selectedCompany!: Company
   @Prop() private SOARModule!: string
+  
 
   selectedSOARModule = this.appData.modules[this.SOARModule]
   topAnswers: any[] = []
