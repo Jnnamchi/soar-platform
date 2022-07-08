@@ -76,28 +76,38 @@ export default {
       cancel_url: "http://localhost:8080/payment?error",
       created_by: getCurrentUserId(),
       company_id: "",
-      redirected: false,
+      redirected: "",
       buttonDisabled: false,
     };
   },
   methods: {
     async paymentSubmittedCallback() {
-      const url = getServerUrl();
-      const body = {
-        amount: this.amount,
-        success_url: this.success_url,
-        cancel_url: this.cancel_url,
-        created_by: this.created_by,
-        company_id: this.company_id,
-      };
-      this.buttonDisabled = true;
-      const response = await axios.post(url + "/payment/checkout", body);
-      this.buttonDisabled = false;
-      window.open(response.data.checkout_url, "_self");
-      this.redirected = true;
+      if (this.amount < 3) {
+        alert("You can't pay less than 3$ and more than 9999$");
+      } else {
+        const url = getServerUrl();
+        const body = {
+          amount: this.amount,
+          success_url: this.success_url,
+          cancel_url: this.cancel_url,
+          created_by: this.created_by,
+          company_id: this.company_id,
+        };
+        this.buttonDisabled = true;
+        const response = await axios.post(url + "/payment/checkout", body);
+        this.buttonDisabled = false;
+        window.open(response.data.checkout_url, "_self");
+      }
     },
     goToPayment() {
       router.push("/payment");
+    },
+  },
+  watch: {
+    amount(newAmount) {
+      if (newAmount > 9999) {
+        this.amount = 9999;
+      }
     },
   },
 };
@@ -112,7 +122,6 @@ export default {
   position: relative;
 }
 .payment-window {
-
   display: flex;
   justify-content: center;
   align-items: center;
