@@ -902,22 +902,26 @@ export default class SOARModuleAnalysis extends Vue {
   }
 
   async doneEditing(meetingId: string) {
-    this.confirmDisabled = true;
-    let startTime = new Date(
-      `${this.editDate.substring(0, 10)}T${this.convertTo24(this.editTime)}`
-    ).toISOString();
-    const url = getServerUrl();
+    if (!this.editTime || !this.editDate) {
+      alert("You must fill date and time fields");
+    } else {
+      this.confirmDisabled = true;
+      let startTime = new Date(
+        `${this.editDate.substring(0, 10)}T${this.convertTo24(this.editTime)}`
+      ).toISOString();
+      const url = getServerUrl();
 
-    let editMeeting = {
-      duration: this.editDuration,
-      agenda: this.editName,
-      start_time: startTime,
-    };
-    await axios.patch(url + "/zoom/meeting/" + meetingId, editMeeting);
-    await this.getZoomMeetings();
-    this.editList = this.editList.filter((id) => id !== meetingId);
-    this.editMode = false;
-    this.confirmDisabled = false;
+      let editMeeting = {
+        duration: this.editDuration,
+        agenda: this.editName,
+        start_time: startTime,
+      };
+      await axios.patch(url + "/zoom/meeting/" + meetingId, editMeeting);
+      await this.getZoomMeetings();
+      this.editList = this.editList.filter((id) => id !== meetingId);
+      this.editMode = false;
+      this.confirmDisabled = false;
+    }
   }
 
   //convert time from am pm to 24 hours
