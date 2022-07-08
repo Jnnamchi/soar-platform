@@ -689,7 +689,7 @@ export default class SOARModuleAnalysis extends Vue {
     const url = getServerUrl();
     this.selectedCompany.addTopAnswers(this.topAnswers.slice(0, 15));
     const data = {
-      //     company: this.selectedCompany,
+      company: this.selectedCompany,
       moduleId: this.selectedSOARModule.uuid,
     };
     const response = await axios.post(url + "/createNextWorkshop", data);
