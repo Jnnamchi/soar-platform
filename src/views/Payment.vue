@@ -72,8 +72,8 @@ export default {
   data() {
     return {
       amount: 3,
-      success_url: "http://localhost:8080/payment?success",
-      cancel_url: "http://localhost:8080/payment?error",
+      success_url: "https://soar.omega-r.club/payment?success",
+      cancel_url: "https://soar.omega-r.club/payment?error",
       created_by: getCurrentUserId(),
       company_id: "",
       redirected: "",
@@ -114,7 +114,7 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 .payment-page {
   display: flex;
   justify-content: center;

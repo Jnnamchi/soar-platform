@@ -980,7 +980,7 @@ export default class SOARModuleAnalysis extends Vue {
 }
 </script>
 
-<style  lang="scss">
+<style  lang="scss" scoped>
 :root {
   --std-width: 100px;
   --large-width: 150px;
