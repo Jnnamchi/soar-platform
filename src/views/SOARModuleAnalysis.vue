@@ -366,6 +366,7 @@
             placeholder="Click to select date"
             value-type="format"
             v-model="editDate"
+            :disabled-date="disabledRange"
           >
             ></date-picker
           >
@@ -392,6 +393,7 @@
           <button
             v-on:click.prevent="doneEditing(conference.id)"
             class="edit-button"
+            :disabled="confirmDisabled"
           >
             Confirm changes
           </button>
@@ -508,8 +510,9 @@ export default class SOARModuleAnalysis extends Vue {
   editName: string = "";
   editTime: string = "";
   editDate: string = "";
-  editDuration!: number;
+  editDuration: number | null = null;
   editMode: boolean = false;
+  confirmDisabled: boolean = false;
 
   @Watch("duration")
   watchDuration(newValue: any) {
@@ -899,6 +902,7 @@ export default class SOARModuleAnalysis extends Vue {
   }
 
   async doneEditing(meetingId: string) {
+    this.confirmDisabled = true;
     let startTime = new Date(
       `${this.editDate.substring(0, 10)}T${this.convertTo24(this.editTime)}`
     ).toISOString();
@@ -913,6 +917,7 @@ export default class SOARModuleAnalysis extends Vue {
     await this.getZoomMeetings();
     this.editList = this.editList.filter((id) => id !== meetingId);
     this.editMode = false;
+    this.confirmDisabled = false;
   }
 
   //convert time from am pm to 24 hours

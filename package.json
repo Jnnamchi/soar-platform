@@ -11,6 +11,7 @@
     "deploy-aws": "aws --region us-east-1 --profile jnnamchi s3 sync ./dist s3://soar-platform --delete"
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
     "axios": "^0.24.0",
     "chart.js": "^2.9.4",
     "class-transformer": "^0.5.1",
@@ -28,10 +29,9 @@
     "vuex": "^3.4.0"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.19",
+    "@types/jest": "^24.9.1",
+    "@types/mocha": "^9.1.1",
     "@types/uuid": "^8.3.3",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
@@ -40,7 +40,6 @@
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-prettier": "^6.0.0",
-    "@vue/eslint-config-typescript": "^7.0.0",
     "@vue/test-utils": "^1.0.3",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
