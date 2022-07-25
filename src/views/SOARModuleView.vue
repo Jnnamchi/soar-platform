@@ -27,7 +27,9 @@ export default class CompanyDashboard extends Vue {
   @Prop() appData
   @Prop() selectedCompany
   @Prop() SOARModule
-
+  mounted() {
+    console.log(this.SOARModule);
+  }
   async addModuleToCompany (moduleUuid, company) {
     const url = getServerUrl()
     const requestBody = {
