@@ -1,5 +1,6 @@
 :root {
-    --col: calc(calc(100% - 150px) / 7)
+    --col: calc(calc(100% - 150px) / 7);
+    --standard-shadow: 0px 4px 13px -4px grey;
 }
 
 .survey-progress-bar {
@@ -32,7 +33,7 @@
 .matrix-column-header, .matrix-row {
     width: 100%;
     display: grid;
-    grid-template-columns: 150px var(--col) var(--col) var(--col) var(--col) var(--col) var(--col) var(--col);
+    grid-template-columns: 150px var(--col) var(--col) var(--col) var(--col) var(--col) var(--col) var(--col) var(--col);
 }
 
 .matrix-column-header-empty {
@@ -117,3 +118,16 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+.reranking-grid {
+    display: grid;
+    grid-template-columns: 30% 35% 30%;
+    gap: 10px;
+}
+
+.standard-panel {
+    padding: 25px;
+    background-color: #f9f6f4 !important;
+    box-shadow: var(--standard-shadow);
+    border-radius: 5px;
+  }
