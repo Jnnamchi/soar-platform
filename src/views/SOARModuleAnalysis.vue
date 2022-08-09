@@ -182,128 +182,136 @@
     </div>
     <div v-else>
       <div class="medium-space"></div>
-      <div>
-        <div>Workshops:</div>
-        <div>
-          <div
-            v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[
-              SOARModule
-            ]"
-            v-bind:key="inPersonWorkshop.name"
-          >
-            <div
-              v-if="inPersonWorkshop.name == selectedWorkshop"
-              style="font-weight: bold"
-            >
-              {{ inPersonWorkshop.name }}
+      <div style="display: grid; grid-template-columns: 250px 250px; margin: 0 auto; width: fit-content;">
+        <div class="general-select" v-on:click="selectedInPersonWorkshopView = 'reranking'" style="margin: 0 auto;">
+          Re-ranking
+        </div>
+        <div class="general-select" v-on:click="selectedInPersonWorkshopView = 'actionPlans'" style="margin: 0 auto;">
+          Action Plans
+        </div>
+      </div>
+      <div class="medium-space"></div>
+      <div v-if="selectedInPersonWorkshopView === 'reranking'">
+        <div style="width: 70%; margin: 0 auto;">Each top initiative identified is either a great OPPORTUNITY or a NECESSITY to your business. Go through them below, discuss, and decide which group they should belong to.</div>
+        <div class="medium-space"></div>
+        <div>{{countAssignedInitiatives(selectedCompany.inPersonWorkshops[SOARModule].reRanking)}} of {{getTotalInitiatives(selectedCompany.inPersonWorkshops[SOARModule].reRanking)}} initiatives have been assigned</div>
+        <div class="medium-space"></div>
+        <div v-on:click="saveWorkshopState()">
+          SAVE
+        </div>
+        <div class="reranking-grid">
+          <div>
+            <div>Opportunities</div>
+            <div class="medium-space"></div>
+            <div>
+              <div v-for="initiative of rankAnswersForReranking(selectedCompany.inPersonWorkshops[SOARModule].reRanking.opportunities)"  v-bind:key="initiative.id">
+                <div v-if="initiative.oppOrNec == 'Opportunity'">
+                  <div class="standard-panel">
+                    <div>{{initiative.questionName}}</div>
+                    <div class="small-space"></div>
+                    <div class="reassign-initative text-small" v-on:click="unassignInitiative(initiative)"><span class="reassign-initative-text">Reassign</span></div>
+                  </div>
+                  <div class="medium-space"></div>
+                </div>
+              </div>
             </div>
-            <div v-else v-on:click="selectWorkshop(inPersonWorkshop.name)">
-              {{ inPersonWorkshop.name }}
+          </div>
+          <div class="reranking-main-column">
+            <div v-for="initiative of rankAnswersForReranking(selectedCompany.inPersonWorkshops[SOARModule].reRanking.unassigned)" v-bind:key="initiative.id">
+              <div class="standard-panel">
+                <RankInitiativeViewer :initiativeData="initiative" :initialSurveyScores="getInitialSurveyScores(initiative)"/>
+                <div>
+                  <div style="font-size: 12px;">
+                    <select :value="initiative.oppOrNec" @change="onAssignInitiative(initiative, $event)">
+                      <option v-for="option in ['Opportunity', 'Necessity', 'Unselected']" v-bind:key="option">{{option}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="medium-space"></div>
+            </div>
+          </div>
+          <div>
+            <div>Necessities</div>
+            <div class="medium-space"></div>
+            <div>
+              <div v-for="initiative of rankAnswersForReranking(selectedCompany.inPersonWorkshops[SOARModule].reRanking.necessities)"  v-bind:key="initiative.id">
+                <div v-if="initiative.oppOrNec == 'Necessity'">
+                  <div class="standard-panel">
+                    <div>{{initiative.answerDetails.score}}</div>
+                    <div>{{initiative.questionName}}</div>
+                    <div class="small-space"></div>
+                    <div class="reassign-initative text-small" v-on:click="unassignInitiative(initiative)"><span class="reassign-initative-text">Reassign</span></div>
+                  </div>
+                  <div class="medium-space"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="selectedInPersonWorkshopView === 'actionPlans'">
+        <div>
+          <div>
+            <div v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[SOARModule].actionPlan" v-bind:key="inPersonWorkshop.name">
+              <div v-if="inPersonWorkshop.name == selectedWorkshop" style="font-weight: bold">{{inPersonWorkshop.name}}</div>
+              <div v-else v-on:click="selectWorkshop(inPersonWorkshop.name)">{{inPersonWorkshop.name}}</div>
             </div>
           </div>
         </div>
         <div class="medium-space"></div>
-        <div
-          v-if="
-            'videoConferenceDate' in
-            selectedCompany.inPersonWorkshops[SOARModule]
-          "
-          class="notice-message"
-        >
-          In-person workshop scheduled for: (include zoom link to workshop)
+        <div v-on:click="saveWorkshopState()">
+          SAVE
         </div>
-        <!-- <div
-          v-else
-          v-on:click="scheduleVideoConference()"
-          class="general-select"
-        >
-          Schedule video conference
-        </div> -->
-      </div>
-      <div class="medium-space"></div>
-      <div v-on:click="saveWorkshopState()">SAVE</div>
-      <div class="medium-space"></div>
-      <div
-        v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[
-          SOARModule
-        ]"
-        v-bind:key="inPersonWorkshop.name"
-      >
-        <div
-          v-if="inPersonWorkshop.name == selectedWorkshop"
-          class="in-person-workshop-container"
-        >
-          <div :style="getRequiredColumns(inPersonWorkshop.columns)">
-            <div></div>
-            <div></div>
-            <div
-              v-for="(column, columnNum) in inPersonWorkshop.columns"
-              v-bind:key="columnNum"
-            >
-              <div class="table-column-header">{{ column.title }}</div>
-              <div style="font-size: 11px">{{ column.subtitle }}</div>
+        <div class="medium-space"></div>
+        <div v-for="[, inPersonWorkshop] in Object.entries(selectedCompany.inPersonWorkshops[SOARModule].actionPlan)" v-bind:key="inPersonWorkshop.name" >
+          <div v-if="inPersonWorkshop.name == selectedWorkshop" class="in-person-workshop-container" :set="workshopRows = getSelectedWorkshopRows(selectedWorkshop)">
+            <div :style="getRequiredColumns(inPersonWorkshop.columns)">
+              <div></div>
+              <div></div>
+              <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum">
+                <div class="table-column-header">{{column.title}}</div>
+                <div style="font-size: 11px;">{{column.subtitle}}</div>
+              </div>
             </div>
-          </div>
-          <div class="medium-space"></div>
-          <div>
-            <draggable
-              tag="ul"
-              :list="inPersonWorkshop.rows"
-              class="list-group"
-              handle=".dragPoint"
-            >
-              <div v-for="row in inPersonWorkshop.rows" :key="row.questionName">
-                <div class="small-space"></div>
-                <div :style="getRequiredColumns(inPersonWorkshop.columns)">
-                  <div>
-                    <i class="drag-icon fa-solid fa-bars dragPoint"></i>
-                  </div>
-                  <div class="question-name-in-grid">
-                    {{ row.questionName }}
-                  </div>
-                  <div
-                    v-for="(column, columnNum) in inPersonWorkshop.columns"
-                    v-bind:key="columnNum"
-                    class="table-column-header"
-                  >
-                    <div v-if="column.type == 'text'">
-                      <input
-                        class="text-input"
-                        v-model="row.answers[columnNum]"
-                      />
+            <div class="medium-space"></div>
+            <div>
+              <draggable tag="ul" :list="workshopRows" class="list-group" handle=".dragPoint">
+                <div
+                  v-for="(row) in workshopRows"
+                  :key="row.questionName"
+                >
+                  <div class="small-space"></div>
+                  <div :style="getRequiredColumns(inPersonWorkshop.columns)">
+                    <div>
+                      <i class="drag-icon fa-solid fa-bars dragPoint"></i>
                     </div>
-                    <div v-if="column.type == 'textarea'" style="width: ">
-                      <textarea
-                        rows="4"
-                        cols="25"
-                        class="textarea-input"
-                        v-model="row.answers[columnNum]"
-                      >
-                      </textarea>
+                    <div class="question-name-in-grid">
+                      {{row.questionName}}
                     </div>
-                    <div v-if="column.type == 'date'">
-                      <input
-                        type="date"
-                        class="date-input"
-                        v-model="row.answers[columnNum]"
-                      />
-                    </div>
-                    <div v-if="column.type == 'dropdown'">
-                      <div style="font-size: 12px">
-                        <select v-model="row.answers[columnNum]">
-                          <option
-                            v-for="option in column.options"
-                            v-bind:key="option"
-                          >
-                            {{ option }}
-                          </option>
-                        </select>
+                    <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum" class="table-column-header">
+                      <div v-if="column.type == 'text'">
+                        <input class="text-input" v-model="row.answers[columnNum]">
+                      </div>
+                      <div v-if="column.type == 'textarea'" style="width:">
+                        <textarea rows="4" cols="25" class="textarea-input" v-model="row.answers[columnNum]">
+                        </textarea>
+                      </div>
+                      <div v-if="column.type == 'date'">
+                        <input type="date" class="date-input" v-model="row.answers[columnNum]">
+                      </div>
+                      <div v-if="column.type == 'dropdown'">
+                        <div style="font-size: 12px;">
+                          <select v-model="row.answers[columnNum]">
+                            <option v-for="option in column.options" v-bind:key="option">{{option}}</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </draggable>
+              </draggable>
+            </div>
           </div>
         </div>
       </div>
@@ -458,6 +466,8 @@ import draggable from "vuedraggable";
 import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
 
+import RankInitiativeViewer from "../components/RankInitiativeViewer.vue"
+
 interface Meeting {
   id: string;
   company_id: string;
@@ -489,6 +499,7 @@ interface createMeeting {
   components: {
     draggable,
     DatePicker,
+    RankInitiativeViewer,
     // RadarChart,
   },
 })
@@ -497,6 +508,7 @@ export default class SOARModuleAnalysis extends Vue {
   @Prop() private selectedCompany!: Company;
   @Prop() private SOARModule!: string;
 
+  // vars for zoom integration
   showModal: boolean = false;
   date: Date = new Date();
   dateData: null = null;
@@ -513,6 +525,19 @@ export default class SOARModuleAnalysis extends Vue {
   editDuration: number | null = null;
   editMode: boolean = false;
   confirmDisabled: boolean = false;
+
+  // Key page vars
+  selectedSOARModule = this.appData.modules[this.SOARModule]
+  topAnswers: any[] = []
+  selectedWorkshopStage = parseInt(this.getLastVirtualWorkshopNumber())
+  hasInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(
+    this.SOARModule
+  )
+  isViewingInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(
+    this.SOARModule
+  )
+  selectedWorkshop: string = this.getSelectedWorkshop()
+  selectedInPersonWorkshopView: string = 'reranking'
 
   @Watch("duration")
   watchDuration(newValue: any) {
@@ -610,17 +635,6 @@ export default class SOARModuleAnalysis extends Vue {
     this.showModal = !this.showModal;
   }
 
-  selectedSOARModule = this.appData.modules[this.SOARModule];
-  topAnswers: any[] = [];
-  selectedWorkshopStage = parseInt(this.getLastVirtualWorkshopNumber());
-  hasInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(
-    this.SOARModule
-  );
-  isViewingInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(
-    this.SOARModule
-  );
-  selectedWorkshop: string = this.getSelectedWorkshop();
-
   compare(a: any, b: any) {
     if (a.score < b.score) {
       return 1;
@@ -630,11 +644,13 @@ export default class SOARModuleAnalysis extends Vue {
     }
     return 0;
   }
-  compareOpportunities(a: any, b: any) {
-    if (a.opportunityScore < b.opportunityScore) {
+  compareOpportunitiesNecessities (a: any, b: any) {
+    const aScore = a.opportunityScore + a.necessityScore
+    const bScore = b.opportunityScore + b.necessityScore
+    if (aScore < bScore) {
       return 1;
     }
-    if (a.opportunityScore > b.opportunityScore) {
+    if (aScore > bScore) {
       return -1;
     }
     return 0;
@@ -648,105 +664,113 @@ export default class SOARModuleAnalysis extends Vue {
     }
     return 0;
   }
-  rankAnswers(answerAnalysis: any) {
-    const answers = [];
+  rankAnswers (answerAnalysis: any) {
+    const answers = []
     for (const answerId in answerAnalysis[this.selectedSOARModule.uuid]) {
-      if (answerAnalysis[this.selectedSOARModule.uuid][answerId].score > 0) {
-        answers.push(
-          Object.assign(
-            answerAnalysis[this.selectedSOARModule.uuid][answerId],
-            { id: answerId }
-          )
-        );
-      }
+      answers.push(Object.assign(answerAnalysis[this.selectedSOARModule.uuid][answerId], {id: answerId}))
     }
-    answers.sort(this.compareOpportunities);
-    this.selectedSOARModule.addQuestionNamesById(answers);
-    this.topAnswers = answers;
-    return answers;
+    answers.sort(this.compareOpportunitiesNecessities)
+    this.selectedSOARModule.addQuestionNamesById(answers)
+    this.topAnswers = answers
+    return answers
   }
-  rankWorkshopAnswers(answerAnalysis: any) {
-    const answers = [];
+  rankWorkshopAnswers (answerAnalysis: any) {
+    const answers = []
     for (const answerId in answerAnalysis) {
       if (answerAnalysis[answerId].score > 0) {
-        answers.push(Object.assign(answerAnalysis[answerId], { id: answerId }));
+        answers.push(Object.assign(answerAnalysis[answerId], {id: answerId}))
       }
     }
-    answers.sort(this.compare);
-    this.selectedSOARModule.addQuestionNamesById(answers);
-    this.topAnswers = answers;
-    return answers;
+    answers.sort(this.compare)
+    this.selectedSOARModule.addQuestionNamesById(answers)
+    this.topAnswers = answers
+    return answers
   }
-  startVirtualWorkshops() {
+  compareReranking (a: any, b: any) {
+    if (a.answerDetails.score < b.answerDetails.score) {
+      return 1;
+    }
+    if (a.answerDetails.score > b.answerDetails.score) {
+      return -1;
+    }
+    return 0;
+  }
+  rankAnswersForReranking (rerankingAnswers: any) {
+    const answers = []
+    for (const answer of rerankingAnswers) {
+      answers.push(answer)
+    }
+    answers.sort(this.compareReranking)
+    return answers
+  }
+  startVirtualWorkshops () {
     // Add question names by id
-    this.moveToNextRound();
+    this.moveToNextRound()
   }
-  moveToNextRound() {
-    this.selectedSOARModule.addQuestionNamesById(this.topAnswers);
-    this.runMoveToNextRound();
+  moveToNextRound () {
+    this.selectedSOARModule.addQuestionNamesById(this.topAnswers)
+    this.runMoveToNextRound()
   }
-  async runMoveToNextRound() {
-    const url = getServerUrl();
-    this.selectedCompany.addTopAnswers(this.topAnswers.slice(0, 15));
+  async runMoveToNextRound () {
+    const url = getServerUrl()
+    this.selectedCompany.addTopAnswers(this.topAnswers.slice(0, 15))
     const data = {
-      company: this.selectedCompany,
-      moduleId: this.selectedSOARModule.uuid,
-    };
-    const response = await axios.post(url + "/createNextWorkshop", data);
-    this.selectedCompany.virtualWorkshops = 12;
-    this.selectedCompany.virtualWorkshops = response.data.virtualWorkshops;
-    this.nextStage();
+        company: this.selectedCompany,
+        moduleId: this.selectedSOARModule.uuid
+    }
+    const response = await axios.post(url + "/createNextWorkshop", data)
+    this.selectedCompany.virtualWorkshops = response.data.virtualWorkshops
+    this.nextStage()
   }
   getVirtualWorkshop() {
     return this.selectedCompany
       ? this.selectedCompany.virtualWorkshops[this.SOARModule]
       : null;
   }
-  getLastVirtualWorkshopNumber() {
-    let lastVirtualWorkshopNumber = "0";
+  getLastVirtualWorkshopNumber () {
+    let lastVirtualWorkshopNumber = "0"
     for (const key in this.getVirtualWorkshop()) {
       if (key > lastVirtualWorkshopNumber) {
-        lastVirtualWorkshopNumber = key;
+        lastVirtualWorkshopNumber = key
       }
     }
-    return lastVirtualWorkshopNumber;
+    return lastVirtualWorkshopNumber
   }
-  moveToNextVirtualWorkshop() {
-    this.selectedSOARModule.addQuestionNamesById(this.topAnswers);
-    // console.log(this.topAnswers)
-    this.runMoveToNextRound();
+  moveToNextVirtualWorkshop () {
+    this.selectedSOARModule.addQuestionNamesById(this.topAnswers)
+    this.runMoveToNextRound()
   }
-  async runMoveToNextVirtualWorkshop() {
-    const url = getServerUrl();
-    this.selectedCompany.addTopAnswers(this.topAnswers.slice(0, 15));
+  async runMoveToNextVirtualWorkshop () {
+    const url = getServerUrl()
+    this.selectedCompany.addTopAnswers(this.topAnswers.slice(0, 15))
     const data = {
       company: this.selectedCompany,
-      moduleId: this.selectedSOARModule.uuid,
-    };
-    const response = await axios.post(url + "/createNextWorkshop", data);
-    this.selectedCompany.virtualWorkshops = response.data.virtualWorkshops;
-    this.nextStage();
+      moduleId: this.selectedSOARModule.uuid
+    }
+    const response = await axios.post(url + "/createNextWorkshop", data)
+    this.selectedCompany.virtualWorkshops = response.data.virtualWorkshops
+    this.nextStage()
   }
   // Create In-Person Workshops
   startInPersonWorkshops() {
-    this.runStartInPersonWorkshop();
+    this.runStartInPersonWorkshop()
   }
-  async runStartInPersonWorkshop() {
-    const url = getServerUrl();
+  async runStartInPersonWorkshop () {
+    const url = getServerUrl()
     const data = {
       company: this.selectedCompany,
-      moduleId: this.selectedSOARModule.uuid,
-    };
-    const response = await axios.post(url + "/createInPersonWorkshops", data);
-    this.selectedCompany.addInPersonWorkshops(response.data.inPersonWorkshops);
-    this.hasInPersonWorkshops = true;
-    this.isViewingInPersonWorkshops = true;
-    this.$forceUpdate();
+      moduleId: this.selectedSOARModule.uuid
+    }
+    const response = await axios.post(url + "/createInPersonWorkshops", data)
+    this.selectedCompany.addInPersonWorkshops(response.data.inPersonWorkshops)
+    this.hasInPersonWorkshops = true
+    this.isViewingInPersonWorkshops = true
+    this.$forceUpdate()
   }
   // Navigation
-  previousStage() {
-    this.isViewingInPersonWorkshops = false;
-    this.selectedWorkshopStage = Math.max(this.selectedWorkshopStage - 1, 0);
+  previousStage () {
+    this.isViewingInPersonWorkshops = false
+    this.selectedWorkshopStage = Math.max(this.selectedWorkshopStage - 1, 0)
   }
   nextStage() {
     this.selectedWorkshopStage = Math.min(
@@ -782,84 +806,137 @@ export default class SOARModuleAnalysis extends Vue {
     };
     return chartData;
   }
-  getRequiredColumns(columns: any) {
-    let templateColumns = "grid-template-columns: 30px 300px";
+  getRequiredColumns (columns: any) {
+    let templateColumns = "grid-template-columns: 30px 300px"
     for (let column of columns) {
-      if (column.type == "textarea") {
-        templateColumns = templateColumns + " var(--large-width)";
+      if (column.type == 'textarea') {
+        templateColumns = templateColumns + " var(--large-width)"
       } else {
-        templateColumns = templateColumns + " var(--std-width)";
+        templateColumns = templateColumns + " var(--std-width)"
       }
     }
-    templateColumns = templateColumns + ";";
-    return "display: grid; gap: 15px; " + templateColumns;
+    templateColumns = templateColumns + ";"
+    return "display: grid; gap: 15px; " + templateColumns
   }
-  getVirtualWorkshopRequiredColumns(workshopQuestion: any) {
-    let totalColumns = 0;
-    const illegalKeys = "score id questionName";
+  getVirtualWorkshopRequiredColumns (workshopQuestion: any) {
+    let totalColumns = 0
+    const illegalKeys = "score id questionName"
     for (let key in workshopQuestion) {
-      if (!illegalKeys.includes(key)) {
-        totalColumns = totalColumns + 1;
+      if (!(illegalKeys.includes(key))) {
+        totalColumns = totalColumns + 1
       }
     }
-    let templateColumns = "grid-template-columns: 300px";
+    let templateColumns = "grid-template-columns: 300px"
     for (let i = 0; i < totalColumns; i++) {
-      templateColumns = templateColumns + " var(--large-width)";
+      templateColumns = templateColumns + " var(--large-width)"
     }
-    templateColumns = templateColumns + " var(--large-width);";
-    return (
-      "display: grid; gap: 25px; margin: 0 auto; font-size: 12px; width: fit-content; " +
-      templateColumns
-    );
+    templateColumns = templateColumns + " var(--large-width);"
+    return "display: grid; gap: 25px; margin: 0 auto; font-size: 12px; width: fit-content; " + templateColumns
   }
-  getVirtualWorkshopQuestions(workshopQuestion: any) {
-    let totalQuestions = [];
-    const illegalKeys = "score id questionName";
+  getVirtualWorkshopQuestions (workshopQuestion: any) {
+    let totalQuestions = []
+    const illegalKeys = "score id questionName"
     for (let keyName in workshopQuestion) {
-      if (!illegalKeys.includes(keyName)) {
-        totalQuestions.push(keyName);
+      if (!(illegalKeys.includes(keyName))) {
+        totalQuestions.push(keyName)
       }
     }
-    return totalQuestions;
+    return totalQuestions
   }
-  getConsensusAnswer(answerTally: any) {
-    let consensusAnswers: Array<any> = [];
-    let maxScore = 0;
+  getConsensusAnswer (answerTally: any) {
+    let consensusAnswers: Array<any> = []
+    let maxScore = 0
     for (let answer in answerTally) {
-      const answerScore = answerTally[answer];
+      const answerScore = answerTally[answer]
       if (answerScore === maxScore) {
-        consensusAnswers.push(answer);
+        consensusAnswers.push(answer)
       }
       if (answerScore > maxScore) {
-        consensusAnswers = [answer];
-        maxScore = answerScore;
+        consensusAnswers = [answer]
+        maxScore = answerScore
       }
     }
-    return consensusAnswers.join(", ") + " (" + maxScore + ")";
+    return consensusAnswers.join(", ") + " (" + maxScore + ")"
   }
-  getSelectedWorkshop(): string {
+  getSelectedWorkshop () :string {
     if (this.selectedCompany.hasInPersonWorkshop(this.SOARModule)) {
-      const workshops: any =
-        this.selectedCompany.inPersonWorkshops[this.SOARModule];
-      for (let workshop of workshops) {
-        return workshop.name;
+      const workshops: any = this.selectedCompany.inPersonWorkshops[this.SOARModule].actionPlan
+      for (let workshopName in workshops) {
+        return workshopName
       }
     }
-    return "";
+    return ""
   }
-  selectWorkshop(workshopName: string) {
-    this.selectedWorkshop = workshopName;
+  selectWorkshop (workshopName: string) {
+    this.selectedWorkshop = workshopName
   }
-  async saveWorkshopState() {
-    const url = getServerUrl();
+  getSelectedWorkshopRows (selectedWorkshop: any) {
+    if (selectedWorkshop.includes("Necessities")) {
+      return this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities
+    }
+    return this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities
+  }
+  async saveWorkshopState () {
+    // this.syncRerankingAndActionPlanTemplates()
+    const url = getServerUrl()
     const data = {
       companyId: this.selectedCompany.uuid,
       workshops: this.selectedCompany.inPersonWorkshops[this.SOARModule],
-      moduleId: this.SOARModule,
-    };
-    const response = await axios.post(url + "/saveWorkshopState", data);
-    this.selectedCompany.inPersonWorkshops = response.data.inPersonWorkshops;
+      moduleId: this.SOARModule
+    }
+    const response = await axios.post(url + "/saveWorkshopState", data)
+    this.selectedCompany.inPersonWorkshops = response.data.inPersonWorkshops
   }
+  onAssignInitiative (initiative: any, event: any) {
+    initiative.oppOrNec = event.target.value
+    let removeInitFromUnassign = false
+    if (event.target.value == "Opportunity") {
+      this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.push(initiative)
+      removeInitFromUnassign = true
+    } else if (event.target.value == "Necessity") {
+      this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.push(initiative)
+      removeInitFromUnassign = true
+    }
+    if (removeInitFromUnassign) {
+      for (let i = 0; i < this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.unassigned.length; i++) {
+        if (this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.unassigned[i].id === initiative.id) {
+          this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.unassigned.splice(i, 1)
+        }
+      }
+    }
+  }
+  unassignInitiative (initiative: any) {
+    // Add the initiative back to unassigned list
+    initiative.oppOrNec = 'Unselected'
+    this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.unassigned.push(initiative)
+    // Remove the initiative from either the opps or necs list
+    for (let i = 0; i < this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.length; i++) {
+      if (this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities[i].id === initiative.id) {
+        this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.splice(i, 1)
+      }
+    }
+    for (let i = 0; i < this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.length; i++) {
+      if (this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities[i].id === initiative.id) {
+        this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.splice(i, 1)
+      }
+    }
+  }
+  getInitialSurveyScores (initiative: any) {
+    return this.selectedCompany.answerAnalysis[this.SOARModule][initiative.id]
+  }
+  getTotalInitiatives (rerankingObj: any) {
+    let totalInitiatives = 0
+    for (let iniativeType in rerankingObj) {
+      totalInitiatives = totalInitiatives + rerankingObj[iniativeType].length
+    }
+    return totalInitiatives
+  }
+  countAssignedInitiatives (rerankingObj: any) {
+    const totalInitiatives: any = this.getTotalInitiatives(rerankingObj)
+    return totalInitiatives - rerankingObj.unassigned.length
+  }
+
+  // Zoom integration here
   scheduleVideoConference() {
     this.toggleModal();
     // TODO:
