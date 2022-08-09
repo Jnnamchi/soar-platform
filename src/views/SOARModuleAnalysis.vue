@@ -47,6 +47,9 @@
             <div>
               Necessity Score
             </div>
+            <div>
+              Total Score
+            </div>
           </div>
           <div class="medium-space"></div>
           <div v-for="answer in rankAnswers(selectedCompany.answerAnalysis)" v-bind:key="answer.id" style="margin-top: 20px; flex: 0 0 400px;">
@@ -54,6 +57,7 @@
               <div class="question-name-in-grid">{{answer.questionName}}</div>
               <div>{{answer.opportunityScore}}</div>
               <div>{{answer.necessityScore}}</div>
+              <div>{{answer.opportunityScore + answer.necessityScore}}</div>
             </div>
           </div>
         </div>
@@ -80,7 +84,7 @@
               <div v-else-if="!hasInPersonWorkshops">
                 <div class="medium-space"></div>
                 <div v-on:click="startInPersonWorkshops()"
-                class="notice-message">
+                class="general-select">
                   Start in person workshops
                 </div>
                 <div class="medium-space"></div>
@@ -119,69 +123,136 @@
     </div>
     <div v-else>
       <div class="medium-space"></div>
-      <div>
-        <div>
-          Workshops:
+      <div style="display: grid; grid-template-columns: 250px 250px; margin: 0 auto; width: fit-content;">
+        <div class="general-select" v-on:click="selectedInPersonWorkshopView = 'reranking'" style="margin: 0 auto;">
+          Re-ranking
         </div>
-        <div>
-          <div v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="inPersonWorkshop.name">
-            <div v-if="inPersonWorkshop.name == selectedWorkshop" style="font-weight: bold">{{inPersonWorkshop.name}}</div>
-            <div v-else v-on:click="selectWorkshop(inPersonWorkshop.name)">{{inPersonWorkshop.name}}</div>
-          </div>
+        <div class="general-select" v-on:click="selectedInPersonWorkshopView = 'actionPlans'" style="margin: 0 auto;">
+          Action Plans
         </div>
       </div>
       <div class="medium-space"></div>
-      <div v-on:click="saveWorkshopState()">
-        SAVE
-      </div>
-      <div class="medium-space"></div>
-      <div v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[SOARModule]" v-bind:key="inPersonWorkshop.name">
-        <div v-if="inPersonWorkshop.name == selectedWorkshop" class="in-person-workshop-container">
-          <div :style="getRequiredColumns(inPersonWorkshop.columns)">
-            <div></div>
-            <div></div>
-            <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum">
-              <div class="table-column-header">{{column.title}}</div>
-              <div style="font-size: 11px;">{{column.subtitle}}</div>
+      <div v-if="selectedInPersonWorkshopView === 'reranking'">
+        <div style="width: 70%; margin: 0 auto;">Each top initiative identified is either a great OPPORTUNITY or a NECESSITY to your business. Go through them below, discuss, and decide which group they should belong to.</div>
+        <div class="medium-space"></div>
+        <div>{{countAssignedInitiatives(selectedCompany.inPersonWorkshops[SOARModule].reRanking)}} of {{getTotalInitiatives(selectedCompany.inPersonWorkshops[SOARModule].reRanking)}} initiatives have been assigned</div>
+        <div class="medium-space"></div>
+        <div v-on:click="saveWorkshopState()">
+          SAVE
+        </div>
+        <div class="reranking-grid">
+          <div>
+            <div>Opportunities</div>
+            <div class="medium-space"></div>
+            <div>
+              <div v-for="initiative of rankAnswersForReranking(selectedCompany.inPersonWorkshops[SOARModule].reRanking.opportunities)"  v-bind:key="initiative.id">
+                <div v-if="initiative.oppOrNec == 'Opportunity'">
+                  <div class="standard-panel">
+                    <div>{{initiative.questionName}}</div>
+                    <div class="small-space"></div>
+                    <div class="reassign-initative text-small" v-on:click="unassignInitiative(initiative)"><span class="reassign-initative-text">Reassign</span></div>
+                  </div>
+                  <div class="medium-space"></div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="medium-space"></div>
+          <div class="reranking-main-column">
+            <div v-for="initiative of rankAnswersForReranking(selectedCompany.inPersonWorkshops[SOARModule].reRanking.unassigned)" v-bind:key="initiative.id">
+              <div class="standard-panel">
+                <RankInitiativeViewer :initiativeData="initiative" :initialSurveyScores="getInitialSurveyScores(initiative)"/>
+                <div>
+                  <div style="font-size: 12px;">
+                    <select :value="initiative.oppOrNec" @change="onAssignInitiative(initiative, $event)">
+                      <option v-for="option in ['Opportunity', 'Necessity', 'Unselected']" v-bind:key="option">{{option}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="medium-space"></div>
+            </div>
+          </div>
           <div>
-            <draggable tag="ul" :list="inPersonWorkshop.rows" class="list-group" handle=".dragPoint">
-              <div
-                v-for="(row) in inPersonWorkshop.rows"
-                :key="row.questionName"
-              >
-                <div class="small-space"></div>
-                <div :style="getRequiredColumns(inPersonWorkshop.columns)">
-                  <div>
-                    <i class="drag-icon fa-solid fa-bars dragPoint"></i>
+            <div>Necessities</div>
+            <div class="medium-space"></div>
+            <div>
+              <div v-for="initiative of rankAnswersForReranking(selectedCompany.inPersonWorkshops[SOARModule].reRanking.necessities)"  v-bind:key="initiative.id">
+                <div v-if="initiative.oppOrNec == 'Necessity'">
+                  <div class="standard-panel">
+                    <div>{{initiative.answerDetails.score}}</div>
+                    <div>{{initiative.questionName}}</div>
+                    <div class="small-space"></div>
+                    <div class="reassign-initative text-small" v-on:click="unassignInitiative(initiative)"><span class="reassign-initative-text">Reassign</span></div>
                   </div>
-                  <div class="question-name-in-grid">
-                    {{row.questionName}}
-                  </div>
-                  <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum" class="table-column-header">
-                    <div v-if="column.type == 'text'">
-                      <input class="text-input" v-model="row.answers[columnNum]">
+                  <div class="medium-space"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="selectedInPersonWorkshopView === 'actionPlans'">
+        <div>
+          <div>
+            <div v-for="inPersonWorkshop in selectedCompany.inPersonWorkshops[SOARModule].actionPlan" v-bind:key="inPersonWorkshop.name">
+              <div v-if="inPersonWorkshop.name == selectedWorkshop" style="font-weight: bold">{{inPersonWorkshop.name}}</div>
+              <div v-else v-on:click="selectWorkshop(inPersonWorkshop.name)">{{inPersonWorkshop.name}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="medium-space"></div>
+        <div v-on:click="saveWorkshopState()">
+          SAVE
+        </div>
+        <div class="medium-space"></div>
+        <div v-for="[, inPersonWorkshop] in Object.entries(selectedCompany.inPersonWorkshops[SOARModule].actionPlan)" v-bind:key="inPersonWorkshop.name" >
+          <div v-if="inPersonWorkshop.name == selectedWorkshop" class="in-person-workshop-container" :set="workshopRows = getSelectedWorkshopRows(selectedWorkshop)">
+            <div :style="getRequiredColumns(inPersonWorkshop.columns)">
+              <div></div>
+              <div></div>
+              <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum">
+                <div class="table-column-header">{{column.title}}</div>
+                <div style="font-size: 11px;">{{column.subtitle}}</div>
+              </div>
+            </div>
+            <div class="medium-space"></div>
+            <div>
+              <draggable tag="ul" :list="workshopRows" class="list-group" handle=".dragPoint">
+                <div
+                  v-for="(row) in workshopRows"
+                  :key="row.questionName"
+                >
+                  <div class="small-space"></div>
+                  <div :style="getRequiredColumns(inPersonWorkshop.columns)">
+                    <div>
+                      <i class="drag-icon fa-solid fa-bars dragPoint"></i>
                     </div>
-                    <div v-if="column.type == 'textarea'" style="width:">
-                      <textarea rows="4" cols="25" class="textarea-input" v-model="row.answers[columnNum]">
-                      </textarea>
+                    <div class="question-name-in-grid">
+                      {{row.questionName}}
                     </div>
-                    <div v-if="column.type == 'date'">
-                      <input type="date" class="date-input" v-model="row.answers[columnNum]">
-                    </div>
-                    <div v-if="column.type == 'dropdown'">
-                      <div style="font-size: 12px;">
-                        <select v-model="row.answers[columnNum]">
-                          <option v-for="option in column.options" v-bind:key="option">{{option}}</option>
-                        </select>
+                    <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum" class="table-column-header">
+                      <div v-if="column.type == 'text'">
+                        <input class="text-input" v-model="row.answers[columnNum]">
+                      </div>
+                      <div v-if="column.type == 'textarea'" style="width:">
+                        <textarea rows="4" cols="25" class="textarea-input" v-model="row.answers[columnNum]">
+                        </textarea>
+                      </div>
+                      <div v-if="column.type == 'date'">
+                        <input type="date" class="date-input" v-model="row.answers[columnNum]">
+                      </div>
+                      <div v-if="column.type == 'dropdown'">
+                        <div style="font-size: 12px;">
+                          <select v-model="row.answers[columnNum]">
+                            <option v-for="option in column.options" v-bind:key="option">{{option}}</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </draggable>
+              </draggable>
+            </div>
           </div>
         </div>
       </div>
@@ -201,10 +272,12 @@ import axios from 'axios'
 import '../styles/text.css'
 import draggable from 'vuedraggable'
 // import RadarChart from '../chart-js/RadarChart.vue'
+import RankInitiativeViewer from "../components/RankInitiativeViewer.vue"
 
 @Component({
   components: {
-    draggable
+    draggable,
+    RankInitiativeViewer
     // RadarChart,
   }
 })
@@ -219,6 +292,7 @@ export default class SOARModuleAnalysis extends Vue {
   hasInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(this.SOARModule)
   isViewingInPersonWorkshops = this.selectedCompany.hasInPersonWorkshop(this.SOARModule)
   selectedWorkshop: string = this.getSelectedWorkshop()
+  selectedInPersonWorkshopView: string = 'reranking'
 
   compare( a: any, b: any ) {
     if ( a.score < b.score ){
@@ -229,11 +303,13 @@ export default class SOARModuleAnalysis extends Vue {
     }
     return 0;
   }
-  compareOpportunities (a: any, b: any) {
-    if (a.opportunityScore < b.opportunityScore) {
+  compareOpportunitiesNecessities (a: any, b: any) {
+    const aScore = a.opportunityScore + a.necessityScore
+    const bScore = b.opportunityScore + b.necessityScore
+    if (aScore < bScore) {
       return 1;
     }
-    if (a.opportunityScore > b.opportunityScore) {
+    if (aScore > bScore) {
       return -1;
     }
     return 0;
@@ -250,11 +326,9 @@ export default class SOARModuleAnalysis extends Vue {
   rankAnswers (answerAnalysis: any) {
     const answers = []
     for (const answerId in answerAnalysis[this.selectedSOARModule.uuid]) {
-      if (answerAnalysis[this.selectedSOARModule.uuid][answerId].score > 0) {
-        answers.push(Object.assign(answerAnalysis[this.selectedSOARModule.uuid][answerId], {id: answerId}))
-      }
+      answers.push(Object.assign(answerAnalysis[this.selectedSOARModule.uuid][answerId], {id: answerId}))
     }
-    answers.sort(this.compareOpportunities)
+    answers.sort(this.compareOpportunitiesNecessities)
     this.selectedSOARModule.addQuestionNamesById(answers)
     this.topAnswers = answers
     return answers
@@ -269,6 +343,23 @@ export default class SOARModuleAnalysis extends Vue {
     answers.sort(this.compare)
     this.selectedSOARModule.addQuestionNamesById(answers)
     this.topAnswers = answers
+    return answers
+  }
+  compareReranking (a: any, b: any) {
+    if (a.answerDetails.score < b.answerDetails.score) {
+      return 1;
+    }
+    if (a.answerDetails.score > b.answerDetails.score) {
+      return -1;
+    }
+    return 0;
+  }
+  rankAnswersForReranking (rerankingAnswers: any) {
+    const answers = []
+    for (const answer of rerankingAnswers) {
+      answers.push(answer)
+    }
+    answers.sort(this.compareReranking)
     return answers
   }
   startVirtualWorkshops () {
@@ -304,7 +395,6 @@ export default class SOARModuleAnalysis extends Vue {
   }
   moveToNextVirtualWorkshop () {
     this.selectedSOARModule.addQuestionNamesById(this.topAnswers)
-    // console.log(this.topAnswers)
     this.runMoveToNextRound()
   }
   async runMoveToNextVirtualWorkshop () {
@@ -422,9 +512,9 @@ export default class SOARModuleAnalysis extends Vue {
   }
   getSelectedWorkshop () :string {
     if (this.selectedCompany.hasInPersonWorkshop(this.SOARModule)) {
-      const workshops: any = this.selectedCompany.inPersonWorkshops[this.SOARModule]
-      for (let workshop of workshops) {
-        return workshop.name
+      const workshops: any = this.selectedCompany.inPersonWorkshops[this.SOARModule].actionPlan
+      for (let workshopName in workshops) {
+        return workshopName
       }
     }
     return ""
@@ -432,7 +522,14 @@ export default class SOARModuleAnalysis extends Vue {
   selectWorkshop (workshopName: string) {
     this.selectedWorkshop = workshopName
   }
+  getSelectedWorkshopRows (selectedWorkshop: any) {
+    if (selectedWorkshop.includes("Necessities")) {
+      return this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities
+    }
+    return this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities
+  }
   async saveWorkshopState () {
+    // this.syncRerankingAndActionPlanTemplates()
     const url = getServerUrl()
     const data = {
       companyId: this.selectedCompany.uuid,
@@ -441,6 +538,54 @@ export default class SOARModuleAnalysis extends Vue {
     }
     const response = await axios.post(url + "/saveWorkshopState", data)
     this.selectedCompany.inPersonWorkshops = response.data.inPersonWorkshops
+  }
+  onAssignInitiative (initiative: any, event: any) {
+    initiative.oppOrNec = event.target.value
+    let removeInitFromUnassign = false
+    if (event.target.value == "Opportunity") {
+      this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.push(initiative)
+      removeInitFromUnassign = true
+    } else if (event.target.value == "Necessity") {
+      this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.push(initiative)
+      removeInitFromUnassign = true
+    }
+    if (removeInitFromUnassign) {
+      for (let i = 0; i < this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.unassigned.length; i++) {
+        if (this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.unassigned[i].id === initiative.id) {
+          this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.unassigned.splice(i, 1)
+        }
+      }
+    }
+  }
+  unassignInitiative (initiative: any) {
+    // Add the initiative back to unassigned list
+    initiative.oppOrNec = 'Unselected'
+    this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.unassigned.push(initiative)
+    // Remove the initiative from either the opps or necs list
+    for (let i = 0; i < this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.length; i++) {
+      if (this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities[i].id === initiative.id) {
+        this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.splice(i, 1)
+      }
+    }
+    for (let i = 0; i < this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.length; i++) {
+      if (this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities[i].id === initiative.id) {
+        this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.splice(i, 1)
+      }
+    }
+  }
+  getInitialSurveyScores (initiative: any) {
+    return this.selectedCompany.answerAnalysis[this.SOARModule][initiative.id]
+  }
+  getTotalInitiatives (rerankingObj: any) {
+    let totalInitiatives = 0
+    for (let iniativeType in rerankingObj) {
+      totalInitiatives = totalInitiatives + rerankingObj[iniativeType].length
+    }
+    return totalInitiatives
+  }
+  countAssignedInitiatives (rerankingObj: any) {
+    const totalInitiatives: any = this.getTotalInitiatives(rerankingObj)
+    return totalInitiatives - rerankingObj.unassigned.length
   }
 }
 </script>
@@ -477,7 +622,7 @@ export default class SOARModuleAnalysis extends Vue {
 
 .initial-survey-grid {
   display: grid;
-  grid-template-columns: 300px 120px 120px;
+  grid-template-columns: 300px 120px 120px 120px;
   gap: 25px;
   margin: 0 auto;
   width: fit-content;
@@ -486,6 +631,55 @@ export default class SOARModuleAnalysis extends Vue {
 .question-name-in-grid {
   font-size: 12px;
   text-align: left;
+}
+
+.reranking-table-header {
+  display: grid;
+  grid-template-columns: 110px 330px 330px 110px 330px 110px 110px;
+  /* gap: 25px; */
+  margin: 0 auto;
+  width: fit-content;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.reranking-table-header > div {
+  margin: 5px;
+  padding-bottom: 10px;
+  border-bottom: solid black 1px;
+}
+.reranking-table > div {
+  padding: 5px;
+}
+
+.reranking-table {
+  display: grid;
+  grid-template-columns: 110px 110px 110px 110px 110px 110px 110px 110px 110px 110px 110px 110px 110px;
+  /* gap: 25px; */
+  margin: 0 auto;
+  width: fit-content;
+  font-size: 12px;
+}
+
+.reranking-main-column {
+  max-height: 600px;
+  overflow: scroll;
+  margin-bottom: 40px;
+}
+
+.reassign-initative {
+  width: 100%;
+  text-align: right;
+}
+
+.reassign-initative-text {
+  width: fit-content;
+  color: var(--SOAR-color);
+}
+
+.reassign-initative-text:hover {
+  cursor: pointer;
+  font-weight: bold;
 }
 
 </style>
