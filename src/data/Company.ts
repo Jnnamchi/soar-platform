@@ -53,8 +53,6 @@ export class Company {
     return false
   }
   hasMovedToNextRound (SOARModuleId: string) {
-    console.log(SOARModuleId)
-    console.log(Object.keys(this.virtualWorkshops))
     return Object.keys(this.virtualWorkshops).includes(SOARModuleId)
   }
   addSOARModule (moduleUuid: string) {

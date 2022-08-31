@@ -144,9 +144,7 @@
             >
               <div></div>
               <div
-                v-for="workshopQuestion in getVirtualWorkshopQuestions(
-                  rankWorkshopAnswers(workshop.answerAnalysis)[0]
-                )"
+                v-for="workshopQuestion in getVirtualWorkshopQuestions()"
                 v-bind:key="workshopQuestion"
               >
                 {{ workshopQuestion }}
@@ -164,9 +162,7 @@
                   {{ answer.questionName }}
                 </div>
                 <div
-                  v-for="workshopQuestion in getVirtualWorkshopQuestions(
-                    answer
-                  )"
+                  v-for="workshopQuestion in getVirtualWorkshopQuestions()"
                   v-bind:key="workshopQuestion"
                 >
                   {{ getConsensusAnswer(answer[workshopQuestion]) }}
@@ -844,15 +840,8 @@ export default class SOARModuleAnalysis extends Vue {
     templateColumns = templateColumns + " var(--large-width);"
     return "display: grid; gap: 25px; margin: 0 auto; font-size: 12px; width: fit-content; " + templateColumns
   }
-  getVirtualWorkshopQuestions (workshopQuestion: any) {
-    let totalQuestions = []
-    const illegalKeys = "score id questionName"
-    for (let keyName in workshopQuestion) {
-      if (!(illegalKeys.includes(keyName))) {
-        totalQuestions.push(keyName)
-      }
-    }
-    return totalQuestions
+  getVirtualWorkshopQuestions () {
+    return this.getVirtualWorkshop()[this.selectedWorkshopStage.toString()].questionsOrder
   }
   getConsensusAnswer (answerTally: any) {
     let consensusAnswers: Array<any> = []
