@@ -71,6 +71,7 @@
             v-on:click="openModuleAnalysis(moduleId)">
             {{appData.getModuleName(moduleId)}}
           </div>
+          <div class="small-space"></div>
         </div>
       </div>
     </div>

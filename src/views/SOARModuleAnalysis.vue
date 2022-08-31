@@ -15,14 +15,14 @@
         >
         <span
           class="click-text"
-          v-if="selectedWorkshopStage < getLastVirtualWorkshopNumber()"
+          v-if="selectedWorkshopStage < parseInt(getLastVirtualWorkshopNumber())"
           v-on:click="nextStage()"
           >&#62;</span
         >
         <span
           class="click-text"
           v-if="
-            selectedWorkshopStage == getLastVirtualWorkshopNumber() &&
+            selectedWorkshopStage == parseInt(getLastVirtualWorkshopNumber()) &&
             hasInPersonWorkshops
           "
           v-on:click="isViewingInPersonWorkshops = true"
@@ -33,7 +33,7 @@
         <span
           class="click-text"
           v-if="
-            selectedWorkshopStage == getLastVirtualWorkshopNumber() &&
+            selectedWorkshopStage == parseInt(getLastVirtualWorkshopNumber()) &&
             hasInPersonWorkshops
           "
           v-on:click="isViewingInPersonWorkshops = false"
@@ -49,10 +49,10 @@
       </div>
       <div>
         Completion: {{ selectedCompany.countModuleAnswers(SOARModule) }} out of
-        {{ selectedCompany.participants.length }} registered participants
+        {{ selectedCompany.participants.length }} registered participants AND {{selectedCompany.hasMovedToNextRound(SOARModule)}}
       </div>
       <div class="medium-space"></div>
-      <div v-if="!selectedCompany.hasMovedToNextRound()">
+      <div v-if="!selectedCompany.hasMovedToNextRound(SOARModule)">
         <div
           v-if="selectedCompany.countModuleAnswers(SOARModule) == 0"
           class="notice-message"
@@ -101,7 +101,7 @@
             Completion: {{ Object.keys(workshop.moduleAnswers).length }} out of
             {{ selectedCompany.participants.length }} registered participants
           </div>
-          <div v-if="workshopNum == getLastVirtualWorkshopNumber()">
+          <div v-if="workshopNum == parseInt(getLastVirtualWorkshopNumber())">
             <div v-if="Object.keys(workshop.moduleAnswers).length > 0">
               <div v-if="workshop.hasNextWorkshop">
                 <div class="medium-space"></div>
@@ -117,7 +117,7 @@
                 <div class="medium-space"></div>
                 <div
                   v-on:click="startInPersonWorkshops()"
-                  class="notice-message"
+                  class="general-select"
                 >
                   Start in person workshops
                 </div>
@@ -196,8 +196,8 @@
         <div class="medium-space"></div>
         <div>{{countAssignedInitiatives(selectedCompany.inPersonWorkshops[SOARModule].reRanking)}} of {{getTotalInitiatives(selectedCompany.inPersonWorkshops[SOARModule].reRanking)}} initiatives have been assigned</div>
         <div class="medium-space"></div>
-        <div v-on:click="saveWorkshopState()">
-          SAVE
+        <div class="general-select" v-on:click="saveWorkshopState()">
+          {{SAVE_DISPLAY}}
         </div>
         <div class="reranking-grid">
           <div>
@@ -260,13 +260,14 @@
           </div>
         </div>
         <div class="medium-space"></div>
-        <div v-on:click="saveWorkshopState()">
-          SAVE
+        <div class="general-select" v-on:click="saveWorkshopState()">
+          {{SAVE_DISPLAY}}
         </div>
         <div class="medium-space"></div>
         <div v-for="[, inPersonWorkshop] in Object.entries(selectedCompany.inPersonWorkshops[SOARModule].actionPlan)" v-bind:key="inPersonWorkshop.name" >
           <div v-if="inPersonWorkshop.name == selectedWorkshop" class="in-person-workshop-container" :set="workshopRows = getSelectedWorkshopRows(selectedWorkshop)">
             <div :style="getRequiredColumns(inPersonWorkshop.columns)">
+              <div></div>
               <div></div>
               <div></div>
               <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum">
@@ -284,7 +285,10 @@
                   <div class="small-space"></div>
                   <div :style="getRequiredColumns(inPersonWorkshop.columns)">
                     <div>
-                      <i class="drag-icon fa-solid fa-bars dragPoint"></i>
+                      <i class="drag-icon fa-solid fa-up-down-left-right dragPoint"></i>
+                    </div>
+                    <div>
+                      <i class="switch-icon fa-solid fa-repeat" v-on:click="alert()"></i>
                     </div>
                     <div class="question-name-in-grid">
                       {{row.questionName}}
@@ -292,6 +296,12 @@
                     <div v-for="(column, columnNum) in inPersonWorkshop.columns" v-bind:key="columnNum" class="table-column-header">
                       <div v-if="column.type == 'text'">
                         <input class="text-input" v-model="row.answers[columnNum]">
+                      </div>
+                      <div v-if="column.type == 'percentage'">
+                        <span class="valuePadding"><input type="number" class="currency-input" v-model="row.answers[columnNum]">%</span>
+                      </div>
+                      <div v-if="column.type == 'currency'">
+                        <span class="valuePadding"><input type="number" class="currency-input" v-model="row.answers[columnNum]">$</span>
                       </div>
                       <div v-if="column.type == 'textarea'" style="width:">
                         <textarea rows="4" cols="25" class="textarea-input" v-model="row.answers[columnNum]">
@@ -504,9 +514,9 @@ interface createMeeting {
   },
 })
 export default class SOARModuleAnalysis extends Vue {
-  @Prop() private appData!: AppData;
-  @Prop() private selectedCompany!: Company;
-  @Prop() private SOARModule!: string;
+  @Prop() appData!: AppData;
+  @Prop() selectedCompany!: Company;
+  @Prop() SOARModule!: string;
 
   // vars for zoom integration
   showModal: boolean = false;
@@ -525,6 +535,7 @@ export default class SOARModuleAnalysis extends Vue {
   editDuration: number | null = null;
   editMode: boolean = false;
   confirmDisabled: boolean = false;
+  SAVE_DISPLAY: string = "Save";
 
   // Key page vars
   selectedSOARModule = this.appData.modules[this.SOARModule]
@@ -807,9 +818,9 @@ export default class SOARModuleAnalysis extends Vue {
     return chartData;
   }
   getRequiredColumns (columns: any) {
-    let templateColumns = "grid-template-columns: 30px 300px"
+    let templateColumns = "grid-template-columns: 30px 30px 300px"
     for (let column of columns) {
-      if (column.type == 'textarea') {
+      if (column.type == 'textarea' || column.type == 'dropdown') {
         templateColumns = templateColumns + " var(--large-width)"
       } else {
         templateColumns = templateColumns + " var(--std-width)"
@@ -877,6 +888,7 @@ export default class SOARModuleAnalysis extends Vue {
     return this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities
   }
   async saveWorkshopState () {
+    this.SAVE_DISPLAY = "Saving..."
     // this.syncRerankingAndActionPlanTemplates()
     const url = getServerUrl()
     const data = {
@@ -886,6 +898,7 @@ export default class SOARModuleAnalysis extends Vue {
     }
     const response = await axios.post(url + "/saveWorkshopState", data)
     this.selectedCompany.inPersonWorkshops = response.data.inPersonWorkshops
+    this.SAVE_DISPLAY = "SAVE"
   }
   onAssignInitiative (initiative: any, event: any) {
     initiative.oppOrNec = event.target.value
@@ -1068,8 +1081,11 @@ export default class SOARModuleAnalysis extends Vue {
 }
 
 .drag-icon:hover {
-  cursor: pointer;
+  cursor: grab;
   font-weight: bold;
+}
+.switch-icon:hover {
+  cursor: pointer;
 }
 
 .text-input,
@@ -1080,6 +1096,10 @@ export default class SOARModuleAnalysis extends Vue {
 
 .textarea-input {
   width: var(--large-width);
+}
+
+.currency-input {
+  width: calc(var(--std-width) - 20px);
 }
 
 .in-person-workshop-container {
@@ -1100,6 +1120,31 @@ export default class SOARModuleAnalysis extends Vue {
   font-size: 12px;
   text-align: left;
 }
+
+.valuePadding {
+  border: 1px inset #ccc;
+}
+
+.valuePadding input {
+  border: none;
+  padding: 0px !important;
+  outline: none;
+  text-align: right;
+  margin-right: 5px;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* ZOOM INTEGRATION */
 
 /* Modal styles */
 .add-conference-button {
