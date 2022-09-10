@@ -898,9 +898,11 @@ export default class SOARModuleAnalysis extends Vue {
   switchOppNecType (selectedWorkshop: any, rowIndex: any) {
     if (selectedWorkshop.includes("Necessities")) {
         const movedInitiative = this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.splice(rowIndex, 1)
+        movedInitiative[0].oppOrNec = "Opportunity"
         this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.push(movedInitiative[0])
     } else {
         const movedInitiative = this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.splice(rowIndex, 1)
+        movedInitiative[0].oppOrNec = "Necessity"
         this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.push(movedInitiative[0])
     }
     this.$modal.hide('confirm-initiative-switch')
