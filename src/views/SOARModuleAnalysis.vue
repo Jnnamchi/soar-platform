@@ -5,6 +5,17 @@
     <div class="subsection-title-description">
       View your company's progress here
     </div>
+    <modal name="confirm-initiative-switch">
+        <div class="medium-space"></div>
+        <div>Confirm Switch?</div>
+        <div class="small-space"></div>
+        <div>This will switch this initiative from {{getCurrentOppOrNec()}} to {{getNewOppOrNec()}}</div>
+        <div class="small-space"></div>
+        <div>
+            <button v-on:click="switchOppNecType(switchOppNecTypeData.selectedWorkshop, switchOppNecTypeData.rowIndex)">Confirm</button>
+            <button v-on:click="$modal.hide('confirm-initiative-switch')">Cancel</button>
+        </div>
+    </modal>
     <div>
       <div v-if="!isViewingInPersonWorkshops">
         <span
@@ -275,7 +286,7 @@
             <div>
               <draggable tag="ul" :list="workshopRows" class="list-group" handle=".dragPoint">
                 <div
-                  v-for="(row) in workshopRows"
+                  v-for="(row, rowIndex) in workshopRows"
                   :key="row.questionName"
                 >
                   <div class="small-space"></div>
@@ -284,7 +295,7 @@
                       <i class="drag-icon fa-solid fa-up-down-left-right dragPoint"></i>
                     </div>
                     <div>
-                      <i class="switch-icon fa-solid fa-repeat" v-on:click="alert()"></i>
+                      <i class="switch-icon fa-solid fa-repeat" v-on:click="confirmSwitchOppNecType(selectedWorkshop, rowIndex)"></i>
                     </div>
                     <div class="question-name-in-grid">
                       {{row.questionName}}
@@ -532,6 +543,7 @@ export default class SOARModuleAnalysis extends Vue {
   editMode: boolean = false;
   confirmDisabled: boolean = false;
   SAVE_DISPLAY: string = "Save";
+  switchOppNecTypeData: any = {}
 
   // Key page vars
   selectedSOARModule = this.appData.modules[this.SOARModule]
@@ -875,6 +887,35 @@ export default class SOARModuleAnalysis extends Vue {
       return this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities
     }
     return this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities
+  }
+  confirmSwitchOppNecType (selectedWorkshop: any, rowIndex: any) {
+    this.switchOppNecTypeData = {
+        selectedWorkshop: selectedWorkshop,
+        rowIndex: rowIndex
+    }
+    this.$modal.show('confirm-initiative-switch')
+  }
+  switchOppNecType (selectedWorkshop: any, rowIndex: any) {
+    if (selectedWorkshop.includes("Necessities")) {
+        const movedInitiative = this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.splice(rowIndex, 1)
+        this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.push(movedInitiative[0])
+    } else {
+        const movedInitiative = this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.opportunities.splice(rowIndex, 1)
+        this.selectedCompany.inPersonWorkshops[this.SOARModule].reRanking.necessities.push(movedInitiative[0])
+    }
+    this.$modal.hide('confirm-initiative-switch')
+  }
+  getCurrentOppOrNec() {
+    if (this.selectedWorkshop.includes("Necessities")) {
+        return "a necessity"
+    }
+    return "an opportunity"
+  }
+  getNewOppOrNec() {
+    if (this.selectedWorkshop.includes("Necessities")) {
+        return "an opportunity"
+    }
+    return "a necessity"
   }
   async saveWorkshopState () {
     this.SAVE_DISPLAY = "Saving..."

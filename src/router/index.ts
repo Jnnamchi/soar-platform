@@ -1,9 +1,10 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
-
+import VModal from 'vue-js-modal'
 
 Vue.use(VueRouter);
+Vue.use(VModal)
 
 const routes: Array<RouteConfig> = [
   {
