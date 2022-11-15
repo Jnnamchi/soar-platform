@@ -1,0 +1,37 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  @include fontSFReg;
+}
+
+body {
+  height: max-content;
+  min-height: 100vh;
+  color: #172b4d;
+}
+
+input {
+  outline: none;
+}
+
+button.button {
+  width: 100%;
+  height: 32px;
+  border: none;
+  border-radius: 3px;
+  color: #fff;
+  background-color: #0052cc;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #1668e4;
+  }
+
+  &:active {
+    background-color: #0052cc;
+  }
+}

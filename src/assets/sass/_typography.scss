@@ -1,0 +1,11 @@
+@font-face {
+  font-family: "SF-Pro";
+  src: url('../fonts/SF-Pro-Display-Regular.otf') format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+
+@mixin fontSFReg {
+  font-family: "SF-Pro", sans-serif;
+  letter-spacing: 0.75px;
+}

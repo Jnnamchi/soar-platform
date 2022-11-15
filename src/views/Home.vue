@@ -1,63 +1,107 @@
 <template>
-  <div class="home">
-    <div class="section-title">Welcome {{user.name}}</div>
-    <div class="subsection">
-      <div class="subsection-title">Your companies</div>
-      <div class="flex-parent">
-        <div v-for="company in appData.companies" v-bind:key="company.uid">
-          <div v-if="company.isOwndeBy(user.uuid)">
-            <div class="unstyle-link company-select" v-on:click="openCompanyPage(company)">
-              {{company.name}}
+  <BaseWrapper>
+    <div class="home">
+      <div class="section-title">Welcome {{ user.name }}</div>
+      <div class="subsection">
+        <div class="subsection-title">Your companies</div>
+        <div class="flex-parent">
+          <div v-for="company in appData.companies" v-bind:key="company.uid">
+            <div v-if="company.isOwndeBy(user.uuid)">
+              <div
+                class="unstyle-link company-select"
+                v-on:click="openCompanyPage(company)"
+              >
+                {{ company.name }}
+              </div>
             </div>
           </div>
-        </div>
-        <div>
-          <router-link :to="{ name: 'AddCompanySection', params: { appData: appData.companies }}" class="add-company">Add New Company</router-link>
+          <div>
+            <router-link
+              :to="{
+                name: 'AddCompanySection',
+                params: { appData: appData.companies },
+              }"
+              class="add-company"
+              >Add New Company</router-link
+            >
+          </div>
         </div>
       </div>
-    </div>
-    <div class="subsection">
-      <div class="subsection-title">Your surveys to complete:</div>
-      <div v-for="company in appData.companies" v-bind:key="company.name">
-        <div v-if="company.isParticipating(user.uuid) && company.modules.length > 0">
-          <div class="company-name">{{company.name}}</div>
-          <div v-if="company.userHasCompletedAllModules(user.uuid)">
+      <div class="subsection">
+        <div class="subsection-title">Your surveys to complete:</div>
+        <div v-for="company in appData.companies" v-bind:key="company.name">
+          <div
+            v-if="
+              company.isParticipating(user.uuid) && company.modules.length > 0
+            "
+          >
+            <div class="company-name">{{ company.name }}</div>
+            <div v-if="company.userHasCompletedAllModules(user.uuid)">
               All surveys have been completed!
-          </div>
-          <div v-for="moduleUuid in company.modules" v-bind:key="moduleUuid.name">
-            <div v-if="!company.userHasCompletedModule(user.uuid, moduleUuid)">
-              <router-link
-              :to="{
-              name: 'SurveySection',
-              params: { appData: appData, selectedCompany: company, SOARModule: moduleUuid }
-              }"
-              class="company-select">
-                <div>{{appData.getModuleName(moduleUuid)}}</div>
-                <div class="start-module-text">START NOW</div>
-              </router-link>
             </div>
-            <div v-if="!company.userHasCompletedVirtualWorkshops(user.uuid, moduleUuid)">
-              <router-link
-              :to="{
-              name: 'VirtualWorkshop',
-              params: { appData: appData, selectedCompany: company, virtualWorkShop: company.getLastVirtualWorkshop(moduleUuid), moduleUuid: moduleUuid }
-              }"
-              class="company-select">
-                <div>{{appData.getModuleName(moduleUuid)}}</div>
-                <div>{{company.getLastVirtualWorkshop(moduleUuid).title}}</div>
-                <div class="start-module-text">START NOW</div>
-              </router-link>
+            <div
+              v-for="moduleUuid in company.modules"
+              v-bind:key="moduleUuid.name"
+            >
+              <div
+                v-if="!company.userHasCompletedModule(user.uuid, moduleUuid)"
+              >
+                <router-link
+                  :to="{
+                    name: 'SurveySection',
+                    params: {
+                      appData: appData,
+                      selectedCompany: company,
+                      SOARModule: moduleUuid,
+                    },
+                  }"
+                  class="company-select"
+                >
+                  <div>{{ appData.getModuleName(moduleUuid) }}</div>
+                  <div class="start-module-text">START NOW</div>
+                </router-link>
+              </div>
+              <div
+                v-if="
+                  !company.userHasCompletedVirtualWorkshops(
+                    user.uuid,
+                    moduleUuid
+                  )
+                "
+              >
+                <router-link
+                  :to="{
+                    name: 'VirtualWorkshop',
+                    params: {
+                      appData: appData,
+                      selectedCompany: company,
+                      virtualWorkShop:
+                        company.getLastVirtualWorkshop(moduleUuid),
+                      moduleUuid: moduleUuid,
+                    },
+                  }"
+                  class="company-select"
+                >
+                  <div>{{ appData.getModuleName(moduleUuid) }}</div>
+                  <div>
+                    {{ company.getLastVirtualWorkshop(moduleUuid).title }}
+                  </div>
+                  <div class="start-module-text">START NOW</div>
+                </router-link>
+              </div>
             </div>
+            <div class="small-space"></div>
           </div>
-          <div class="small-space"></div>
         </div>
       </div>
     </div>
-  </div>
+  </BaseWrapper>
 </template>
 
 <script>
-import { Component, Vue, Prop } from "vue-property-decorator"
+import { Component, Vue, Prop } from 'vue-property-decorator'
+
+import { BaseWrapper } from '@/components/home/BaseWrapper.vue'
 
 import { getCurrentUserId, getCurrentUser } from '../firebase/firebase'
 import { getServerUrl } from '../requests/requests'
@@ -70,55 +114,64 @@ import '../styles/positions.css'
 
 import axios from 'axios'
 
-@Component
+@Component({
+  components: {
+    BaseWrapper,
+  },
+})
 export default class Home extends Vue {
   @Prop() appData
 
-  mounted () {
+  mounted() {
     this.getUserData()
   }
 
   user = getCurrentUser()
-  getUserData () {
+  getUserData() {
     let url = getServerUrl()
     let userId = getCurrentUserId()
-    axios.get(url + "/getAllUserData?userId=" + userId)
-    .then(response => {
-      // Replace all chart data with new data
-      this.appData.clearCompanies()
-      for (const company of response.data.companies) {
-        const newCompany = CreateCompanyFromObject(company)
-        this.appData.addCompany(newCompany)
-      }
-      this.appData.clearModules()
-      for (const module of response.data.modules) {
-        const newModule = CreateModuleFromObject(module)
-        this.appData.addModule(newModule)
-      }
-      this.appData.clearUsers()
-      for (const user of response.data.users) {
-        const newUser = CreateUserFromObject(user)
-        this.appData.addUser(newUser)
-      }
-    }).catch(error => {
-      if (error) {
-        console.log("There was an error")
-        console.log(error)
-      }
-      alert("Error fetching data")
+    axios
+      .get(url + '/getAllUserData?userId=' + userId)
+      .then((response) => {
+        // Replace all chart data with new data
+        this.appData.clearCompanies()
+        for (const company of response.data.companies) {
+          const newCompany = CreateCompanyFromObject(company)
+          this.appData.addCompany(newCompany)
+        }
+        this.appData.clearModules()
+        for (const module of response.data.modules) {
+          const newModule = CreateModuleFromObject(module)
+          this.appData.addModule(newModule)
+        }
+        this.appData.clearUsers()
+        for (const user of response.data.users) {
+          const newUser = CreateUserFromObject(user)
+          this.appData.addUser(newUser)
+        }
+      })
+      .catch((error) => {
+        if (error) {
+          console.log('There was an error')
+          console.log(error)
+        }
+        alert('Error fetching data')
+      })
+  }
+  openStartModule(companyName, SOARModuleName) {
+    this.$router.push({
+      name: 'SurveySection',
+      params: { companyName: companyName, SOARModuleName: SOARModuleName },
     })
   }
-  openStartModule (companyName, SOARModuleName) {
-    this.$router.push({name: 'SurveySection', params: {companyName: companyName, SOARModuleName: SOARModuleName}})
-  }
-  openCompanyPage (company) {
+  openCompanyPage(company) {
     localStorage.setItem('selectedCompanyUuid', company.uuid)
     this.$router.push({
       name: 'CompanyDashboard',
       params: {
         companyUuid: company.uuid,
-        appData: this.appData
-      }
+        appData: this.appData,
+      },
     })
   }
 }

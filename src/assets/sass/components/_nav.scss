@@ -1,0 +1,18 @@
+#nav {
+  padding: 20px;
+  background-color: #42b983;
+  color: white;
+  border-bottom: solid #42b983 1px;
+  text-align: left;
+  a {
+    color: white;
+    &.router-link-exact-active {
+      font-weight: bold;
+    }
+  }
+}
+
+.nav-item {
+  margin: auto 15px;
+  text-decoration: none;
+}
