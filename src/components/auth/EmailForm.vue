@@ -1,27 +1,27 @@
 <template>
-  <div>
-    <div class="form">
-      <p class="form__title">{{ formTitle }}</p>
+  <div class="form">
+    <p class="form__title">{{ formTitle }}</p>
 
-      <AppInput
-        class="form__input"
-        :placeholder="'Enter your email address'"
-        v-model="inputText"
-      />
+    <AppInput
+      class="form__input"
+      :placeholder="'Enter your email address'"
+      v-model="inputText"
+    />
 
-      <AppButton @click.native="submitButtonHandler" class="button form__button"
-        >Submit</AppButton
-      >
-    </div>
+    <AppButton @click.native="submitButtonHandler" class="button form__button"
+      >Submit</AppButton
+    >
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { checkEmailValidation } from '@/utils/validation'
 
 const EmailFormProps = Vue.extend({
   props: {
     title: String,
+    submitForm: Function,
   },
 })
 
@@ -34,7 +34,12 @@ export default class EmailForm extends EmailFormProps {
   }
 
   submitButtonHandler() {
-    console.log('submit: ', this.inputText)
+    const isEmailValid = checkEmailValidation(this.inputText.trim())
+    if (isEmailValid) {
+      this.submitForm(this.inputText)
+    } else {
+      console.log('show validation error')
+    }
   }
 }
 </script>
@@ -42,7 +47,6 @@ export default class EmailForm extends EmailFormProps {
 <style lang="scss" scoped>
 .form {
   padding: 27px;
-  margin-bottom: 15px;
   border-radius: 8px;
   background-color: #f4f5f7;
 

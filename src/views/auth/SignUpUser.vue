@@ -6,19 +6,13 @@
         malesuada diam nisl vel enim nisi. Mattis ut iaculis amet ultrices nibh.
       </p>
 
-      <EmailForm
+      <SignupUserForm
         v-if="signupStep === 1"
-        :title="'Start your registration'"
-        :submitForm="submitEmailForm"
-      />
-
-      <SignupAdminForm
-        v-if="signupStep === 2"
         :validEmail="validEmail"
-        :submitForm="submitAdminForm"
+        :submitForm="submitUserForm"
       />
 
-      <div v-if="signupStep === 3" class="success">
+      <div v-if="signupStep === 2" class="success">
         <IconSuccess class="success-icon" />
         <div class="success-info">
           <p class="title">Success!</p>
@@ -40,29 +34,21 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import AuthWrapper from '@/components/auth/AuthWrapper.vue'
-import EmailForm from '@/components/auth/EmailForm.vue'
-import SignupAdminForm from '@/components/auth/SignupAdminForm.vue'
+import SignupUserForm from '@/components/auth/SignupUserForm.vue'
 
 @Component({
   components: {
     AuthWrapper,
-    EmailForm,
-    SignupAdminForm,
+    SignupUserForm,
   },
 })
 export default class SignUpAdmin extends Vue {
   signupStep = 1
   validEmail = ''
 
-  submitEmailForm(validEmail: string) {
-    console.log('start validation passed')
+  submitUserForm() {
+    console.log('user signup passed')
     this.signupStep = 2
-    this.validEmail = validEmail
-  }
-
-  submitAdminForm() {
-    console.log('signup passed')
-    this.signupStep = 3
   }
 }
 </script>

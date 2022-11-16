@@ -2,18 +2,19 @@
   <div>
     <div class="form">
       <p class="form__text">Email</p>
-      <input
+      <AppInput
         type="text"
         class="form__input"
-        placeholder="Enter your email address"
-        value="mehmet@xyz.com"
+        :placeholder="'Enter your email address'"
+        v-model="loginData.email"
       />
 
       <p class="form__text">Password</p>
-      <input
-        type="password"
+      <AppInput
+        :type="'password'"
         class="form__input"
-        placeholder="Enter your password"
+        :placeholder="'Enter your password'"
+        v-model="loginData.password"
       />
 
       <div class="form__control">
@@ -23,13 +24,31 @@
         >
       </div>
 
-      <AppButton class="button form__button">Sign in</AppButton>
+      <AppButton @click.native="submitButtonHandler" class="button form__button"
+        >Sign in</AppButton
+      >
     </div>
   </div>
 </template>
 
 <script lang="ts">
-export default {}
+import { Component, Vue } from 'vue-property-decorator'
+// import { checkEmailValidation } from '@/utils/validation'
+
+const EmailFormProps = Vue.extend({})
+
+@Component
+export default class EmailForm extends EmailFormProps {
+  loginData = {
+    email: '',
+    password: '',
+  }
+
+  submitButtonHandler() {
+    // const isEmailValid = checkEmailValidation(this.inputText.trim())
+    console.log('check form validation and login to server', this.loginData)
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -49,17 +68,8 @@ export default {}
   }
 
   .form__input {
-    display: block;
-    padding: 12px 8px;
     margin-bottom: 20px;
     width: 100%;
-
-    border-radius: 3px;
-    border: 2px solid #a5adba;
-
-    &:focus {
-      border-color: #4c9aff;
-    }
   }
 
   .form__control {
