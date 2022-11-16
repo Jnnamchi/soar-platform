@@ -7,11 +7,6 @@
 
       <h1 class="auth__title">Welcome to Soarline</h1>
 
-      <p class="auth__intro">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Odio facilisis
-        malesuada diam nisl vel enim nisi. Mattis ut iaculis amet ultrices nibh.
-      </p>
-
       <slot />
 
       <div class="auth__bottom">
@@ -59,13 +54,6 @@ export default {
     font-size: 40px;
     line-height: 50px;
     font-weight: 700;
-  }
-
-  .auth__intro {
-    margin-bottom: 15px;
-    color: #505f79;
-    font-size: 14px;
-    line-height: 20px;
   }
 
   .auth__bottom {

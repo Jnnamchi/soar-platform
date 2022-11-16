@@ -1,26 +1,42 @@
 <template>
   <div>
     <div class="form">
-      <p class="form__title">Start your registration</p>
+      <p class="form__title">{{ formTitle }}</p>
 
-      <input
-        type="text"
+      <AppInput
         class="form__input"
-        placeholder="Enter your email address"
+        :placeholder="'Enter your email address'"
+        v-model="inputText"
       />
 
-      <button class="button form__button">Submit</button>
+      <AppButton @click.native="submitButtonHandler" class="button form__button"
+        >Submit</AppButton
+      >
     </div>
-
-    <p class="redirect">
-      Already a member?
-      <router-link to="/login" class="redirect__link">Login</router-link>
-    </p>
   </div>
 </template>
 
 <script lang="ts">
-export default {}
+import { Component, Vue } from 'vue-property-decorator'
+
+const EmailFormProps = Vue.extend({
+  props: {
+    title: String,
+  },
+})
+
+@Component
+export default class EmailForm extends EmailFormProps {
+  inputText = ''
+
+  get formTitle(): string {
+    return this.title || 'Enter your email'
+  }
+
+  submitButtonHandler() {
+    console.log('submit: ', this.inputText)
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -37,17 +53,7 @@ export default {}
   }
 
   .form__input {
-    display: block;
-    padding: 12px 8px;
     margin-bottom: 17px;
-    width: 100%;
-
-    border-radius: 3px;
-    border: 2px solid #a5adba;
-
-    &:focus {
-      border-color: #4c9aff;
-    }
   }
 }
 

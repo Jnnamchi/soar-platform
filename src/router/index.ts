@@ -5,6 +5,8 @@ import EmptyHome from '../views/EmptyHome.vue'
 
 // auth
 import SignUpAdmin from '@/views/auth/SignUpAdmin.vue'
+import LoginUser from '@/views/auth/LoginUser.vue'
+import ResetPassword from '@/views/auth/ResetPassword.vue'
 
 Vue.use(VueRouter)
 
@@ -79,8 +81,18 @@ const routes: Array<RouteConfig> = [
   // auth
   {
     path: '/auth/sign-up-admin',
-    name: 'sign-au-admin',
+    name: 'sign-up-admin',
     component: SignUpAdmin,
+  },
+  {
+    path: '/auth/login',
+    name: 'login',
+    component: LoginUser,
+  },
+  {
+    path: '/auth/reset-pass',
+    name: 'reset-pass',
+    component: ResetPassword,
   },
 ]
 
