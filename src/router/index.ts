@@ -7,7 +7,7 @@ import EmptyHome from '../views/EmptyHome.vue'
 
 // auth
 import SignUpAdmin from '@/views/auth/SignUpAdmin.vue'
-import SignUpUser from '@/views/auth/SignUpUser.vue'
+import SignUpParticipant from '@/views/auth/SignUpParticipant.vue'
 import LoginUser from '@/views/auth/LoginUser.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 
@@ -34,7 +34,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/auth/sign-up',
     name: 'sign-up-user',
-    component: SignUpUser,
+    component: SignUpParticipant,
     meta: {
       layout: 'AuthLayout',
     },

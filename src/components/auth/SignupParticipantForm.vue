@@ -47,7 +47,7 @@
 import { checkEmailValidation } from '@/utils/validation'
 import { Component, Vue } from 'vue-property-decorator'
 
-const SignupAdminFormProps = Vue.extend({
+const SignupParticipantFormProps = Vue.extend({
   props: {
     validEmail: String,
     submitForm: Function,
@@ -55,7 +55,7 @@ const SignupAdminFormProps = Vue.extend({
 })
 
 @Component({})
-export default class SignupAdminForm extends SignupAdminFormProps {
+export default class SignupParticipantForm extends SignupParticipantFormProps {
   emailInfo = {
     type: '',
     text: '',
