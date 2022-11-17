@@ -1,44 +1,40 @@
 <template>
   <div>
-    <AuthWrapper>
-      <p class="auth__intro">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Odio facilisis
-        malesuada diam nisl vel enim nisi. Mattis ut iaculis amet ultrices nibh.
-      </p>
+    <p class="auth__intro">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Odio facilisis
+      malesuada diam nisl vel enim nisi. Mattis ut iaculis amet ultrices nibh.
+    </p>
 
-      <SignupUserForm
-        v-if="signupStep === 1"
-        :validEmail="validEmail"
-        :submitForm="submitUserForm"
-      />
+    <SignupUserForm
+      v-if="signupStep === 1"
+      :validEmail="validEmail"
+      :submitForm="submitUserForm"
+    />
 
-      <div v-if="signupStep === 2" class="success">
-        <IconSuccess class="success-icon" />
-        <div class="success-info">
-          <p class="title">Success!</p>
-          <p class="text">Check your email to activate your account</p>
-          <p class="link">Didn’t get email? click here</p>
-        </div>
+    <div v-if="signupStep === 2" class="success">
+      <IconSuccess class="success-icon" />
+      <div class="success-info">
+        <p class="title">Success!</p>
+        <p class="text">Check your email to activate your account</p>
+        <p class="link">Didn’t get email? click here</p>
       </div>
+    </div>
 
-      <p class="redirect">
-        Already a member?
-        <router-link :to="{ name: 'login' }" class="redirect__link"
-          >Login</router-link
-        >
-      </p>
-    </AuthWrapper>
+    <p class="redirect">
+      Already a member?
+      <router-link :to="{ name: 'login' }" class="redirect__link"
+        >Login</router-link
+      >
+    </p>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import AuthWrapper from '@/components/auth/AuthWrapper.vue'
 import SignupUserForm from '@/components/auth/SignupUserForm.vue'
 
 @Component({
   components: {
-    AuthWrapper,
     SignupUserForm,
   },
 })

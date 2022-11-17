@@ -1,19 +1,15 @@
 <template>
   <div>
-    <AuthWrapper>
-      <EmailForm :title="'Reset password form'" :submitForm="submitEmailForm" />
-    </AuthWrapper>
+    <EmailForm :title="'Reset password form'" :submitForm="submitEmailForm" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import AuthWrapper from '@/components/auth/AuthWrapper.vue'
 import EmailForm from '@/components/auth/EmailForm.vue'
 
 @Component({
   components: {
-    AuthWrapper,
     EmailForm,
   },
 })

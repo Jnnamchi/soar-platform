@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
+
+// home
 // import Home from "../views/Home.vue";
 import EmptyHome from '../views/EmptyHome.vue'
 
@@ -12,12 +14,48 @@ import ResetPassword from '@/views/auth/ResetPassword.vue'
 Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
+  // home
   {
     path: '/',
     props: true,
     name: 'home',
     component: EmptyHome,
   },
+
+  // auth
+  {
+    path: '/auth/sign-up-admin',
+    name: 'sign-up-admin',
+    component: SignUpAdmin,
+    meta: {
+      layout: 'AuthLayout',
+    },
+  },
+  {
+    path: '/auth/sign-up',
+    name: 'sign-up-user',
+    component: SignUpUser,
+    meta: {
+      layout: 'AuthLayout',
+    },
+  },
+  {
+    path: '/auth/login',
+    name: 'login',
+    component: LoginUser,
+    meta: {
+      layout: 'AuthLayout',
+    },
+  },
+  {
+    path: '/auth/reset-pass',
+    name: 'reset-pass',
+    component: ResetPassword,
+    meta: {
+      layout: 'AuthLayout',
+    },
+  },
+
   {
     path: '/survey',
     props: true,
@@ -78,28 +116,6 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/SOARModuleAnalysis.vue'),
   },
-
-  // auth
-  {
-    path: '/auth/sign-up-admin',
-    name: 'sign-up-admin',
-    component: SignUpAdmin,
-  },
-  {
-    path: '/auth/sign-up',
-    name: 'sign-up-user',
-    component: SignUpUser,
-  },
-  {
-    path: '/auth/login',
-    name: 'login',
-    component: LoginUser,
-  },
-  {
-    path: '/auth/reset-pass',
-    name: 'reset-pass',
-    component: ResetPassword,
-  },
 ]
 
 const router = new VueRouter({
@@ -107,7 +123,6 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 })
-
 
 // // Setup the route hooks to perform authentication checking for every route
 // // except those that are not protected

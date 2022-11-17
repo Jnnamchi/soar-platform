@@ -2,16 +2,18 @@
   <div class="layout">
     <AppNav />
 
-    <slot />
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 import AppNav from '@/components/AppNav.vue'
 
-export default {
+@Component({
   components: {
     AppNav,
   },
-}
+})
+export default class DefaultLayout extends Vue {}
 </script>

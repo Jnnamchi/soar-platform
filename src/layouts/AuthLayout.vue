@@ -7,7 +7,7 @@
 
       <h1 class="auth__title">Welcome to Soarline</h1>
 
-      <slot />
+      <router-view />
 
       <div class="auth__bottom">
         <h2 class="bottom__title">watch a quick tour</h2>
@@ -24,9 +24,10 @@
 </template>
 
 <script lang="ts">
-export default {
-  name: 'auth-wrapper',
-}
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({})
+export default class AuthLayout extends Vue {}
 </script>
 
 <style lang="scss" scoped>

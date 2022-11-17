@@ -1,51 +1,47 @@
 <template>
   <div>
-    <AuthWrapper>
-      <p class="auth__intro">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Odio facilisis
-        malesuada diam nisl vel enim nisi. Mattis ut iaculis amet ultrices nibh.
-      </p>
+    <p class="auth__intro">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Odio facilisis
+      malesuada diam nisl vel enim nisi. Mattis ut iaculis amet ultrices nibh.
+    </p>
 
-      <EmailForm
-        v-if="signupStep === 1"
-        :title="'Start your registration'"
-        :submitForm="submitEmailForm"
-      />
+    <EmailForm
+      v-if="signupStep === 1"
+      :title="'Start your registration'"
+      :submitForm="submitEmailForm"
+    />
 
-      <SignupAdminForm
-        v-if="signupStep === 2"
-        :validEmail="validEmail"
-        :submitForm="submitAdminForm"
-      />
+    <SignupAdminForm
+      v-if="signupStep === 2"
+      :validEmail="validEmail"
+      :submitForm="submitAdminForm"
+    />
 
-      <div v-if="signupStep === 3" class="success">
-        <IconSuccess class="success-icon" />
-        <div class="success-info">
-          <p class="title">Success!</p>
-          <p class="text">Check your email to activate your account</p>
-          <p class="link">Didn’t get email? click here</p>
-        </div>
+    <div v-if="signupStep === 3" class="success">
+      <IconSuccess class="success-icon" />
+      <div class="success-info">
+        <p class="title">Success!</p>
+        <p class="text">Check your email to activate your account</p>
+        <p class="link">Didn’t get email? click here</p>
       </div>
+    </div>
 
-      <p class="redirect">
-        Already a member?
-        <router-link :to="{ name: 'login' }" class="redirect__link"
-          >Login</router-link
-        >
-      </p>
-    </AuthWrapper>
+    <p class="redirect">
+      Already a member?
+      <router-link :to="{ name: 'login' }" class="redirect__link"
+        >Login</router-link
+      >
+    </p>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import AuthWrapper from '@/components/auth/AuthWrapper.vue'
 import EmailForm from '@/components/auth/EmailForm.vue'
 import SignupAdminForm from '@/components/auth/SignupAdminForm.vue'
 
 @Component({
   components: {
-    AuthWrapper,
     EmailForm,
     SignupAdminForm,
   },
