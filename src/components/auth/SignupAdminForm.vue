@@ -57,6 +57,7 @@
         :placeholder="'Choose password'"
         :type="'password'"
         v-model="signupForm.password"
+        :info="passwordInfo"
       />
 
       <AppInput
@@ -64,9 +65,13 @@
         :placeholder="'Repeat password'"
         :type="'password'"
         v-model="signupForm.passwordConfirm"
+        :info="passwordConfirmInfo"
       />
 
-      <AppButton class="button form__button" @click.native="submitButtonHandler"
+      <AppButton
+        class="button form__button"
+        @click.native="submitButtonHandler"
+        :isLoading="isLoading"
         >Submit</AppButton
       >
     </div>
@@ -90,27 +95,91 @@ export default class SignupAdminForm extends SignupAdminFormProps {
     type: 'success',
     text: 'Email is validated',
   }
+  passwordInfo = {
+    type: '',
+    text: '',
+  }
+  passwordConfirmInfo = {
+    type: '',
+  }
+  isLoading = false
   signupForm = {
     email: this.validEmail,
-    firstName: '',
+    firstName: 'yy',
     lastName: '',
     jobTitle: '',
     phone: '',
     companyName: '',
     organizatoinSize: '',
     industry: '',
-    password: '',
+    password: '123123',
     passwordConfirm: '',
   }
 
   submitButtonHandler() {
-    const isEmailValid = checkEmailValidation(this.signupForm.email.trim())
+    this.emailValidation()
+    this.passValidation()
 
-    console.log('is email valid: ', isEmailValid, this.signupForm.email)
-    if (isEmailValid) {
-      this.submitForm(this.signupForm)
+    const validationSuccess =
+      this.emailInfo.type === 'success' &&
+      !this.passwordInfo.type &&
+      !this.passwordConfirmInfo.type
+
+    if (validationSuccess) {
+      this.isLoading = true
+      setTimeout(() => {
+        this.submitForm(this.signupForm)
+        this.isLoading = false
+      }, 3000)
+    }
+  }
+
+  emailValidation() {
+    const isEmailValid = checkEmailValidation(this.signupForm.email.trim())
+    if (!isEmailValid) {
+      this.emailInfo = {
+        type: 'error',
+        text: "Email wasn't validated",
+      }
     } else {
-      console.log('show validation error')
+      this.emailInfo = {
+        type: 'success',
+        text: 'Email is validated',
+      }
+    }
+  }
+
+  passValidation() {
+    if (this.signupForm.password.length < 6) {
+      this.passwordInfo = {
+        type: 'error',
+        text: 'Password length must be greater than 6 characters',
+      }
+    } else {
+      this.passwordInfo = {
+        type: '',
+        text: '',
+      }
+      const isPassValid =
+        this.signupForm.password === this.signupForm.passwordConfirm
+
+      this.passwordInfo = isPassValid
+        ? {
+            type: '',
+            text: '',
+          }
+        : {
+            type: 'error',
+            text: 'The password confirmation does not match',
+          }
+
+      this.passwordConfirmInfo = isPassValid
+        ? {
+            type: '',
+          }
+        : {
+            type: 'error',
+          }
     }
   }
 }

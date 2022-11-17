@@ -30,7 +30,6 @@ export default class App extends Vue {
 
   get layout() {
     const layout = this.$route.meta?.layout || DEFAULT_LAYOUT
-    console.log('layout: ', layout)
     return layout
   }
 }

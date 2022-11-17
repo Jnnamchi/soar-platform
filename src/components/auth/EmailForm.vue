@@ -6,6 +6,7 @@
       class="form__input"
       :placeholder="'Enter your email address'"
       v-model="inputText"
+      :info="inputValidationInfo"
     />
 
     <AppButton @click.native="submitButtonHandler" class="button form__button"
@@ -27,7 +28,11 @@ const EmailFormProps = Vue.extend({
 
 @Component
 export default class EmailForm extends EmailFormProps {
-  inputText = ''
+  inputText = 'yy.dev@bk.ru'
+  inputValidationInfo = {
+    type: '',
+    text: '',
+  }
 
   get formTitle(): string {
     return this.title || 'Enter your email'
@@ -37,8 +42,15 @@ export default class EmailForm extends EmailFormProps {
     const isEmailValid = checkEmailValidation(this.inputText.trim())
     if (isEmailValid) {
       this.submitForm(this.inputText)
+      this.inputValidationInfo = {
+        type: '',
+        text: '',
+      }
     } else {
-      console.log('show validation error')
+      this.inputValidationInfo = {
+        type: 'error',
+        text: "Email wasn't validated",
+      }
     }
   }
 }

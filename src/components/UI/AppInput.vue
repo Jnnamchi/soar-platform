@@ -3,18 +3,24 @@
     <input
       :value="inputValue"
       @input="updateInput($event)"
-      class="input"
+      :class="['input', info && info.type === 'error' && 'error']"
       :placeholder="inputPlaceholder"
       :type="inputType"
     />
     <p class="text">
-      <IconSuccess v-if="info && info.type === 'success'" class="text-icon" />
-      <IconError v-if="info && info.type === 'error'" class="text-icon" />
+      <IconSuccess
+        v-if="info && info.type === 'success' && info.text"
+        class="text-icon"
+      />
+      <IconError
+        v-if="info && info.type === 'error' && info.text"
+        class="text-icon"
+      />
       <span
         v-if="info"
         :class="{
-          'text-success': info.type === 'success',
-          'text-error': info.type === 'error',
+          'text-success': info && info.type === 'success',
+          'text-error': info && info.type === 'error',
         }"
         >{{ info.text }}</span
       >
@@ -68,6 +74,10 @@ export default class AppInput extends InputProps {
     border-radius: 3px;
     border: 2px solid #d7dbe4;
 
+    &.error {
+      border-color: #de350b;
+    }
+
     &:focus {
       border-color: #4c9aff;
     }
@@ -77,8 +87,15 @@ export default class AppInput extends InputProps {
     display: flex;
     align-items: center;
     margin-top: 2px;
-    color: #00875a;
     font-size: 12px;
+
+    &-success {
+      color: #00875a;
+    }
+
+    &-error {
+      color: #de350b;
+    }
 
     &-icon {
       margin-left: 3px;
