@@ -17,10 +17,10 @@ Vue.use(VueRouter)
 // eslint-disable-next-line no-prototype-builtins
 const isAuthorized = localStorage.hasOwnProperty('sl-t')
 
-// const authGuard = (to, from, next) => {
-//   if (!isAuthorized) return next({ name: 'login' })
-//   else return next()
-// }
+const authGuard = (to, from, next) => {
+  if (!isAuthorized) return next({ name: 'login' })
+  else return next()
+}
 
 const routes: Array<RouteConfig> = [
   // home
@@ -29,6 +29,7 @@ const routes: Array<RouteConfig> = [
     props: true,
     name: 'home',
     component: EmptyHome,
+    beforeEnter: authGuard,
   },
 
   // auth
@@ -141,22 +142,22 @@ const router = new VueRouter({
   routes,
 })
 
-router.beforeEach(async (to, from, next) => {
-  if (to == from) {
-    return
-  }
-  if (!isAuthorized) {
-    if (to.path == '/login') {
-      next()
-    } else {
-      next('/login')
-    }
-  } else {
-    if (to.path == '/login') {
-      next('/home')
-    } else {
-      next()
-    }
-  }
-})
+// router.beforeEach(async (to, from, next) => {
+//   if (to == from) {
+//     return
+//   }
+//   if (!isAuthorized) {
+//     if (to.path == '/auth/login') {
+//       next()
+//     } else {
+//       next('/auth/login')
+//     }
+//   } else {
+//     if (to.path == '/auth/login') {
+//       next('/home')
+//     } else {
+//       next()
+//     }
+//   }
+// })
 export default router
