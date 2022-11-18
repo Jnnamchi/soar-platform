@@ -13,19 +13,19 @@
       <AppInput
         class="form__input"
         :placeholder="'First name'"
-        v-model="signupForm.firstName"
+        v-model="signupForm.first_name"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Last name'"
-        v-model="signupForm.lastName"
+        v-model="signupForm.last_name"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Job title'"
-        v-model="signupForm.jobTitle"
+        v-model="signupForm.job_title"
       />
 
       <AppInput
@@ -37,13 +37,13 @@
       <AppInput
         class="form__input"
         :placeholder="'Your company name'"
-        v-model="signupForm.companyName"
+        v-model="signupForm.company_name"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Your organization size'"
-        v-model="signupForm.organizatoinSize"
+        v-model="signupForm.organization_size"
       />
 
       <AppInput
@@ -64,7 +64,7 @@
         class="form__input"
         :placeholder="'Repeat password'"
         :type="'password'"
-        v-model="signupForm.passwordConfirm"
+        v-model="passwordConfirm"
         :info="passwordConfirmInfo"
       />
 
@@ -79,8 +79,8 @@
 </template>
 
 <script lang="ts">
-import { checkEmailValidation } from '@/utils/validation'
 import { Component, Vue } from 'vue-property-decorator'
+import { checkEmailValidation } from '@/utils/validation'
 
 const SignupAdminFormProps = Vue.extend({
   props: {
@@ -105,18 +105,18 @@ export default class SignupAdminForm extends SignupAdminFormProps {
   isLoading = false
   signupForm = {
     email: this.validEmail,
-    firstName: 'yy',
-    lastName: '',
-    jobTitle: '',
+    first_name: '',
+    last_name: '',
+    job_title: '',
     phone: '',
-    companyName: '',
-    organizatoinSize: '',
+    company_name: '',
+    organization_size: '',
     industry: '',
-    password: '123123',
-    passwordConfirm: '',
+    password: '',
   }
+  passwordConfirm = ''
 
-  submitButtonHandler() {
+  async submitButtonHandler() {
     this.emailValidation()
     this.passValidation()
 
@@ -126,11 +126,26 @@ export default class SignupAdminForm extends SignupAdminFormProps {
       !this.passwordConfirmInfo.type
 
     if (validationSuccess) {
+      this.signup()
+    }
+  }
+
+  async signup() {
+    try {
       this.isLoading = true
-      setTimeout(() => {
-        this.submitForm(this.signupForm)
-        this.isLoading = false
-      }, 3000)
+
+      const res = await this.$store.dispatch(
+        'moduleAuth/onSignupAdmin',
+        this.signupForm
+      )
+
+      if (res.status === 204) {
+        this.submitForm()
+      }
+    } catch (error) {
+      throw new Error()
+    } finally {
+      this.isLoading = false
     }
   }
 
@@ -160,8 +175,7 @@ export default class SignupAdminForm extends SignupAdminFormProps {
         type: '',
         text: '',
       }
-      const isPassValid =
-        this.signupForm.password === this.signupForm.passwordConfirm
+      const isPassValid = this.signupForm.password === this.passwordConfirm
 
       this.passwordInfo = isPassValid
         ? {

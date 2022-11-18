@@ -7,11 +7,20 @@ import EmptyHome from '../views/EmptyHome.vue'
 
 // auth
 import SignUpAdmin from '@/views/auth/SignUpAdmin.vue'
+import ConfirmRegistration from '@/views/auth/ConfirmRegistration.vue'
 import SignUpParticipant from '@/views/auth/SignUpParticipant.vue'
 import LoginUser from '@/views/auth/LoginUser.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 
 Vue.use(VueRouter)
+
+// eslint-disable-next-line no-prototype-builtins
+const isAuthorized = localStorage.hasOwnProperty('sl-t')
+
+const authGuard = (to, from, next) => {
+  if (!isAuthorized) next({ name: 'login' })
+  else next()
+}
 
 const routes: Array<RouteConfig> = [
   // home
@@ -20,6 +29,7 @@ const routes: Array<RouteConfig> = [
     props: true,
     name: 'home',
     component: EmptyHome,
+    beforeEnter: authGuard,
   },
 
   // auth
@@ -32,9 +42,9 @@ const routes: Array<RouteConfig> = [
     },
   },
   {
-    path: '/auth/sign-up',
-    name: 'sign-up-user',
-    component: SignUpParticipant,
+    path: '/registration/complete/:id',
+    name: 'complete-registration',
+    component: ConfirmRegistration,
     meta: {
       layout: 'AuthLayout',
     },
@@ -51,6 +61,14 @@ const routes: Array<RouteConfig> = [
     path: '/auth/reset-pass',
     name: 'reset-pass',
     component: ResetPassword,
+    meta: {
+      layout: 'AuthLayout',
+    },
+  },
+  {
+    path: '/auth/sign-up',
+    name: 'sign-up-user',
+    component: SignUpParticipant,
     meta: {
       layout: 'AuthLayout',
     },

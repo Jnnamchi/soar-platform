@@ -1,14 +1,24 @@
-import { LoginAPIInstance, DefaultAPIInstance } from '@/api'
+import { authAPIInstance } from '@/api'
+import { IUser } from '@/data/User'
 
 export const AuthAPI = {
-  login(email: string, password: string, first_name: string) {
+  registrationAdmin(data: IUser) {
     const url = '/account/signup'
-    const data = { email, password, first_name }
-    return LoginAPIInstance.post(url, data)
+    return authAPIInstance.post(url, data)
   },
 
-  logout() {
-    const url = 'account/logout'
-    return DefaultAPIInstance.post(url)
+  registrationConfirm(id: string) {
+    const url = `/account/signup/${id}`
+    return authAPIInstance.post(url)
+  },
+
+  login(data: { email: string; password: string }) {
+    const url = '/account/2fa'
+    return authAPIInstance.post(url, data)
+  },
+
+  loginConfirm(data: { id: string; code: string }) {
+    const url = `/account/2fa/${data.id}`
+    return authAPIInstance.post(url, { code: data.code })
   },
 }

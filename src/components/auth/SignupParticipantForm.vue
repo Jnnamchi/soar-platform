@@ -71,7 +71,6 @@ export default class SignupParticipantForm extends SignupParticipantFormProps {
   submitButtonHandler() {
     const isEmailValid = checkEmailValidation(this.signupForm.email.trim())
 
-    console.log('is email valid: ', isEmailValid, this.signupForm.email)
     if (isEmailValid) {
       this.submitForm(this.signupForm)
     } else {

@@ -13,7 +13,7 @@ import EmailForm from '@/components/auth/EmailForm.vue'
     EmailForm,
   },
 })
-export default class SignUpAdmin extends Vue {
+export default class ResetPassword extends Vue {
   submitEmailForm(validEmail: string) {
     console.log('reset pass validation confirm', validEmail)
   }

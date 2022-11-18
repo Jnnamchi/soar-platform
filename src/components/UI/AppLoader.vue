@@ -1,15 +1,11 @@
 <template>
-  <button :class="['button', loader && 'disabled']" :disabled="loader">
-    <slot v-if="!loader" />
-
-    <div v-else class="loader"></div>
-  </button>
+  <div v-if="isLoading" class="loader"></div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-const ButtonProps = Vue.extend({
+const AppLoaderProps = Vue.extend({
   props: {
     isLoading: {
       type: Boolean,
@@ -19,9 +15,9 @@ const ButtonProps = Vue.extend({
 })
 
 @Component({
-  name: 'AppButton',
+  name: 'AppLoader',
 })
-export default class AppButton extends ButtonProps {
+export default class AppLoader extends AppLoaderProps {
   get loader(): boolean {
     return this.isLoading
   }
@@ -29,29 +25,6 @@ export default class AppButton extends ButtonProps {
 </script>
 
 <style lang="scss" scoped>
-.button {
-  width: 100%;
-  height: 32px;
-  border: none;
-  border-radius: 3px;
-  color: #fff;
-  background-color: #0052cc;
-  cursor: pointer;
-
-  &.disabled {
-    background-color: #4d90f5;
-    cursor: default;
-  }
-
-  &:not(.disabled):hover {
-    background-color: #1668e4;
-  }
-
-  &:not(.disabled):active {
-    background-color: #0052cc;
-  }
-}
-
 .loader,
 .loader:after {
   border-radius: 50%;
@@ -59,7 +32,7 @@ export default class AppButton extends ButtonProps {
   height: 10em;
 }
 
-$fs: 2px;
+$fs: 10px;
 $bs: 1.25em;
 .loader {
   margin: 0 auto;

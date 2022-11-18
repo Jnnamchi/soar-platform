@@ -32,4 +32,10 @@ export interface IUser {
   email: string
   first_name: string
   password: string
+  last_name: string
+  job_title: string
+  phone: string
+  company_name: string
+  organization_size: string
+  industry: string
 }

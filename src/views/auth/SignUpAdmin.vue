@@ -39,7 +39,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import EmailForm from '@/components/auth/EmailForm.vue'
 import SignupAdminForm from '@/components/auth/SignupAdminForm.vue'
-import { IUser } from '@/data/User'
 
 @Component({
   components: {
@@ -56,9 +55,8 @@ export default class SignUpAdmin extends Vue {
     this.validEmail = validEmail
   }
 
-  submitAdminForm(signupForm: IUser) {
-    console.log('signup passed', signupForm)
-    // this.signupStep = 3
+  submitAdminForm() {
+    this.signupStep = 3
   }
 }
 </script>

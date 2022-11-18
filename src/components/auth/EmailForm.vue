@@ -28,7 +28,7 @@ const EmailFormProps = Vue.extend({
 
 @Component
 export default class EmailForm extends EmailFormProps {
-  inputText = 'yy.dev@bk.ru'
+  inputText = ''
   inputValidationInfo = {
     type: '',
     text: '',
@@ -40,6 +40,7 @@ export default class EmailForm extends EmailFormProps {
 
   submitButtonHandler() {
     const isEmailValid = checkEmailValidation(this.inputText.trim())
+
     if (isEmailValid) {
       this.submitForm(this.inputText)
       this.inputValidationInfo = {
