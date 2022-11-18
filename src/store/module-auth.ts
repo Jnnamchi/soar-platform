@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+// @ts-nocheck
 import { AuthAPI } from '@/api/auth'
 import { IUser } from '@/data/User'
 
