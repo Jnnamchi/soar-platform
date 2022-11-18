@@ -53,8 +53,8 @@ const EmailFormProps = Vue.extend({
 @Component
 export default class EmailForm extends EmailFormProps {
   loginData = {
-    email: 'yy.ainu@gmail.com',
-    password: '123123',
+    email: '',
+    password: '',
   }
   emailInfo = {
     type: '',
