@@ -31,7 +31,6 @@ export default class LoginUser extends Vue {
   }
 
   submitCodeForm() {
-    console.log('token accepted redirect to home')
     this.$router.push({ name: 'home' })
   }
 }

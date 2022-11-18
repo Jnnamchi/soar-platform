@@ -47,6 +47,7 @@ export default class SigninCodeForm extends SigninCodeFormProps {
         id: this.id,
         code: this.code,
       })
+
       if (res && res.status === 200) {
         this.submitForm()
       }

@@ -59,12 +59,16 @@ export default {
 
     async onLoginConfirm({ commit }, data: { id: string; code: string }) {
       return AuthAPI.loginConfirm(data).then((res) => {
-        console.log('res: ', res)
-
         if (res.status === 200) {
           commit('SET_TOKEN', res.data.access_token)
         }
 
+        return res
+      })
+    },
+
+    async onGetUserInfo() {
+      return AuthAPI.userInfo().then((res) => {
         return res
       })
     },

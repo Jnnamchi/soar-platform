@@ -14,7 +14,7 @@ const app = new Vue({
   render: (h) => h(App),
 })
 
-components.forEach(component => {
+components.forEach((component) => {
   Vue.component(component.name, component)
 })
 

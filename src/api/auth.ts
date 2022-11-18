@@ -1,4 +1,4 @@
-import { authAPIInstance } from '@/api'
+import { authAPIInstance, defaultAPIInstance } from '@/api'
 import { IUser } from '@/data/User'
 
 export const AuthAPI = {
@@ -20,5 +20,10 @@ export const AuthAPI = {
   loginConfirm(data: { id: string; code: string }) {
     const url = `/account/2fa/${data.id}`
     return authAPIInstance.post(url, { code: data.code })
+  },
+
+  userInfo() {
+    const url = '/account/me'
+    return defaultAPIInstance.get(url)
   },
 }
