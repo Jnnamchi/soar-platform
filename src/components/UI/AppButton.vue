@@ -18,9 +18,7 @@ const ButtonProps = Vue.extend({
   },
 })
 
-@Component({
-  name: 'AppButton',
-})
+@Component({})
 export default class AppButton extends ButtonProps {
   get loader(): boolean {
     return this.isLoading

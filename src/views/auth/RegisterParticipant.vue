@@ -32,10 +32,12 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import RegisterParticipantForm from '@/components/auth/RegisterParticipantForm.vue'
+import IconSuccess from '@/components/UI/IconSuccess.vue'
 
 @Component({
   components: {
     RegisterParticipantForm,
+    IconSuccess,
   },
 })
 export default class RegisterParticipant extends Vue {

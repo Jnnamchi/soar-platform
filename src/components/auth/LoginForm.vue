@@ -43,6 +43,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { checkEmailValidation } from '@/utils/validation'
+import AppButton from '@/components/UI/AppButton.vue'
+import AppInput from '@/components/UI/AppInput.vue'
 
 const LoginFormProps = Vue.extend({
   props: {
@@ -50,7 +52,12 @@ const LoginFormProps = Vue.extend({
   },
 })
 
-@Component
+@Component({
+  components: {
+    AppButton,
+    AppInput,
+  },
+})
 export default class LoginForm extends LoginFormProps {
   loginData = {
     email: '',

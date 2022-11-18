@@ -18,6 +18,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { checkEmailValidation } from '@/utils/validation'
+import AppButton from '@/components/UI/AppButton.vue'
+import AppInput from '@/components/UI/AppInput.vue'
 
 const EmailFormProps = Vue.extend({
   props: {
@@ -26,7 +28,12 @@ const EmailFormProps = Vue.extend({
   },
 })
 
-@Component
+@Component({
+  components: {
+    AppButton,
+    AppInput,
+  },
+})
 export default class EmailForm extends EmailFormProps {
   inputText = ''
   inputValidationInfo = {

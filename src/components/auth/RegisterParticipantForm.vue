@@ -46,6 +46,8 @@
 <script lang="ts">
 import { checkEmailValidation } from '@/utils/validation'
 import { Component, Vue } from 'vue-property-decorator'
+import AppButton from '@/components/UI/AppButton.vue'
+import AppInput from '@/components/UI/AppInput.vue'
 
 const RegisterParticipantFormProps = Vue.extend({
   props: {
@@ -54,7 +56,12 @@ const RegisterParticipantFormProps = Vue.extend({
   },
 })
 
-@Component({})
+@Component({
+  components: {
+    AppButton,
+    AppInput,
+  },
+})
 export default class RegisterParticipantForm extends RegisterParticipantFormProps {
   emailInfo = {
     type: '',

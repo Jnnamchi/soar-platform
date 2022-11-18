@@ -22,6 +22,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import AppButton from '@/components/UI/AppButton.vue'
+import AppInput from '@/components/UI/AppInput.vue'
 
 const TwoFactorFormProps = Vue.extend({
   props: {
@@ -30,7 +32,12 @@ const TwoFactorFormProps = Vue.extend({
   },
 })
 
-@Component
+@Component({
+  components: {
+    AppButton,
+    AppInput,
+  },
+})
 export default class TwoFactorForm extends TwoFactorFormProps {
   code = ''
   isLoading = false

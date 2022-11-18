@@ -10,8 +10,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import AppButton from '@/components/UI/AppButton.vue'
 
-@Component({})
+@Component({
+  components: {
+    AppButton,
+  },
+})
 export default class BaseHome extends Vue {
   user = {
     id: '',

@@ -39,11 +39,13 @@
 import { Component, Vue } from 'vue-property-decorator'
 import EmailForm from '@/components/auth/EmailForm.vue'
 import RegisterAdminForm from '@/components/auth/RegisterAdminForm.vue'
+import IconSuccess from '@/components/UI/IconSuccess.vue'
 
 @Component({
   components: {
     EmailForm,
     RegisterAdminForm,
+    IconSuccess,
   },
 })
 export default class RegisterAdmin extends Vue {

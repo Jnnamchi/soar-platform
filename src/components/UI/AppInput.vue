@@ -30,6 +30,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import IconError from './IconError.vue'
+import IconSuccess from './IconSuccess.vue'
 
 const InputProps = Vue.extend({
   props: {
@@ -42,6 +44,10 @@ const InputProps = Vue.extend({
 
 @Component({
   name: 'AppInput',
+  components: {
+    IconError,
+    IconSuccess,
+  },
 })
 export default class AppInput extends InputProps {
   get inputValue(): string {

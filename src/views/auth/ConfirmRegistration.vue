@@ -12,8 +12,13 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import router from '@/router'
+import AppLoader from '@/components/UI/AppLoader.vue'
 
-@Component({})
+@Component({
+  components: {
+    AppLoader,
+  },
+})
 export default class ConfirmRegistration extends Vue {
   status = 'waiting'
 

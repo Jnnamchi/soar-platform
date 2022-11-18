@@ -81,6 +81,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { checkEmailValidation } from '@/utils/validation'
+import AppButton from '@/components/UI/AppButton.vue'
+import AppInput from '@/components/UI/AppInput.vue'
 
 const RegisterAdminFormProps = Vue.extend({
   props: {
@@ -89,7 +91,12 @@ const RegisterAdminFormProps = Vue.extend({
   },
 })
 
-@Component({})
+@Component({
+  components: {
+    AppInput,
+    AppButton,
+  }
+})
 export default class RegisterAdminForm extends RegisterAdminFormProps {
   emailInfo = {
     type: 'success',
