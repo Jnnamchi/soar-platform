@@ -44,14 +44,14 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { checkEmailValidation } from '@/utils/validation'
 
-const EmailFormProps = Vue.extend({
+const LoginFormProps = Vue.extend({
   props: {
     submitForm: Function,
   },
 })
 
 @Component
-export default class EmailForm extends EmailFormProps {
+export default class LoginForm extends LoginFormProps {
   loginData = {
     email: '',
     password: '',

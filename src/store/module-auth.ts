@@ -43,7 +43,7 @@ export default {
   },
 
   actions: {
-    async onSignupAdmin({ commit }, data: IUser) {
+    async onRegisterAdmin({ commit }, data: IUser) {
       return AuthAPI.registrationAdmin(data).then((res) => {
         console.log('auth api login res: ', res)
         return
@@ -70,6 +70,13 @@ export default {
 
     async onGetUserInfo() {
       return AuthAPI.userInfo().then((res) => {
+        return res
+      })
+    },
+
+    async onRemoveUser({ commit }, { id }: { string }) {
+      return AuthAPI.removeUser(id).then((res) => {
+        console.log('onRemoveUser res: ', res)
         return res
       })
     },

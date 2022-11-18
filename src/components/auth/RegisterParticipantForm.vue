@@ -6,34 +6,34 @@
       <AppInput
         class="form__input"
         :placeholder="'Enter your email address'"
-        v-model="signupForm.email"
+        v-model="registerForm.email"
         :info="emailInfo"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'First name'"
-        v-model="signupForm.firstName"
+        v-model="registerForm.firstName"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Last name'"
-        v-model="signupForm.lastName"
+        v-model="registerForm.lastName"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Choose password'"
         :type="'password'"
-        v-model="signupForm.password"
+        v-model="registerForm.password"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Repeat password'"
         :type="'password'"
-        v-model="signupForm.passwordConfirm"
+        v-model="registerForm.passwordConfirm"
       />
 
       <AppButton class="button form__button" @click.native="submitButtonHandler"
@@ -47,7 +47,7 @@
 import { checkEmailValidation } from '@/utils/validation'
 import { Component, Vue } from 'vue-property-decorator'
 
-const SignupParticipantFormProps = Vue.extend({
+const RegisterParticipantFormProps = Vue.extend({
   props: {
     validEmail: String,
     submitForm: Function,
@@ -55,12 +55,12 @@ const SignupParticipantFormProps = Vue.extend({
 })
 
 @Component({})
-export default class SignupParticipantForm extends SignupParticipantFormProps {
+export default class RegisterParticipantForm extends RegisterParticipantFormProps {
   emailInfo = {
     type: '',
     text: '',
   }
-  signupForm = {
+  registerForm = {
     email: this.validEmail,
     firstName: '',
     lastName: '',
@@ -69,10 +69,10 @@ export default class SignupParticipantForm extends SignupParticipantFormProps {
   }
 
   submitButtonHandler() {
-    const isEmailValid = checkEmailValidation(this.signupForm.email.trim())
+    const isEmailValid = checkEmailValidation(this.registerForm.email.trim())
 
     if (isEmailValid) {
-      this.submitForm(this.signupForm)
+      this.submitForm(this.registerForm)
     } else {
       console.log('show validation error')
     }

@@ -4,12 +4,12 @@ import VueRouter, { RouteConfig } from 'vue-router'
 
 // home
 // import Home from "../views/Home.vue";
-import EmptyHome from '../views/EmptyHome.vue'
+import BaseHome from '../views/BaseHome.vue'
 
 // auth
-import SignUpAdmin from '@/views/auth/SignUpAdmin.vue'
+import RegisterAdmin from '@/views/auth/RegisterAdmin.vue'
 import ConfirmRegistration from '@/views/auth/ConfirmRegistration.vue'
-import SignUpParticipant from '@/views/auth/SignUpParticipant.vue'
+import RegisterParticipant from '@/views/auth/RegisterParticipant.vue'
 import LoginUser from '@/views/auth/LoginUser.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 
@@ -19,8 +19,11 @@ Vue.use(VueRouter)
 const isAuthorized = localStorage.hasOwnProperty('sl-t')
 
 const authGuard = (to, from, next) => {
-  if (!isAuthorized) return next({ name: 'login' })
-  else return next()
+  if (!isAuthorized) {
+    next({ name: 'login' })
+  } else {
+    next()
+  }
 }
 
 const routes: Array<RouteConfig> = [
@@ -29,7 +32,7 @@ const routes: Array<RouteConfig> = [
     path: '/',
     props: true,
     name: 'home',
-    component: EmptyHome,
+    component: BaseHome,
     beforeEnter: authGuard,
   },
 
@@ -37,7 +40,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/auth/sign-up-admin',
     name: 'sign-up-admin',
-    component: SignUpAdmin,
+    component: RegisterAdmin,
     meta: {
       layout: 'AuthLayout',
     },
@@ -69,7 +72,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/auth/sign-up',
     name: 'sign-up-user',
-    component: SignUpParticipant,
+    component: RegisterParticipant,
     meta: {
       layout: 'AuthLayout',
     },

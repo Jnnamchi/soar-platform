@@ -6,57 +6,57 @@
       <AppInput
         class="form__input"
         :placeholder="'Enter your email address'"
-        v-model="signupForm.email"
+        v-model="adminForm.email"
         :info="emailInfo"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'First name'"
-        v-model="signupForm.first_name"
+        v-model="adminForm.first_name"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Last name'"
-        v-model="signupForm.last_name"
+        v-model="adminForm.last_name"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Job title'"
-        v-model="signupForm.job_title"
+        v-model="adminForm.job_title"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Phone'"
-        v-model="signupForm.phone"
+        v-model="adminForm.phone"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Your company name'"
-        v-model="signupForm.company_name"
+        v-model="adminForm.company_name"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Your organization size'"
-        v-model="signupForm.organization_size"
+        v-model="adminForm.organization_size"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Your industry'"
-        v-model="signupForm.industry"
+        v-model="adminForm.industry"
       />
 
       <AppInput
         class="form__input"
         :placeholder="'Choose password'"
         :type="'password'"
-        v-model="signupForm.password"
+        v-model="adminForm.password"
         :info="passwordInfo"
       />
 
@@ -82,7 +82,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { checkEmailValidation } from '@/utils/validation'
 
-const SignupAdminFormProps = Vue.extend({
+const RegisterAdminFormProps = Vue.extend({
   props: {
     validEmail: String,
     submitForm: Function,
@@ -90,7 +90,7 @@ const SignupAdminFormProps = Vue.extend({
 })
 
 @Component({})
-export default class SignupAdminForm extends SignupAdminFormProps {
+export default class RegisterAdminForm extends RegisterAdminFormProps {
   emailInfo = {
     type: 'success',
     text: 'Email is validated',
@@ -103,7 +103,7 @@ export default class SignupAdminForm extends SignupAdminFormProps {
     type: '',
   }
   isLoading = false
-  signupForm = {
+  adminForm = {
     email: this.validEmail,
     first_name: '',
     last_name: '',
@@ -126,17 +126,17 @@ export default class SignupAdminForm extends SignupAdminFormProps {
       !this.passwordConfirmInfo.type
 
     if (validationSuccess) {
-      this.signup()
+      this.register()
     }
   }
 
-  async signup() {
+  async register() {
     try {
       this.isLoading = true
 
       const res = await this.$store.dispatch(
-        'moduleAuth/onSignupAdmin',
-        this.signupForm
+        'moduleAuth/onRegisterAdmin',
+        this.adminForm
       )
 
       if (res.status === 204) {
@@ -150,7 +150,7 @@ export default class SignupAdminForm extends SignupAdminFormProps {
   }
 
   emailValidation() {
-    const isEmailValid = checkEmailValidation(this.signupForm.email.trim())
+    const isEmailValid = checkEmailValidation(this.adminForm.email.trim())
     if (!isEmailValid) {
       this.emailInfo = {
         type: 'error',
@@ -165,7 +165,7 @@ export default class SignupAdminForm extends SignupAdminFormProps {
   }
 
   passValidation() {
-    if (this.signupForm.password.length < 6) {
+    if (this.adminForm.password.length < 6) {
       this.passwordInfo = {
         type: 'error',
         text: 'Password length must be greater than 6 characters',
@@ -175,7 +175,7 @@ export default class SignupAdminForm extends SignupAdminFormProps {
         type: '',
         text: '',
       }
-      const isPassValid = this.signupForm.password === this.passwordConfirm
+      const isPassValid = this.adminForm.password === this.passwordConfirm
 
       this.passwordInfo = isPassValid
         ? {

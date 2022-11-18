@@ -26,4 +26,9 @@ export const AuthAPI = {
     const url = '/account/me'
     return defaultAPIInstance.get(url)
   },
+
+  removeUser(id: string) {
+    const url = `/account/user/${id}`
+    return defaultAPIInstance.delete(url)
+  },
 }

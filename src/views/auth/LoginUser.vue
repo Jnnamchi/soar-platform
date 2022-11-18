@@ -1,8 +1,8 @@
 <template>
   <div class="login">
-    <SigninForm v-if="loginStep === 1" :submitForm="submitLoginForm" />
+    <LoginForm v-if="loginStep === 1" :submitForm="submitLoginForm" />
 
-    <SigninCodeForm
+    <TwoFactorForm
       v-if="loginStep === 2"
       :loginId="loginId"
       :submitForm="submitCodeForm"
@@ -12,13 +12,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import SigninForm from '@/components/auth/SigninForm.vue'
-import SigninCodeForm from '@/components/auth/SigninCodeForm.vue'
+import LoginForm from '@/components/auth/LoginForm.vue'
+import TwoFactorForm from '@/components/auth/TwoFactorForm.vue'
 
 @Component({
   components: {
-    SigninForm,
-    SigninCodeForm,
+    LoginForm,
+    TwoFactorForm,
   },
 })
 export default class LoginUser extends Vue {
@@ -30,8 +30,8 @@ export default class LoginUser extends Vue {
     this.loginId = loginId
   }
 
-  submitCodeForm() {
-    this.$router.push({ name: 'home' })
+  async submitCodeForm() {
+    await this.$router.push({ name: 'home' })
   }
 }
 </script>

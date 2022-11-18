@@ -23,7 +23,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-const SigninCodeFormProps = Vue.extend({
+const TwoFactorFormProps = Vue.extend({
   props: {
     loginId: String,
     submitForm: Function,
@@ -31,7 +31,7 @@ const SigninCodeFormProps = Vue.extend({
 })
 
 @Component
-export default class SigninCodeForm extends SigninCodeFormProps {
+export default class TwoFactorForm extends TwoFactorFormProps {
   code = ''
   isLoading = false
 
