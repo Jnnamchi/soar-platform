@@ -59,6 +59,7 @@ export default class TwoFactorForm extends TwoFactorFormProps {
         this.submitForm()
       }
     } catch (error) {
+      console.log('2f form error', error)
       throw new Error()
     } finally {
       this.isLoading = false

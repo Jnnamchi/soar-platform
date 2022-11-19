@@ -96,6 +96,7 @@ export default class LoginForm extends LoginFormProps {
         this.submitForm(res.data.id)
       }
     } catch (error) {
+      console.log('login form error', error)
       throw new Error()
     } finally {
       this.isLoading = false

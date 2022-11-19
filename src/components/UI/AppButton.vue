@@ -32,6 +32,7 @@ export default class AppButton extends ButtonProps {
   height: 32px;
   border: none;
   border-radius: 3px;
+  padding: 0 10px;
   color: #fff;
   background-color: #0052cc;
   cursor: pointer;

@@ -16,15 +16,14 @@ import ResetPassword from '@/views/auth/ResetPassword.vue'
 Vue.use(VueRouter)
 
 // eslint-disable-next-line no-prototype-builtins
-const isAuthorized = localStorage.hasOwnProperty('sl-t')
-
-const authGuard = (to, from, next) => {
-  if (!isAuthorized) {
-    next({ name: 'login' })
-  } else {
-    next()
-  }
-}
+// const isAuthorized = localStorage.hasOwnProperty('sl-t')
+// const authGuard = (to, from, next) => {
+//   if (!isAuthorized) {
+//     next({ name: 'login' })
+//   } else {
+//     next()
+//   }
+// }
 
 const routes: Array<RouteConfig> = [
   // home
@@ -33,7 +32,7 @@ const routes: Array<RouteConfig> = [
     props: true,
     name: 'home',
     component: BaseHome,
-    beforeEnter: authGuard,
+    // beforeEnter: authGuard,
   },
 
   // auth
@@ -76,67 +75,6 @@ const routes: Array<RouteConfig> = [
     meta: {
       layout: 'AuthLayout',
     },
-  },
-
-  {
-    path: '/survey',
-    props: true,
-    name: 'SurveySection',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/SurveyView.vue'),
-  },
-  {
-    path: '/virtualWorkshop',
-    props: true,
-    name: 'VirtualWorkshop',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(
-        /* webpackChunkName: "about" */ '../views/VirtualWorkshopView.vue'
-      ),
-  },
-  {
-    path: '/addCompany',
-    props: true,
-    name: 'AddCompanySection',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/AddCompany.vue'),
-  },
-  {
-    path: '/company',
-    props: (route) => ({
-      user: '',
-      ...route.params,
-    }),
-    name: 'CompanyDashboard',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/CompanyDashboard.vue'),
-  },
-  {
-    path: '/login',
-    props: true,
-    name: 'LoginPage',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/Login.vue'),
-  },
-  {
-    path: '/SOARModuleView',
-    props: true,
-    name: 'SOARModuleView',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/SOARModuleView.vue'),
-  },
-  {
-    path: '/SOARModuleAnalysis',
-    props: true,
-    name: 'SOARModuleAnalysis',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/SOARModuleAnalysis.vue'),
   },
 ]
 

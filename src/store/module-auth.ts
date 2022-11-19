@@ -60,7 +60,7 @@ export default {
 
     async onLoginConfirm({ commit }, data: { id: string; code: string }) {
       return AuthAPI.loginConfirm(data).then((res) => {
-        if (res.status === 200) {
+        if (res && res.status === 200) {
           commit('SET_TOKEN', res.data.access_token)
         }
 

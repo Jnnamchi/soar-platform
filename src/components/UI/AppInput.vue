@@ -6,8 +6,9 @@
       :class="['input', info && info.type === 'error' && 'error']"
       :placeholder="inputPlaceholder"
       :type="inputType"
+      :disabled="isDisabled"
     />
-    <p class="text">
+    <p class="text" v-if="info">
       <IconSuccess
         v-if="info && info.type === 'success' && info.text"
         class="text-icon"
@@ -17,7 +18,7 @@
         class="text-icon"
       />
       <span
-        v-if="info"
+        v-if="info && info.type"
         :class="{
           'text-success': info && info.type === 'success',
           'text-error': info && info.type === 'error',
@@ -39,6 +40,7 @@ const InputProps = Vue.extend({
     placeholder: String,
     type: String,
     info: Object,
+    disabled: Boolean,
   },
 })
 
@@ -60,6 +62,10 @@ export default class AppInput extends InputProps {
 
   get inputType(): string {
     return this.type || 'text'
+  }
+
+  get isDisabled(): boolean {
+    return this.disabled || false
   }
 
   updateInput($event: { target: { value: string } }) {

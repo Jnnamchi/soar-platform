@@ -95,7 +95,7 @@ const RegisterAdminFormProps = Vue.extend({
   components: {
     AppInput,
     AppButton,
-  }
+  },
 })
 export default class RegisterAdminForm extends RegisterAdminFormProps {
   emailInfo = {
@@ -146,10 +146,11 @@ export default class RegisterAdminForm extends RegisterAdminFormProps {
         this.adminForm
       )
 
-      if (res.status === 204) {
+      if (res && res.status === 204) {
         this.submitForm()
       }
     } catch (error) {
+      console.log('reg admin form error', error)
       throw new Error()
     } finally {
       this.isLoading = false

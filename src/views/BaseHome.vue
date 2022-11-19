@@ -1,20 +1,32 @@
 <template>
-  <div class="home">
-    <h3>Admin:</h3>
-    <p v-if="user.first_name">name: {{ user.first_name }}</p>
-    <p v-if="user.email">email: {{ user.email }}</p>
+  <div class="app-container">
+    <AppHeader class="header" />
+    <div class="main__top">
+      <h4>user info:</h4>
+    </div>
+    <AppMain class="main">
+      <TeamMembers />
 
-    <AppButton class="remove" @click.native="remove">REMOVE USER</AppButton>
+      <AppButton class="remove" @click.native="remove"
+        >Remove current user from DB</AppButton
+      >
+    </AppMain>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import AppButton from '@/components/UI/AppButton.vue'
+import AppHeader from '@/components/AppHeader.vue'
+import AppMain from '@/components/AppMain.vue'
+import TeamMembers from '@/components/home/TeamMembers.vue'
 
 @Component({
   components: {
     AppButton,
+    AppHeader,
+    AppMain,
+    TeamMembers,
   },
 })
 export default class BaseHome extends Vue {
@@ -25,7 +37,7 @@ export default class BaseHome extends Vue {
   }
 
   mounted() {
-    this.getUserInfo()
+    // this.getUserInfo()
   }
 
   async getUserInfo() {
@@ -36,6 +48,7 @@ export default class BaseHome extends Vue {
 
       this.user = res.data
     } catch (error) {
+      console.log('getUser error', error)
       throw Error()
     }
   }
@@ -54,6 +67,7 @@ export default class BaseHome extends Vue {
         this.$router.push({ name: 'login' })
       }
     } catch (error) {
+      console.log('remove user from db error', error)
       throw Error()
     }
   }
@@ -61,17 +75,32 @@ export default class BaseHome extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.home {
-  height: calc(100vh - 60px);
+.app-container {
   display: flex;
   flex-direction: column;
+  height: 100%;
 
-  .remove {
-    // display: none;
-    margin-top: auto;
-    margin-left: auto;
-    padding: 0 10px;
-    width: max-content;
+  .header {
+    height: 50px;
+  }
+
+  .main__top {
+    height: 100px;
+    background-color: #fafbfc;
+  }
+
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .remove {
+      display: none;
+      margin-top: auto;
+      margin-left: auto;
+      width: max-content;
+      padding: 0 10px;
+    }
   }
 }
 </style>
