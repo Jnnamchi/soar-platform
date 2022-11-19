@@ -11,6 +11,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { AppData } from './data/App'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import EmptyLayout from '@/layouts/EmptyLayout.vue'
 
 const DEFAULT_LAYOUT = 'DefaultLayout'
 
@@ -18,6 +19,7 @@ const DEFAULT_LAYOUT = 'DefaultLayout'
   components: {
     AuthLayout,
     DefaultLayout,
+    EmptyLayout,
   },
 })
 export default class App extends Vue {

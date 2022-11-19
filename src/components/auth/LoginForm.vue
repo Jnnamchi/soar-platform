@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="form">
+    <div v-if="!errorText" class="form">
       <p class="form__text">Email</p>
       <AppInput
         type="text"
@@ -37,18 +37,25 @@
         >Sign in</AppButton
       >
     </div>
+
+    <ErrorText v-else :text="errorText" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { checkEmailValidation } from '@/utils/validation'
 import AppButton from '@/components/UI/AppButton.vue'
 import AppInput from '@/components/UI/AppInput.vue'
+import { checkEmailValidation } from '@/utils/validation'
+import { namespace } from 'vuex-class'
+const Auth = namespace('Auth')
+import { convertErrorToString } from '@/utils/convert'
+import { IAuthData } from '@/types/auth'
+import ErrorText from '@/components/ErrorText.vue'
 
 const LoginFormProps = Vue.extend({
   props: {
-    submitForm: Function,
+    loginSuccessCb: Function,
   },
 })
 
@@ -56,6 +63,7 @@ const LoginFormProps = Vue.extend({
   components: {
     AppButton,
     AppInput,
+    ErrorText,
   },
 })
 export default class LoginForm extends LoginFormProps {
@@ -72,34 +80,33 @@ export default class LoginForm extends LoginFormProps {
     text: '',
   }
   isLoading = false
+  errorText = ''
 
-  submitButtonHandler() {
+  @Auth.Action
+  loginInitialAction!: (data: IAuthData) => Promise<any>
+
+  async submitButtonHandler() {
     this.emailValidation()
     this.passValidation()
 
     const validationSuccess = !this.emailInfo.type && !this.passwordInfo.type
 
     if (validationSuccess) {
-      this.login()
-    }
-  }
+      this.isLoading = true
 
-  async login() {
-    this.isLoading = true
-
-    try {
-      const res = await this.$store.dispatch(
-        'moduleAuth/onLogin',
-        this.loginData
-      )
-      if (res && res.status === 200) {
-        this.submitForm(res.data.id)
+      try {
+        this.errorText = ''
+        const res = await this.loginInitialAction(this.loginData)
+        if (res.status === 'ok') {
+          this.loginSuccessCb()
+        } else {
+          this.errorText = 'Ooops! Something went wrong. Please try again later'
+        }
+      } catch (error) {
+        this.errorText = convertErrorToString(error)
+      } finally {
+        this.isLoading = false
       }
-    } catch (error) {
-      console.log('login form error', error)
-      throw new Error()
-    } finally {
-      this.isLoading = false
     }
   }
 
@@ -179,5 +186,10 @@ export default class LoginForm extends LoginFormProps {
       }
     }
   }
+}
+
+.refresh {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

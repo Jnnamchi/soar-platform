@@ -1,37 +1,48 @@
 <template>
   <div class="login">
-    <LoginForm v-if="loginStep === 1" :submitForm="submitLoginForm" />
+    <LoginForm v-if="loginStep === 1" :loginSuccessCb="submitLoginForm" />
 
-    <TwoFactorForm
+    <LoginVerificationForm
       v-if="loginStep === 2"
-      :loginId="loginId"
-      :submitForm="submitCodeForm"
+      :submitFormCb="submitCodeForm"
     />
+
+    <LoginSuccessInfo v-if="loginStep === 3">
+      <p>You have been successfully logged in</p>
+      <p>you will be automatically redirected in few seconds</p>
+    </LoginSuccessInfo>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import LoginForm from '@/components/auth/LoginForm.vue'
-import TwoFactorForm from '@/components/auth/TwoFactorForm.vue'
+import LoginVerificationForm from '@/components/auth/LoginVerificationForm.vue'
+import LoginSuccessInfo from '@/components/auth/LoginSuccessInfo.vue'
+import { RouteName } from '@/types/route'
 
 @Component({
   components: {
     LoginForm,
-    TwoFactorForm,
+    LoginVerificationForm,
+    LoginSuccessInfo,
   },
 })
 export default class LoginUser extends Vue {
   loginStep = 1
-  loginId = ''
 
-  submitLoginForm(loginId: string) {
-    this.loginStep = 2
-    this.loginId = loginId
+  created() {
+    if (this.$store.getters['Auth/isLoggedIn']) {
+      this.$router.push({ name: RouteName.Home })
+    }
   }
 
-  async submitCodeForm() {
-    await this.$router.push({ name: 'home' })
+  submitLoginForm() {
+    this.loginStep = 2
+  }
+
+  submitCodeForm() {
+    this.loginStep = 3
   }
 }
 </script>

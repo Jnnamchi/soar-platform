@@ -2,7 +2,7 @@
   <div class="app-container">
     <AppHeader class="header" />
     <div class="main__top">
-      <h4>user info:</h4>
+      <h4>user info: {{ $store.state.Auth.user.email }}</h4>
     </div>
     <AppMain class="main">
       <TeamMembers />
@@ -20,6 +20,7 @@ import AppButton from '@/components/UI/AppButton.vue'
 import AppHeader from '@/components/AppHeader.vue'
 import AppMain from '@/components/AppMain.vue'
 import TeamMembers from '@/components/home/TeamMembers.vue'
+import { RouteName } from '@/types/route'
 
 @Component({
   components: {
@@ -30,46 +31,14 @@ import TeamMembers from '@/components/home/TeamMembers.vue'
   },
 })
 export default class BaseHome extends Vue {
-  user = {
-    id: '',
-    email: '',
-    first_name: '',
-  }
-
-  mounted() {
-    // this.getUserInfo()
-  }
-
-  async getUserInfo() {
-    try {
-      const res = await this.$store.dispatch('moduleAuth/onGetUserInfo')
-
-      console.log('res: ', res)
-
-      this.user = res.data
-    } catch (error) {
-      console.log('getUser error', error)
-      throw Error()
+  created() {
+    if (!this.$store.getters['Auth/isLoggedIn']) {
+      this.$router.push({ name: RouteName.Login })
     }
   }
 
-  async remove() {
-    console.log('remove user')
-    try {
-      const res = await this.$store.dispatch('moduleAuth/onRemoveUser', {
-        id: this.user.id,
-      })
-
-      console.log('res: ', res)
-
-      if (res && res.status === 204) {
-        this.$store.dispatch('moduleAuth/onLogout')
-        this.$router.push({ name: 'login' })
-      }
-    } catch (error) {
-      console.log('remove user from db error', error)
-      throw Error()
-    }
+  remove() {
+    console.log('remove current user from DB')
   }
 }
 </script>
@@ -95,7 +64,7 @@ export default class BaseHome extends Vue {
     flex-direction: column;
 
     .remove {
-      display: none;
+      // display: none;
       margin-top: auto;
       margin-left: auto;
       width: max-content;

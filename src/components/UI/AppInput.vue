@@ -98,7 +98,6 @@ export default class AppInput extends InputProps {
   .text {
     display: flex;
     align-items: center;
-    margin-top: 2px;
     font-size: 12px;
 
     &-success {

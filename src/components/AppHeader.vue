@@ -6,12 +6,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { RouteName } from '@/types/route'
 
 @Component({})
 export default class AppHeader extends Vue {
   logout() {
-    this.$store.dispatch('moduleAuth/onLogout')
-    this.$router.push({ name: 'login' })
+    this.$store.commit('Auth/logout')
+    this.$router.push({ name: RouteName.Login })
   }
 }
 </script>

@@ -1,38 +1,31 @@
 // @ts-nocheck
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
+import { RoutePath, RouteName } from '@/types/route'
 
 // home
 // import Home from "../views/Home.vue";
 import BaseHome from '../views/BaseHome.vue'
 
 // auth
+import LoginUser from '@/views/auth/LoginUser.vue'
 import RegisterAdmin from '@/views/auth/RegisterAdmin.vue'
 import ConfirmRegistration from '@/views/auth/ConfirmRegistration.vue'
 import RegisterParticipant from '@/views/auth/RegisterParticipant.vue'
-import LoginUser from '@/views/auth/LoginUser.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 
-Vue.use(VueRouter)
+// 404
+import NotFoundComponent from '@/views/404.vue'
 
-// eslint-disable-next-line no-prototype-builtins
-// const isAuthorized = localStorage.hasOwnProperty('sl-t')
-// const authGuard = (to, from, next) => {
-//   if (!isAuthorized) {
-//     next({ name: 'login' })
-//   } else {
-//     next()
-//   }
-// }
+Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
   // home
   {
-    path: '/',
+    path: RoutePath.Home,
     props: true,
-    name: 'home',
+    name: RouteName.Home,
     component: BaseHome,
-    // beforeEnter: authGuard,
   },
 
   // auth
@@ -76,6 +69,15 @@ const routes: Array<RouteConfig> = [
       layout: 'AuthLayout',
     },
   },
+
+  // 404
+  {
+    path: '/:pathMatch(.*)',
+    component: NotFoundComponent,
+    meta: {
+      layout: 'EmptyLayout',
+    },
+  },
 ]
 
 const router = new VueRouter({
@@ -84,22 +86,4 @@ const router = new VueRouter({
   routes,
 })
 
-// router.beforeEach(async (to, from, next) => {
-//   if (to == from) {
-//     return
-//   }
-//   if (!isAuthorized) {
-//     if (to.path == '/auth/login') {
-//       next()
-//     } else {
-//       next('/auth/login')
-//     }
-//   } else {
-//     if (to.path == '/auth/login') {
-//       next('/home')
-//     } else {
-//       next()
-//     }
-//   }
-// })
 export default router
