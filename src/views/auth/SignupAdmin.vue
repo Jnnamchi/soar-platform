@@ -6,23 +6,22 @@
     </p>
 
     <EmailForm
-      v-if="registerStep === 1"
+      v-if="signupStep === 1"
       :title="'Start your registration'"
       :submitForm="submitEmailForm"
     />
 
-    <RegisterAdminForm
-      v-if="registerStep === 2"
+    <SignupAdminForm
+      v-if="signupStep === 2"
       :validEmail="validEmail"
-      :submitForm="submitAdminForm"
+      :signupCb="submitAdminForm"
     />
 
-    <div v-if="registerStep === 3" class="success">
+    <div v-if="signupStep === 3" class="success">
       <IconSuccess class="success-icon" />
       <div class="success-info">
         <p class="title">Success!</p>
         <p class="text">Check your email to activate your account</p>
-        <p class="link">Didn’t get email? click here</p>
       </div>
     </div>
 
@@ -38,27 +37,27 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import EmailForm from '@/components/auth/EmailForm.vue'
-import RegisterAdminForm from '@/components/auth/RegisterAdminForm.vue'
+import SignupAdminForm from '@/components/auth/SignupAdminForm.vue'
 import IconSuccess from '@/components/UI/IconSuccess.vue'
 
 @Component({
   components: {
     EmailForm,
-    RegisterAdminForm,
+    SignupAdminForm,
     IconSuccess,
   },
 })
-export default class RegisterAdmin extends Vue {
-  registerStep = 1
+export default class SignupAdmin extends Vue {
+  signupStep = 1
   validEmail = ''
 
   submitEmailForm(validEmail: string) {
-    this.registerStep = 2
     this.validEmail = validEmail
+    this.signupStep = 2
   }
 
   submitAdminForm() {
-    this.registerStep = 3
+    this.signupStep = 3
   }
 }
 </script>

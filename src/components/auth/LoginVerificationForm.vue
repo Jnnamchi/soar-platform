@@ -34,7 +34,7 @@ import { convertErrorToString } from '@/utils/convert'
 
 const LoginVerificationFormProps = Vue.extend({
   props: {
-    submitFormCb: Function,
+    loginVerificationCb: Function,
   },
 })
 
@@ -74,7 +74,7 @@ export default class LoginVerificationForm extends LoginVerificationFormProps {
         this.errorText = ''
         const res = await this.loginVerificationAction(this.code)
         if (res.status === 'ok') {
-          this.submitFormCb()
+          this.loginVerificationCb()
         } else {
           this.errorText = 'Ooops! Something went wrong. Please try again later'
         }

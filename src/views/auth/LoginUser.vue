@@ -4,7 +4,7 @@
 
     <LoginVerificationForm
       v-if="loginStep === 2"
-      :submitFormCb="submitCodeForm"
+      :loginVerificationCb="submitCodeForm"
     />
 
     <LoginSuccessInfo v-if="loginStep === 3">

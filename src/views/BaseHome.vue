@@ -7,7 +7,7 @@
     <AppMain class="main">
       <TeamMembers />
 
-      <AppButton class="remove" @click.native="remove"
+      <AppButton class="remove" @click.native="remove" :isLoading="isLoading"
         >Remove current user from DB</AppButton
       >
     </AppMain>
@@ -32,6 +32,7 @@ import { RouteName } from '@/types/route'
 })
 export default class BaseHome extends Vue {
   email = ''
+  isLoading = false
 
   created() {
     this.init()
@@ -46,8 +47,17 @@ export default class BaseHome extends Vue {
     }
   }
 
-  remove() {
-    console.log('remove current user from DB')
+  async remove() {
+    try {
+      this.isLoading = true
+      const res = await this.$store.dispatch('Auth/removeCurrentUserAction')
+
+      if (res && res.status === 204) {
+        this.$router.push({ name: RouteName.Login })
+      }
+    } catch (error) {
+      throw new Error()
+    }
   }
 }
 </script>
@@ -74,6 +84,7 @@ export default class BaseHome extends Vue {
 
     .remove {
       // display: none;
+      width: 197px !important;
       margin-top: auto;
       margin-left: auto;
       width: max-content;

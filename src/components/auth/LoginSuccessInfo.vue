@@ -15,6 +15,8 @@ const Auth = namespace('Auth')
 import { convertErrorToString } from '@/utils/convert'
 import { RouteName } from '@/types/route'
 
+const delayBeforeRedirectToHome = 2000
+
 @Component({
   components: {
     ErrorText,
@@ -35,7 +37,9 @@ export default class LoginSuccessInfo extends Vue {
       this.errorText = ''
       const res = await this.getUserInfoAction()
       if (res.status === 'ok') {
-        this.$router.push({ name: RouteName.Home })
+        setTimeout(() => {
+          this.$router.push({ name: RouteName.Home })
+        }, delayBeforeRedirectToHome)
       } else {
         this.errorText = 'Ooops! Something went wrong. Please try again later'
       }

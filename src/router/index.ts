@@ -9,8 +9,8 @@ import BaseHome from '../views/BaseHome.vue'
 
 // auth
 import LoginUser from '@/views/auth/LoginUser.vue'
-import RegisterAdmin from '@/views/auth/RegisterAdmin.vue'
-import ConfirmRegistration from '@/views/auth/ConfirmRegistration.vue'
+import SignupAdmin from '@/views/auth/SignupAdmin.vue'
+import SignupAdminConfirm from '@/views/auth/SignupAdminConfirm.vue'
 import RegisterParticipant from '@/views/auth/RegisterParticipant.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 
@@ -30,17 +30,17 @@ const routes: Array<RouteConfig> = [
 
   // auth
   {
-    path: '/auth/sign-up-admin',
-    name: 'sign-up-admin',
-    component: RegisterAdmin,
+    path: RoutePath.SignupAdmin,
+    name: RouteName.SignupAdmin,
+    component: SignupAdmin,
     meta: {
       layout: 'AuthLayout',
     },
   },
   {
-    path: '/registration/complete/:id',
-    name: 'complete-registration',
-    component: ConfirmRegistration,
+    path: RoutePath.SignupAdminConfirm,
+    name: RouteName.SignupAdminConfirm,
+    component: SignupAdminConfirm,
     meta: {
       layout: 'AuthLayout',
     },

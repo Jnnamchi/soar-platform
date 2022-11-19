@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="form">
+    <div v-if="!errorText" class="form">
       <p class="form__title">Start your registration</p>
 
       <AppInput
@@ -75,6 +75,8 @@
         >Submit</AppButton
       >
     </div>
+
+    <ErrorText v-else :text="errorText" />
   </div>
 </template>
 
@@ -83,11 +85,13 @@ import { Component, Vue } from 'vue-property-decorator'
 import { checkEmailValidation } from '@/utils/validation'
 import AppButton from '@/components/UI/AppButton.vue'
 import AppInput from '@/components/UI/AppInput.vue'
+import ErrorText from '../ErrorText.vue'
+import { convertErrorToString } from '@/utils/convert'
 
-const RegisterAdminFormProps = Vue.extend({
+const SignupAdminFormProps = Vue.extend({
   props: {
     validEmail: String,
-    submitForm: Function,
+    signupCb: Function,
   },
 })
 
@@ -95,9 +99,10 @@ const RegisterAdminFormProps = Vue.extend({
   components: {
     AppInput,
     AppButton,
+    ErrorText,
   },
 })
-export default class RegisterAdminForm extends RegisterAdminFormProps {
+export default class SignupAdminForm extends SignupAdminFormProps {
   emailVerificationInfo = {
     type: 'success',
     text: 'Email is validated',
@@ -123,7 +128,9 @@ export default class RegisterAdminForm extends RegisterAdminFormProps {
   }
   passwordConfirm = ''
 
-  async submitButtonHandler() {
+  errorText = ''
+
+  submitButtonHandler() {
     this.emailValidation()
     this.passValidation()
 
@@ -142,15 +149,17 @@ export default class RegisterAdminForm extends RegisterAdminFormProps {
       this.isLoading = true
 
       const res = await this.$store.dispatch(
-        'moduleAuth/onRegisterAdmin',
+        'Signup/signupAdminAction',
         this.adminForm
       )
 
       if (res && res.status === 204) {
-        this.submitForm()
+        this.signupCb()
+      } else {
+        this.errorText = 'Ooops! Something went wrong. Please try again later'
       }
     } catch (error) {
-      console.log('reg admin form error', error)
+      this.errorText = convertErrorToString(error)
       throw new Error()
     } finally {
       this.isLoading = false

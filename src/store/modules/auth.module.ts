@@ -1,6 +1,6 @@
 import { VuexModule, Module, Mutation, Action } from 'vuex-module-decorators'
 import AuthService from '@/services/authService'
-import { IAuthData } from '@/types/auth'
+import { IAuthData, IUserData } from '@/types/auth'
 
 const storedToken = localStorage.getItem('soarline-token')
 const storedUser = localStorage.getItem('soarline-user')
@@ -14,10 +14,14 @@ class User extends VuexModule {
   userToken = storedToken ? storedToken : ''
   loggedIn = storedToken ? true : false
   loginVerificationId = ''
-  user = storedUser ? JSON.parse(storedUser) : userInitial
+  user: IUserData = storedUser ? JSON.parse(storedUser) : userInitial
 
   get isLoggedIn(): boolean {
     return this.loggedIn
+  }
+
+  get userId(): string {
+    return this.user.id || ''
   }
 
   @Mutation
@@ -42,7 +46,7 @@ class User extends VuexModule {
   loginFailure(): void {
     this.userToken = ''
     this.loggedIn = false
-    this.user = null
+    this.user = {}
   }
 
   @Mutation
@@ -50,7 +54,7 @@ class User extends VuexModule {
     this.userToken = ''
     this.loggedIn = false
     this.loginVerificationId = ''
-    this.user = null
+    this.user = {}
     localStorage.removeItem('soarline-token')
     localStorage.removeItem('soarline-user')
   }
@@ -95,6 +99,22 @@ class User extends VuexModule {
       },
       (error) => {
         this.context.commit('loginFailure')
+        return Promise.reject(error)
+      }
+    )
+  }
+
+  @Action({ rawError: true })
+  removeCurrentUserAction(): Promise<any> {
+    const currentUserId = this.context.getters['userId']
+    return AuthService.removeUser(currentUserId).then(
+      (res) => {
+        if (res && res.status === 204) {
+          this.context.commit('logout')
+        }
+        return Promise.resolve(res)
+      },
+      (error) => {
         return Promise.reject(error)
       }
     )

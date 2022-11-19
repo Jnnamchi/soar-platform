@@ -6,36 +6,49 @@
     <h3 class="subtitle">please wait, till your account will be activated</h3>
   </div>
 
-  <div v-else class="error">Oops, something going wrong. Please, try later</div>
+  <ErrorText v-else :text="errorText" />
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import router from '@/router'
 import AppLoader from '@/components/UI/AppLoader.vue'
+import ErrorText from '@/components/ErrorText.vue'
+import { convertErrorToString } from '@/utils/convert'
+import { RouteName } from '@/types/route'
+
+const delayBeforeRedirectToLogin = 2000
 
 @Component({
   components: {
     AppLoader,
+    ErrorText,
   },
 })
-export default class ConfirmRegistration extends Vue {
+export default class SignupAdminConfirm extends Vue {
   status = 'waiting'
+  errorText = ''
 
-  mounted() {
-    this.registrationConfirm(this.$route.params.id)
+  created() {
+    this.signupAdminRequest()
   }
 
-  async registrationConfirm(id: string) {
-    const res = await this.$store.dispatch(
-      'moduleAuth/onRegistrationConfirm',
-      id
-    )
+  async signupAdminRequest() {
+    const routeId = this.$route.params.id
 
-    if (res && res.status === 204) {
-      router.push({ name: 'login' })
-    } else {
+    try {
+      const res = await this.$store.dispatch(
+        'Signup/signupAdminConfirmAction',
+        routeId
+      )
+
+      if (res && res.status === 204) {
+        setTimeout(() => {
+          this.$router.push({ name: RouteName.Login })
+        }, delayBeforeRedirectToLogin)
+      }
+    } catch (error) {
       this.status = 'error'
+      this.errorText = convertErrorToString(error)
     }
   }
 }
