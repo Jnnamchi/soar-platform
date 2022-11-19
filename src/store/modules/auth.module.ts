@@ -40,6 +40,7 @@ class User extends VuexModule {
 
   @Mutation
   loginFailure(): void {
+    this.userToken = ''
     this.loggedIn = false
     this.user = null
   }
@@ -93,8 +94,6 @@ class User extends VuexModule {
         return Promise.resolve({ status: 'ok' })
       },
       (error) => {
-        console.log('error: ', error)
-
         this.context.commit('loginFailure')
         return Promise.reject(error)
       }

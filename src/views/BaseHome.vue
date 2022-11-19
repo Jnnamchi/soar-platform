@@ -2,7 +2,7 @@
   <div class="app-container">
     <AppHeader class="header" />
     <div class="main__top">
-      <h4>user info: {{ $store.state.Auth.user.email }}</h4>
+      <h4>user info: {{ email }}</h4>
     </div>
     <AppMain class="main">
       <TeamMembers />
@@ -31,8 +31,17 @@ import { RouteName } from '@/types/route'
   },
 })
 export default class BaseHome extends Vue {
+  email = ''
+
   created() {
-    if (!this.$store.getters['Auth/isLoggedIn']) {
+    this.init()
+  }
+
+  async init() {
+    try {
+      await this.$store.dispatch('Auth/getUserInfoAction')
+      this.email = this.$store.state.Auth.user.email
+    } catch (error) {
       this.$router.push({ name: RouteName.Login })
     }
   }
