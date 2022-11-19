@@ -6,7 +6,7 @@
       class="form__input"
       :placeholder="'Enter your email address'"
       v-model="inputText"
-      :info="inputValidationInfo"
+      :status="inputValidationInfo"
     />
 
     <AppButton @click.native="submitButtonHandler" class="button form__button"

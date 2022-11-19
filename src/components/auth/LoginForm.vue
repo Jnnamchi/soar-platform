@@ -7,7 +7,7 @@
         class="form__input"
         :placeholder="'Enter your email address'"
         v-model="loginData.email"
-        :info="emailInfo"
+        :status="emailValidationInfo"
       />
 
       <p class="form__text">Password</p>
@@ -16,7 +16,7 @@
         class="form__input"
         :placeholder="'Enter your password'"
         v-model="loginData.password"
-        :info="passwordInfo"
+        :status="passwordValidationInfo"
       />
 
       <div class="form__control">
@@ -71,11 +71,11 @@ export default class LoginForm extends LoginFormProps {
     email: '',
     password: '',
   }
-  emailInfo = {
+  emailValidationInfo = {
     type: '',
     text: '',
   }
-  passwordInfo = {
+  passwordValidationInfo = {
     type: '',
     text: '',
   }
@@ -89,7 +89,8 @@ export default class LoginForm extends LoginFormProps {
     this.emailValidation()
     this.passValidation()
 
-    const validationSuccess = !this.emailInfo.type && !this.passwordInfo.type
+    const validationSuccess =
+      !this.emailValidationInfo.type && !this.passwordValidationInfo.type
 
     if (validationSuccess) {
       this.isLoading = true
@@ -113,12 +114,12 @@ export default class LoginForm extends LoginFormProps {
   emailValidation() {
     const isEmailValid = checkEmailValidation(this.loginData.email.trim())
     if (!isEmailValid) {
-      this.emailInfo = {
+      this.emailValidationInfo = {
         type: 'error',
         text: "Email wasn't validated",
       }
     } else {
-      this.emailInfo = {
+      this.emailValidationInfo = {
         type: '',
         text: '',
       }
@@ -127,12 +128,12 @@ export default class LoginForm extends LoginFormProps {
 
   passValidation() {
     if (this.loginData.password.length < 6) {
-      this.passwordInfo = {
+      this.passwordValidationInfo = {
         type: 'error',
         text: 'Password length must be greater than 6 characters',
       }
     } else {
-      this.passwordInfo = {
+      this.passwordValidationInfo = {
         type: '',
         text: '',
       }

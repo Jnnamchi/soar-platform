@@ -7,7 +7,7 @@
         class="form__input"
         :placeholder="'Enter your email address'"
         v-model="registerForm.email"
-        :info="emailInfo"
+        :status="emailInfo"
       />
 
       <AppInput

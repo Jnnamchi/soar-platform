@@ -7,7 +7,7 @@
         class="form__input"
         :placeholder="'Enter your email address'"
         v-model="adminForm.email"
-        :info="emailInfo"
+        :status="emailVerificationInfo"
       />
 
       <AppInput
@@ -57,7 +57,7 @@
         :placeholder="'Choose password'"
         :type="'password'"
         v-model="adminForm.password"
-        :info="passwordInfo"
+        :status="passwordVerificationInfo"
       />
 
       <AppInput
@@ -65,7 +65,7 @@
         :placeholder="'Repeat password'"
         :type="'password'"
         v-model="passwordConfirm"
-        :info="passwordConfirmInfo"
+        :status="passwordConfirmInfo"
       />
 
       <AppButton
@@ -98,11 +98,11 @@ const RegisterAdminFormProps = Vue.extend({
   },
 })
 export default class RegisterAdminForm extends RegisterAdminFormProps {
-  emailInfo = {
+  emailVerificationInfo = {
     type: 'success',
     text: 'Email is validated',
   }
-  passwordInfo = {
+  passwordVerificationInfo = {
     type: '',
     text: '',
   }
@@ -128,8 +128,8 @@ export default class RegisterAdminForm extends RegisterAdminFormProps {
     this.passValidation()
 
     const validationSuccess =
-      this.emailInfo.type === 'success' &&
-      !this.passwordInfo.type &&
+      this.emailVerificationInfo.type === 'success' &&
+      !this.passwordVerificationInfo.type &&
       !this.passwordConfirmInfo.type
 
     if (validationSuccess) {
@@ -160,12 +160,12 @@ export default class RegisterAdminForm extends RegisterAdminFormProps {
   emailValidation() {
     const isEmailValid = checkEmailValidation(this.adminForm.email.trim())
     if (!isEmailValid) {
-      this.emailInfo = {
+      this.emailVerificationInfo = {
         type: 'error',
         text: "Email wasn't validated",
       }
     } else {
-      this.emailInfo = {
+      this.emailVerificationInfo = {
         type: 'success',
         text: 'Email is validated',
       }
@@ -174,18 +174,18 @@ export default class RegisterAdminForm extends RegisterAdminFormProps {
 
   passValidation() {
     if (this.adminForm.password.length < 6) {
-      this.passwordInfo = {
+      this.passwordVerificationInfo = {
         type: 'error',
         text: 'Password length must be greater than 6 characters',
       }
     } else {
-      this.passwordInfo = {
+      this.passwordVerificationInfo = {
         type: '',
         text: '',
       }
       const isPassValid = this.adminForm.password === this.passwordConfirm
 
-      this.passwordInfo = isPassValid
+      this.passwordVerificationInfo = isPassValid
         ? {
             type: '',
             text: '',

@@ -3,27 +3,27 @@
     <input
       :value="inputValue"
       @input="updateInput($event)"
-      :class="['input', info && info.type === 'error' && 'error']"
+      :class="['input', status && status.type === 'error' && 'error']"
       :placeholder="inputPlaceholder"
       :type="inputType"
       :disabled="isDisabled"
     />
-    <p class="text" v-if="info">
+    <p class="text" v-if="status">
       <IconSuccess
-        v-if="info && info.type === 'success' && info.text"
+        v-if="status && status.type === 'success' && status.text"
         class="text-icon"
       />
       <IconError
-        v-if="info && info.type === 'error' && info.text"
+        v-if="status && status.type === 'error' && status.text"
         class="text-icon"
       />
       <span
-        v-if="info && info.type"
+        v-if="status && status.type"
         :class="{
-          'text-success': info && info.type === 'success',
-          'text-error': info && info.type === 'error',
+          'text-success': status && status.type === 'success',
+          'text-error': status && status.type === 'error',
         }"
-        >{{ info.text }}</span
+        >{{ status.text }}</span
       >
     </p>
   </div>
@@ -39,7 +39,7 @@ const InputProps = Vue.extend({
     value: String,
     placeholder: String,
     type: String,
-    info: Object,
+    status: Object,
     disabled: Boolean,
   },
 })

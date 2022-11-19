@@ -8,7 +8,7 @@
         class="form__input"
         :placeholder="'verification code'"
         v-model="code"
-        :info="inputInfo"
+        :status="codeVerificationInfo"
       />
 
       <AppButton
@@ -49,7 +49,7 @@ export default class LoginVerificationForm extends LoginVerificationFormProps {
   code = ''
   isLoading = false
   errorText = ''
-  inputInfo = {
+  codeVerificationInfo = {
     type: '',
     text: '',
   }
@@ -59,13 +59,13 @@ export default class LoginVerificationForm extends LoginVerificationFormProps {
 
   async submitButtonHandler() {
     if (this.code.trim().length === 0) {
-      this.inputInfo = {
+      this.codeVerificationInfo = {
         type: 'error',
         text: 'Enter verification code',
       }
     } else {
       this.isLoading = true
-      this.inputInfo = {
+      this.codeVerificationInfo = {
         type: '',
         text: '',
       }
