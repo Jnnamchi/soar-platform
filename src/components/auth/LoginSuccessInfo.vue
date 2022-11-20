@@ -52,7 +52,7 @@ export default class LoginSuccessInfo extends Vue {
 
 <style lang="scss" scoped>
 .login-completed {
-  background-color: #83f195a6;
+  background-color: #e3fcef;
 
   p {
     padding: 10px;

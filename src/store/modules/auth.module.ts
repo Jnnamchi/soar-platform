@@ -1,6 +1,6 @@
 import { VuexModule, Module, Mutation, Action } from 'vuex-module-decorators'
 import AuthService from '@/services/authService'
-import { IAuthData, IUserData } from '@/types/auth'
+import { IAuthData, IChangePassword, IUserData } from '@/types/auth'
 
 const storedToken = localStorage.getItem('soarline-token')
 const storedUser = localStorage.getItem('soarline-user')
@@ -105,8 +105,20 @@ class User extends VuexModule {
   }
 
   @Action({ rawError: true })
-  resetPasswordAction(email: string): Promise<any> {
+  resetPasswordRequestAction(email: string): Promise<any> {
     return AuthService.resetPasswordRequest(email).then(
+      (res) => {
+        return Promise.resolve(res)
+      },
+      (error) => {
+        return Promise.reject(error)
+      }
+    )
+  }
+
+  @Action({ rawError: true })
+  resetPasswordAction(data: IChangePassword): Promise<any> {
+    return AuthService.changePassword(data).then(
       (res) => {
         return Promise.resolve(res)
       },

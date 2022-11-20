@@ -25,7 +25,7 @@
             >Remember for 30 days</label
           >
         </div>
-        <router-link :to="{ name: 'reset-pass' }" class="pass__link"
+        <router-link :to="{ name: 'reset-password-request' }" class="pass__link"
           >Forgot password</router-link
         >
       </div>

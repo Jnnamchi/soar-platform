@@ -25,3 +25,8 @@ export interface IAdminData extends IAuthData {
   organization_size: string
   industry: string
 }
+
+export interface IChangePassword {
+  id: string
+  password: string
+}

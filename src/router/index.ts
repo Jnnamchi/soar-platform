@@ -13,6 +13,7 @@ import SignupAdmin from '@/views/auth/SignupAdmin.vue'
 import SignupAdminConfirm from '@/views/auth/SignupAdminConfirm.vue'
 import RegisterParticipant from '@/views/auth/RegisterParticipant.vue'
 import ResetPasswordRequest from '@/views/auth/ResetPasswordRequest.vue'
+import ChangePassword from '@/views/auth/ChangePassword.vue'
 
 // 404
 import NotFoundComponent from '@/views/404.vue'
@@ -57,6 +58,14 @@ const routes: Array<RouteConfig> = [
     path: RoutePath.ResetPasswordRequest,
     name: RouteName.ResetPasswordRequest,
     component: ResetPasswordRequest,
+    meta: {
+      layout: 'AuthLayout',
+    },
+  },
+  {
+    path: RoutePath.ChangePassword,
+    name: RouteName.ChangePassword,
+    component: ChangePassword,
     meta: {
       layout: 'AuthLayout',
     },

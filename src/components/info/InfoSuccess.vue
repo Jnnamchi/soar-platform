@@ -29,7 +29,7 @@ export default class InfoSuccess extends InfoSuccessProps {}
 <style lang="scss" scoped>
 .success {
   display: flex;
-  padding: 20px;
+  padding: 40px 20px;
   border-radius: 3px;
   background-color: #e3fcef;
 

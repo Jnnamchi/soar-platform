@@ -1,6 +1,11 @@
-import { IAuthVerificationData, IAuthData, IAdminData } from '@/types/auth'
 import { apiInstance } from '@/services/api'
 import authHeader from './auth-header'
+import {
+  IAuthVerificationData,
+  IAuthData,
+  IAdminData,
+  IChangePassword,
+} from '@/types/auth'
 
 class AuthService {
   signupAdmin(data: IAdminData) {
@@ -31,6 +36,11 @@ class AuthService {
   resetPasswordRequest(email: string) {
     const url = 'account/reset-password'
     return apiInstance.post(url, { email })
+  }
+
+  changePassword(data: IChangePassword) {
+    const url = `/account/reset-password/${data.id}`
+    return apiInstance.post(url, { password: data.password })
   }
 
   removeUser(id: string) {

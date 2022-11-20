@@ -36,11 +36,10 @@ export default class ResetPassword extends Vue {
   errorText = ''
 
   async submitEmailForm(validEmail: string) {
-    console.log('reset pass validation confirm', validEmail)
     this.isLoading = true
     try {
       const res = await this.$store.dispatch(
-        'Auth/resetPasswordAction',
+        'Auth/resetPasswordRequestAction',
         validEmail
       )
       if (res && res.status === 204) {
