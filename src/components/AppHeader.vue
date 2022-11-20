@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts">
+import { RouteName } from '@/router/route.types'
 import { Component, Vue } from 'vue-property-decorator'
-import { RouteName } from '@/types/route'
 
 @Component({})
 export default class AppHeader extends Vue {

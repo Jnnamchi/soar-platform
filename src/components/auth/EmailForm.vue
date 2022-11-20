@@ -9,7 +9,10 @@
       :status="inputValidationInfo"
     />
 
-    <AppButton @click.native="submitButtonHandler" class="button form__button"
+    <AppButton
+      @click.native="submitButtonHandler"
+      class="button form__button"
+      :isLoading="isLoading"
       >Submit</AppButton
     >
   </div>
@@ -25,6 +28,10 @@ const EmailFormProps = Vue.extend({
   props: {
     title: String,
     submitForm: Function,
+    isLoading: {
+      type: Boolean,
+      default: () => false,
+    },
   },
 })
 
@@ -35,7 +42,7 @@ const EmailFormProps = Vue.extend({
   },
 })
 export default class EmailForm extends EmailFormProps {
-  inputText = ''
+  inputText = 'yy.dev@bk.ru'
   inputValidationInfo = {
     type: '',
     text: '',

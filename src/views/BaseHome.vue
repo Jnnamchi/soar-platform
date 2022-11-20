@@ -20,7 +20,7 @@ import AppButton from '@/components/UI/AppButton.vue'
 import AppHeader from '@/components/AppHeader.vue'
 import AppMain from '@/components/AppMain.vue'
 import TeamMembers from '@/components/home/TeamMembers.vue'
-import { RouteName } from '@/types/route'
+import { RouteName } from '@/router/route.types'
 
 @Component({
   components: {

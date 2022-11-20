@@ -6,22 +6,22 @@
     <h3 class="subtitle">please wait, till your account will be activated</h3>
   </div>
 
-  <ErrorText v-else :text="errorText" />
+  <InfoError v-else :text="errorText" />
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import AppLoader from '@/components/UI/AppLoader.vue'
-import ErrorText from '@/components/ErrorText.vue'
+import InfoError from '@/components/info/InfoError.vue'
 import { convertErrorToString } from '@/utils/convert'
-import { RouteName } from '@/types/route'
+import { RouteName } from '@/router/route.types'
 
 const delayBeforeRedirectToLogin = 2000
 
 @Component({
   components: {
     AppLoader,
-    ErrorText,
+    InfoError,
   },
 })
 export default class SignupAdminConfirm extends Vue {

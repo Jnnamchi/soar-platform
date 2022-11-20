@@ -38,7 +38,7 @@
       >
     </div>
 
-    <ErrorText v-else :text="errorText" />
+    <InfoError v-else :text="errorText" />
   </div>
 </template>
 
@@ -51,7 +51,7 @@ import { namespace } from 'vuex-class'
 const Auth = namespace('Auth')
 import { convertErrorToString } from '@/utils/convert'
 import { IAuthData } from '@/types/auth'
-import ErrorText from '@/components/ErrorText.vue'
+import InfoError from '@/components/info/InfoError.vue'
 
 const LoginFormProps = Vue.extend({
   props: {
@@ -63,7 +63,7 @@ const LoginFormProps = Vue.extend({
   components: {
     AppButton,
     AppInput,
-    ErrorText,
+    InfoError,
   },
 })
 export default class LoginForm extends LoginFormProps {

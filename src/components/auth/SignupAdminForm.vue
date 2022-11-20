@@ -76,7 +76,7 @@
       >
     </div>
 
-    <ErrorText v-else :text="errorText" />
+    <InfoError v-else :text="errorText" />
   </div>
 </template>
 
@@ -85,7 +85,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { checkEmailValidation } from '@/utils/validation'
 import AppButton from '@/components/UI/AppButton.vue'
 import AppInput from '@/components/UI/AppInput.vue'
-import ErrorText from '../ErrorText.vue'
+import InfoError from '@/components/info/InfoError.vue'
 import { convertErrorToString } from '@/utils/convert'
 
 const SignupAdminFormProps = Vue.extend({
@@ -99,7 +99,7 @@ const SignupAdminFormProps = Vue.extend({
   components: {
     AppInput,
     AppButton,
-    ErrorText,
+    InfoError,
   },
 })
 export default class SignupAdminForm extends SignupAdminFormProps {

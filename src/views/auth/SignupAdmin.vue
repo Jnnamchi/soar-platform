@@ -17,13 +17,10 @@
       :signupCb="submitAdminForm"
     />
 
-    <div v-if="signupStep === 3" class="success">
-      <IconSuccess class="success-icon" />
-      <div class="success-info">
-        <p class="title">Success!</p>
-        <p class="text">Check your email to activate your account</p>
-      </div>
-    </div>
+    <InfoSuccess
+      v-if="signupStep === 3"
+      :text="'Check your email to activate your account'"
+    />
 
     <p class="redirect">
       Already a member?
@@ -38,13 +35,13 @@
 import { Component, Vue } from 'vue-property-decorator'
 import EmailForm from '@/components/auth/EmailForm.vue'
 import SignupAdminForm from '@/components/auth/SignupAdminForm.vue'
-import IconSuccess from '@/components/UI/IconSuccess.vue'
+import InfoSuccess from '@/components/info/InfoSuccess.vue'
 
 @Component({
   components: {
     EmailForm,
     SignupAdminForm,
-    IconSuccess,
+    InfoSuccess,
   },
 })
 export default class SignupAdmin extends Vue {
@@ -68,36 +65,6 @@ export default class SignupAdmin extends Vue {
   color: #505f79;
   font-size: 14px;
   line-height: 20px;
-}
-
-.success {
-  display: flex;
-  padding: 20px;
-  border-radius: 3px;
-  background-color: #e3fcef;
-
-  &-icon {
-    margin-right: 20px;
-    transform: scale(2) translateY(2px);
-  }
-  &-info {
-    .title {
-      margin-bottom: 8px;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .text {
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    .link {
-      font-size: 14px;
-      color: #0052cc;
-      cursor: pointer;
-    }
-  }
 }
 
 .redirect {

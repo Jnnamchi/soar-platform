@@ -105,6 +105,18 @@ class User extends VuexModule {
   }
 
   @Action({ rawError: true })
+  resetPasswordAction(email: string): Promise<any> {
+    return AuthService.resetPasswordRequest(email).then(
+      (res) => {
+        return Promise.resolve(res)
+      },
+      (error) => {
+        return Promise.reject(error)
+      }
+    )
+  }
+
+  @Action({ rawError: true })
   removeCurrentUserAction(): Promise<any> {
     const currentUserId = this.context.getters['userId']
     return AuthService.removeUser(currentUserId).then(

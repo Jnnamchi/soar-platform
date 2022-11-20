@@ -1,7 +1,7 @@
 // @ts-nocheck
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
-import { RoutePath, RouteName } from '@/types/route'
+import { RoutePath, RouteName } from '@/router/route.types'
 
 // home
 // import Home from "../views/Home.vue";
@@ -12,7 +12,7 @@ import LoginUser from '@/views/auth/LoginUser.vue'
 import SignupAdmin from '@/views/auth/SignupAdmin.vue'
 import SignupAdminConfirm from '@/views/auth/SignupAdminConfirm.vue'
 import RegisterParticipant from '@/views/auth/RegisterParticipant.vue'
-import ResetPassword from '@/views/auth/ResetPassword.vue'
+import ResetPasswordRequest from '@/views/auth/ResetPasswordRequest.vue'
 
 // 404
 import NotFoundComponent from '@/views/404.vue'
@@ -46,17 +46,17 @@ const routes: Array<RouteConfig> = [
     },
   },
   {
-    path: '/auth/login',
-    name: 'login',
+    path: RoutePath.Login,
+    name: RouteName.Login,
     component: LoginUser,
     meta: {
       layout: 'AuthLayout',
     },
   },
   {
-    path: '/auth/reset-pass',
-    name: 'reset-pass',
-    component: ResetPassword,
+    path: RoutePath.ResetPasswordRequest,
+    name: RouteName.ResetPasswordRequest,
+    component: ResetPasswordRequest,
     meta: {
       layout: 'AuthLayout',
     },

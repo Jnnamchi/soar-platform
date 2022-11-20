@@ -19,7 +19,7 @@
       >
     </div>
 
-    <ErrorText v-else :text="errorText" />
+    <InfoError v-else :text="errorText" />
   </div>
 </template>
 
@@ -27,7 +27,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import AppButton from '@/components/UI/AppButton.vue'
 import AppInput from '@/components/UI/AppInput.vue'
-import ErrorText from '@/components/ErrorText.vue'
+import InfoError from '@/components/info/InfoError.vue'
 import { namespace } from 'vuex-class'
 const Auth = namespace('Auth')
 import { convertErrorToString } from '@/utils/convert'
@@ -42,7 +42,7 @@ const LoginVerificationFormProps = Vue.extend({
   components: {
     AppButton,
     AppInput,
-    ErrorText,
+    InfoError,
   },
 })
 export default class LoginVerificationForm extends LoginVerificationFormProps {

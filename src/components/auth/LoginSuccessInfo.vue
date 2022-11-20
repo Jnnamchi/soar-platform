@@ -4,22 +4,22 @@
     <p>you will be automatically redirected in few seconds</p>
   </div>
 
-  <ErrorText v-else :text="errorText" />
+  <InfoError v-else :text="errorText" />
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import ErrorText from '@/components/ErrorText.vue'
+import InfoError from '@/components/info/InfoError.vue'
 import { namespace } from 'vuex-class'
 const Auth = namespace('Auth')
 import { convertErrorToString } from '@/utils/convert'
-import { RouteName } from '@/types/route'
+import { RouteName } from '@/router/route.types'
 
 const delayBeforeRedirectToHome = 2000
 
 @Component({
   components: {
-    ErrorText,
+    InfoError,
   },
 })
 export default class LoginSuccessInfo extends Vue {

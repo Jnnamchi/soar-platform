@@ -19,7 +19,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import LoginVerificationForm from '@/components/auth/LoginVerificationForm.vue'
 import LoginSuccessInfo from '@/components/auth/LoginSuccessInfo.vue'
-import { RouteName } from '@/types/route'
+import { RouteName } from '@/router/route.types'
 
 @Component({
   components: {

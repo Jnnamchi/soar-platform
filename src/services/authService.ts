@@ -28,6 +28,11 @@ class AuthService {
     return apiInstance.get(url, { headers: authHeader() })
   }
 
+  resetPasswordRequest(email: string) {
+    const url = 'account/reset-password'
+    return apiInstance.post(url, { email })
+  }
+
   removeUser(id: string) {
     const url = `/account/user/${id}`
     return apiInstance.delete(url)
