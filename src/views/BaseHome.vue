@@ -2,7 +2,9 @@
   <div class="app-container">
     <AppHeader class="header" />
     <div class="main__top">
-      <h4>user info: {{ email }}</h4>
+      <h4>
+        user info: {{ email }} <span v-if="role">({{ role }})</span>
+      </h4>
     </div>
     <AppMain class="main">
       <TeamMembers />
@@ -32,6 +34,7 @@ import { RouteName } from '@/router/route.types'
 })
 export default class BaseHome extends Vue {
   email = ''
+  role = ''
   isLoading = false
 
   created() {
@@ -42,6 +45,7 @@ export default class BaseHome extends Vue {
     try {
       await this.$store.dispatch('Auth/getUserInfoAction')
       this.email = this.$store.state.Auth.user.email
+      this.role = this.$store.state.Auth.user.role
     } catch (error) {
       this.$router.push({ name: RouteName.Login })
     }

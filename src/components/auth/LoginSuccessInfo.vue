@@ -1,7 +1,7 @@
 <template>
   <div v-if="!errorText" class="login-completed">
     <p>You have been successfully logged in</p>
-    <p>you will be automatically redirected in few seconds</p>
+    <p>You will be automatically redirected in few seconds</p>
   </div>
 
   <InfoError v-else :text="errorText" />

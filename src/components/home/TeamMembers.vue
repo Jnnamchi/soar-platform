@@ -1,9 +1,14 @@
 <template>
   <div class="team">
-    <p class="members-count">No team members</p>
-    <AppButton @click.native="openAddMemberForm" class="add-user"
-      >Add new member</AppButton
-    >
+    <div class="team-intro">
+      <p class="members-count">No team members</p>
+      <AppButton
+        v-if="$store.state.Auth.user.role === 'administrator'"
+        @click.native="openAddMemberForm"
+        class="add-user"
+        >Add new member</AppButton
+      >
+    </div>
 
     <AppPopup v-model="openNewMemberPopup">
       <NewTeamMemberForm :hideFormCb="test" />
@@ -39,8 +44,11 @@ export default class TeamMembers extends Vue {
 
 <style lang="scss" scoped>
 .team {
-  display: flex;
-  align-items: center;
+  &-intro {
+    display: flex;
+    align-items: center;
+    height: 32px;
+  }
 
   .add-user {
     width: max-content;

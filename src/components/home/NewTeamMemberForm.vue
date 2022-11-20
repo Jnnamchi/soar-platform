@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="form">
+    <div v-if="!errorText && inviteStep === 1" class="form">
       <p class="subtitle">Add team members</p>
       <p class="text">
         Its as easy as filling in their information and we will send them a
@@ -48,6 +48,7 @@
           class="form__input"
           :placeholder="'Email address'"
           v-model="form.email"
+          :status="emailValidationInfo"
         />
       </div>
 
@@ -62,11 +63,18 @@
 
       <div class="buttons-wrapper">
         <AppButton class="cancel" @click.native="cancel">Cancel</AppButton>
-        <AppButton class="submit" @click.native="submit"
+        <AppButton class="submit" @click.native="submit" :isLoading="isLoading"
           >Add New Member</AppButton
         >
       </div>
     </div>
+
+    <div v-if="!errorText && inviteStep === 2" class="success">
+      <InfoSuccess :text="'You\'ve added your team member'" />
+      <AppButton class="success-button" @click.native="cancel">Ok</AppButton>
+    </div>
+
+    <InfoError v-if="errorText" :text="errorText" />
   </div>
 </template>
 
@@ -74,7 +82,11 @@
 import { Component, Vue } from 'vue-property-decorator'
 import AppButton from '@/components/UI/AppButton.vue'
 import AppInput from '@/components/UI/AppInput.vue'
+import InfoError from '@/components/info/InfoError.vue'
 import { writeTextToClipboard } from '@/utils/clipboard'
+import { checkEmailValidation } from '@/utils/validation'
+import { convertErrorToString } from '@/utils/convert'
+import InfoSuccess from '../info/InfoSuccess.vue'
 
 const NewTeamMemberFormProps = Vue.extend({
   props: {
@@ -86,21 +98,26 @@ const NewTeamMemberFormProps = Vue.extend({
   components: {
     AppButton,
     AppInput,
+    InfoSuccess,
+    InfoError,
   },
 })
 export default class NewTeamMemberForm extends NewTeamMemberFormProps {
-  joinLink = 'https://so.link/invite=?123'
+  inviteStep = 1
+  joinLink = 'https://site-name/invite=?no-actual-route'
   isLinkCopied = false
   form = {
-    first_name: '',
+    first_name: 'Ben',
     last_name: '',
-    email: '',
-    company_division: '',
+    email: 'yy.ainu@gmail.com',
+    company_division: 'sales',
   }
-  emailInfo = {
+  emailValidationInfo = {
     type: '',
     text: '',
   }
+  isLoading = false
+  errorText = ''
 
   copy() {
     writeTextToClipboard(this.joinLink)
@@ -108,11 +125,51 @@ export default class NewTeamMemberForm extends NewTeamMemberFormProps {
   }
 
   cancel() {
+    this.form = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      company_division: '',
+    }
     this.hideFormCb()
   }
 
-  submit() {
-    console.log('submit')
+  async submit() {
+    this.emailValidation()
+
+    const validationSuccess = !this.emailValidationInfo.type
+    if (validationSuccess) {
+      this.isLoading = true
+      try {
+        const res = await this.$store.dispatch(
+          'Signup/inviteParticipant',
+          this.form
+        )
+        console.log('invite res data: ', res)
+        if (res && res.status === 204) {
+          this.inviteStep = 2
+        }
+      } catch (error) {
+        this.errorText = convertErrorToString(error)
+      } finally {
+        this.isLoading = false
+      }
+    }
+  }
+
+  emailValidation() {
+    const isEmailValid = checkEmailValidation(this.form.email.trim())
+    if (!isEmailValid) {
+      this.emailValidationInfo = {
+        type: 'error',
+        text: "Email wasn't validated",
+      }
+    } else {
+      this.emailValidationInfo = {
+        type: '',
+        text: '',
+      }
+    }
   }
 }
 </script>
@@ -188,6 +245,16 @@ export default class NewTeamMemberForm extends NewTeamMemberFormProps {
         height: 100%;
         padding: 12px 53px;
       }
+    }
+  }
+
+  .success {
+    &-button {
+      display: block;
+      margin-top: 10px;
+      padding: 0 20px;
+      margin-left: auto;
+      width: max-content;
     }
   }
 }

@@ -5,6 +5,7 @@ import {
   IAuthData,
   IAdminData,
   IChangePassword,
+  IParticipantInviteData,
 } from '@/types/auth'
 
 class AuthService {
@@ -41,6 +42,11 @@ class AuthService {
   changePassword(data: IChangePassword) {
     const url = `/account/reset-password/${data.id}`
     return apiInstance.post(url, { password: data.password })
+  }
+
+  inviteParticipant(data: IParticipantInviteData) {
+    const url = '/account/participant/invite'
+    return apiInstance.post(url, { ...data }, { headers: authHeader() })
   }
 
   removeUser(id: string) {

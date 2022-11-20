@@ -7,10 +7,7 @@
       :loginVerificationCb="submitCodeForm"
     />
 
-    <LoginSuccessInfo v-if="loginStep === 3">
-      <p>You have been successfully logged in</p>
-      <p>you will be automatically redirected in few seconds</p>
-    </LoginSuccessInfo>
+    <LoginSuccessInfo v-if="loginStep === 3" />
   </div>
 </template>
 

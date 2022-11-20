@@ -30,3 +30,10 @@ export interface IChangePassword {
   id: string
   password: string
 }
+
+export interface IParticipantInviteData {
+  email: string
+  first_name: string
+  last_name: string
+  company_division: string
+}
