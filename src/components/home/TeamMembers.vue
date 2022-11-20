@@ -11,7 +11,7 @@
     </div>
 
     <AppPopup v-model="openNewMemberPopup">
-      <NewTeamMemberForm :hideFormCb="test" />
+      <NewTeamMemberForm :hideFormCb="closeAddMemberForm" :reset="reset" />
     </AppPopup>
   </div>
 </template>
@@ -31,12 +31,14 @@ import NewTeamMemberForm from './NewTeamMemberForm.vue'
 })
 export default class TeamMembers extends Vue {
   openNewMemberPopup = false
+  reset = false
 
   openAddMemberForm() {
     this.openNewMemberPopup = true
+    this.reset = !this.reset
   }
 
-  test() {
+  closeAddMemberForm() {
     this.openNewMemberPopup = false
   }
 }

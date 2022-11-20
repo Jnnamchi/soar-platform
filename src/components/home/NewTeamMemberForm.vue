@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import AppButton from '@/components/UI/AppButton.vue'
 import AppInput from '@/components/UI/AppInput.vue'
 import InfoError from '@/components/info/InfoError.vue'
@@ -91,6 +91,7 @@ import InfoSuccess from '../info/InfoSuccess.vue'
 const NewTeamMemberFormProps = Vue.extend({
   props: {
     hideFormCb: Function,
+    // reset: Boolean,
   },
 })
 
@@ -101,6 +102,14 @@ const NewTeamMemberFormProps = Vue.extend({
     InfoSuccess,
     InfoError,
   },
+  // watch: {
+  //   $props: {
+  //     handler: function () {
+  //       this.resetForm()
+  //     },
+  //     deep: true,
+  //   },
+  // },
 })
 export default class NewTeamMemberForm extends NewTeamMemberFormProps {
   inviteStep = 1
@@ -119,19 +128,32 @@ export default class NewTeamMemberForm extends NewTeamMemberFormProps {
   isLoading = false
   errorText = ''
 
+  @Prop()
+  reset!: Boolean
+
+  @Watch('reset', { immediate: true })
+  resetChanged() {
+    this.resetForm()
+  }
+
   copy() {
     writeTextToClipboard(this.joinLink)
     this.isLinkCopied = true
   }
 
   cancel() {
+    this.resetForm()
+    this.hideFormCb()
+  }
+
+  resetForm() {
     this.form = {
       first_name: '',
       last_name: '',
       email: '',
       company_division: '',
     }
-    this.hideFormCb()
+    this.inviteStep = 1
   }
 
   async submit() {
