@@ -12,10 +12,14 @@
 
     <InfoSuccess
       v-if="signupStep === 2"
-      :text="'Check your email to activate your account'"
-    />
+      :text="'You have been successfully signed up'"
+    >
+      <router-link :to="{ name: 'login' }" class="redirect__link"
+        >Login</router-link
+      ></InfoSuccess
+    >
 
-    <p class="redirect">
+    <p v-if="signupStep !== 2" class="redirect">
       Already a member?
       <router-link :to="{ name: 'login' }" class="redirect__link"
         >Login</router-link

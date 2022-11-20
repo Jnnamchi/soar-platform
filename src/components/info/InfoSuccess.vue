@@ -4,6 +4,8 @@
     <div class="success-info">
       <p class="title">Success!</p>
       <p class="text">{{ text }}</p>
+
+      <slot></slot>
     </div>
   </div>
 </template>
