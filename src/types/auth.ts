@@ -37,3 +37,10 @@ export interface IParticipantInviteData {
   last_name: string
   company_division: string
 }
+
+export interface IParticipantSignupData {
+  first_name: string
+  last_name: string
+  invitation_id: string
+  password: string
+}

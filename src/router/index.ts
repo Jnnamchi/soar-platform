@@ -11,7 +11,7 @@ import BaseHome from '../views/BaseHome.vue'
 import LoginUser from '@/views/auth/LoginUser.vue'
 import SignupAdmin from '@/views/auth/SignupAdmin.vue'
 import SignupAdminConfirm from '@/views/auth/SignupAdminConfirm.vue'
-import RegisterParticipant from '@/views/auth/RegisterParticipant.vue'
+import SignupParticipant from '@/views/auth/SignupParticipant.vue'
 import ResetPasswordRequest from '@/views/auth/ResetPasswordRequest.vue'
 import ChangePassword from '@/views/auth/ChangePassword.vue'
 
@@ -71,9 +71,9 @@ const routes: Array<RouteConfig> = [
     },
   },
   {
-    path: '/auth/sign-up',
-    name: 'sign-up-user',
-    component: RegisterParticipant,
+    path: RoutePath.SignupParticipant,
+    name: RouteName.SignupParticipant,
+    component: SignupParticipant,
     meta: {
       layout: 'AuthLayout',
     },

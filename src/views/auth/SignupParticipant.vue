@@ -5,20 +5,15 @@
       malesuada diam nisl vel enim nisi. Mattis ut iaculis amet ultrices nibh.
     </p>
 
-    <RegisterParticipantForm
-      v-if="registerStep === 1"
-      :validEmail="validEmail"
-      :submitForm="submitParticipantForm"
+    <SignupParticipantForm
+      v-if="signupStep === 1"
+      :submitFormCb="submitParticipantForm"
     />
 
-    <div v-if="registerStep === 2" class="success">
-      <IconSuccess class="success-icon" />
-      <div class="success-info">
-        <p class="title">Success!</p>
-        <p class="text">Check your email to activate your account</p>
-        <p class="link">Didn’t get email? click here</p>
-      </div>
-    </div>
+    <InfoSuccess
+      v-if="signupStep === 2"
+      :text="'Check your email to activate your account'"
+    />
 
     <p class="redirect">
       Already a member?
@@ -31,22 +26,20 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import RegisterParticipantForm from '@/components/auth/RegisterParticipantForm.vue'
-import IconSuccess from '@/components/UI/IconSuccess.vue'
+import SignupParticipantForm from '@/components/auth/SignupParticipantForm.vue'
+import InfoSuccess from '@/components/info/InfoSuccess.vue'
 
 @Component({
   components: {
-    RegisterParticipantForm,
-    IconSuccess,
+    SignupParticipantForm,
+    InfoSuccess,
   },
 })
-export default class RegisterParticipant extends Vue {
-  registerStep = 1
-  validEmail = ''
+export default class SignupParticipant extends Vue {
+  signupStep = 1
 
   submitParticipantForm() {
-    console.log('Participant signup passed')
-    this.registerStep = 2
+    this.signupStep = 2
   }
 }
 </script>

@@ -107,10 +107,10 @@ export default class NewTeamMemberForm extends NewTeamMemberFormProps {
   joinLink = 'https://site-name/invite=?no-actual-route'
   isLinkCopied = false
   form = {
-    first_name: 'Ben',
+    first_name: '',
     last_name: '',
-    email: 'yy.ainu@gmail.com',
-    company_division: 'sales',
+    email: '',
+    company_division: '',
   }
   emailValidationInfo = {
     type: '',
@@ -142,10 +142,9 @@ export default class NewTeamMemberForm extends NewTeamMemberFormProps {
       this.isLoading = true
       try {
         const res = await this.$store.dispatch(
-          'Signup/inviteParticipant',
+          'Signup/inviteParticipantAction',
           this.form
         )
-        console.log('invite res data: ', res)
         if (res && res.status === 204) {
           this.inviteStep = 2
         }

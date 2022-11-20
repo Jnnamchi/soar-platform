@@ -93,6 +93,8 @@ export default class BaseHome extends Vue {
       margin-left: auto;
       width: max-content;
       padding: 0 10px;
+      opacity: 0.4;
+      background-color: rgb(155, 18, 18);
     }
   }
 }

@@ -1,6 +1,10 @@
 import { VuexModule, Module, Mutation, Action } from 'vuex-module-decorators'
-import { IAdminData, IParticipantInviteData } from '@/types/auth'
 import authService from '@/services/authService'
+import {
+  IAdminData,
+  IParticipantInviteData,
+  IParticipantSignupData,
+} from '@/types/auth'
 
 @Module({ namespaced: true })
 class User extends VuexModule {
@@ -14,6 +18,11 @@ class User extends VuexModule {
   @Mutation
   inivteParticipantFailure(): void {
     console.log('invite participant failure')
+  }
+
+  @Mutation
+  signupParticipantFailure(): void {
+    console.log('signup participant failure')
   }
 
   @Action({ rawError: true })
@@ -43,13 +52,26 @@ class User extends VuexModule {
   }
 
   @Action({ rawError: true })
-  inviteParticipant(data: IParticipantInviteData): Promise<any> {
+  inviteParticipantAction(data: IParticipantInviteData): Promise<any> {
     return authService.inviteParticipant(data).then(
       (res) => {
         return Promise.resolve(res)
       },
       (error) => {
         this.context.commit('inivteParticipantFailure')
+        return Promise.reject(error)
+      }
+    )
+  }
+
+  @Action({ rawError: true })
+  signupParticipantAction(data: IParticipantSignupData): Promise<any> {
+    return authService.signupParticipant(data).then(
+      (res) => {
+        return Promise.resolve(res)
+      },
+      (error) => {
+        this.context.commit('signupParticipantFailure')
         return Promise.reject(error)
       }
     )
