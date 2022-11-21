@@ -15,5 +15,5 @@ export enum RoutePath {
   SignupAdminConfirm = '/registration/complete/:id',
   SignupParticipant = '/registration/complete/participant/:id',
   ResetPasswordRequest = '/auth/reset-password',
-  ChangePassword = '/reset-password//:id',
+  ChangePassword = '/reset-password/:id',
 }
