@@ -1,6 +1,6 @@
 <template>
   <div class="layout layout__base">
-    <AppMenu class="menu" />
+    <AppSidebar class="menu" />
     <div class="content">
       <router-view />
     </div>
@@ -9,11 +9,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import AppMenu from '@/components/AppMenu.vue'
+import AppSidebar from '@/components/containers/AppSidebar.vue'
 
 @Component({
   components: {
-    AppMenu,
+    AppSidebar,
   },
 })
 export default class DefaultLayout extends Vue {}

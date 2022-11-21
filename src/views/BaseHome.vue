@@ -19,8 +19,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import AppButton from '@/components/UI/AppButton.vue'
-import AppHeader from '@/components/AppHeader.vue'
-import AppMain from '@/components/AppMain.vue'
+import AppHeader from '@/components/containers/AppHeader.vue'
+import AppMain from '@/components/containers/AppMain.vue'
 import TeamMembers from '@/components/home/TeamMembers.vue'
 import { RouteName } from '@/router/route.types'
 
@@ -88,7 +88,7 @@ export default class BaseHome extends Vue {
 
     .remove {
       // display: none;
-      width: 197px !important;
+      width: 200px !important;
       margin-top: auto;
       margin-left: auto;
       width: max-content;
