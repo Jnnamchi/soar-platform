@@ -20,10 +20,9 @@
       />
 
       <div class="form__control">
-        <div class="remember">
-          <input type="radio" id="remember" /><label for="remember"
-            >Remember for 30 days</label
-          >
+        <div class="remember" @click="rememberMeHandler">
+          <span :class="['icon', isRememberMeActive && 'active']"></span>
+          <span class="text">Remember for 30 days</span>
         </div>
         <router-link :to="{ name: 'reset-password-request' }" class="pass__link"
           >Forgot password</router-link
@@ -71,6 +70,7 @@ export default class LoginForm extends LoginFormProps {
     email: '',
     password: '',
   }
+  isRememberMeActive = false
   emailValidationInfo = {
     type: '',
     text: '',
@@ -84,6 +84,10 @@ export default class LoginForm extends LoginFormProps {
 
   @Auth.Action
   loginInitialAction!: (data: IAuthData) => Promise<any>
+
+  rememberMeHandler() {
+    this.isRememberMeActive = !this.isRememberMeActive
+  }
 
   async submitButtonHandler() {
     this.emailValidation()
@@ -171,9 +175,28 @@ export default class LoginForm extends LoginFormProps {
     .remember {
       display: flex;
       align-items: center;
+      cursor: pointer;
 
-      input {
+      .icon {
+        width: 14px;
+        height: 14px;
+        border: 1px solid #dfe1e6;
+        border-radius: 50%;
         margin-right: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.active {
+          &::after {
+            display: block;
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0052cc;
+          }
+        }
       }
     }
 
